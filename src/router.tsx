@@ -1,0 +1,54 @@
+import { createRouter } from '@tanstack/react-router';
+
+// Import the generated route tree
+import { routeTree } from './routeTree.gen';
+import type { FlattenObj } from './lib/utils';
+
+// Create a new router instance
+export const router = createRouter({
+  routeTree,
+  context: {
+    auth: undefined!,
+    queryClient: undefined!,
+  },
+  defaultPreload: 'intent',
+  scrollRestoration: true,
+  defaultStructuralSharing: true,
+  defaultPreloadStaleTime: 0,
+});
+
+// Register the router instance for type safety
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router;
+  }
+}
+
+export const ROUTES = {
+  PUBLIC: {
+    HOME: '/',
+  },
+  DASHBOARD: {
+    HOME: '/dashboard',
+    ACCOUNTS_PAYABLE: {
+      HOME: '/dashboard/accounts-payable',
+    },
+    ACCOUNTS_RECEIVABLE: {
+      HOME: '/dashboard/accounts-receivable',
+    },
+    CASH_MANAGEMENT: {
+      HOME: '/dashboard/cash-management',
+    },
+    SETTINGS: {
+      HOME: '/dashboard/settings',
+    },
+  },
+  AUTH: {
+    LOGIN: '/login',
+    FORGET_PW: '/forget-password',
+  },
+} as const;
+
+type FlattenRoutes = FlattenObj<typeof ROUTES>;
+
+export type TRoutes = FlattenRoutes | '..' | '.';

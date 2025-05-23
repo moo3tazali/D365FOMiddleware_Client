@@ -1,0 +1,49 @@
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+// import {
+//   useNavigate,
+//   useSearch,
+//   useRouter,
+// } from '@tanstack/react-router';
+
+const formSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'),
+});
+
+type FormData = z.infer<typeof formSchema>;
+
+export const useLogin = () => {
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  // const navigate = useNavigate();
+
+  // const router = useRouter();
+
+  // const redirect = useSearch({
+  //   strict: false,
+  //   select: (s: { redirect?: string }) => s?.redirect ?? '',
+  // });
+
+  function onSubmit(values: FormData) {
+    console.log(values);
+  }
+
+  return {
+    form: {
+      ...form,
+      isPending: false,
+      onSubmit: form.handleSubmit(onSubmit),
+    },
+  };
+};
