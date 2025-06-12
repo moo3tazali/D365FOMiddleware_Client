@@ -367,6 +367,7 @@ export const FileInput = forwardRef<
         disabled={isLOF}
         {...dropzoneState.getInputProps()}
         className={`${isLOF ? 'cursor-not-allowed' : ''}`}
+        id={props.id}
       />
     </div>
   );

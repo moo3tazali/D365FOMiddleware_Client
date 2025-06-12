@@ -42,6 +42,7 @@ export const UploadEntriesForm = () => {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                   disabled={form.isPending}
+                  name='type'
                 >
                   <FormControl>
                     <SelectTrigger className='w-full'>
@@ -68,6 +69,7 @@ export const UploadEntriesForm = () => {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                   disabled={form.isPending}
+                  name='billingCodeId'
                 >
                   <FormControl>
                     <SelectTrigger className='w-full'>
@@ -91,7 +93,7 @@ export const UploadEntriesForm = () => {
           name='dataFile'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Select File</FormLabel>
+              <FormLabel htmlFor='dataFile'>Select File</FormLabel>
               <FormControl>
                 <FileUploader
                   value={field.value}
@@ -109,7 +111,7 @@ export const UploadEntriesForm = () => {
                   disabled={form.isPending}
                 >
                   <FileInput
-                    id='fileInput'
+                    id='dataFile'
                     className='outline-dashed outline-1 outline-slate-500'
                   >
                     <div className='flex items-center justify-center flex-col p-8 w-full '>
