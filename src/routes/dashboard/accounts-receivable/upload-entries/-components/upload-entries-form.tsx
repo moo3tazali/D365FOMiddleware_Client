@@ -26,7 +26,7 @@ import {
 import { useUploadEnteries } from '../-hooks/use-upload-enteries';
 
 export const UploadEntriesForm = () => {
-  const { form } = useUploadEnteries();
+  const { form, UPLOAD_TYPES } = useUploadEnteries();
 
   return (
     <Form {...form}>
@@ -50,8 +50,12 @@ export const UploadEntriesForm = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value='1'>Freight</SelectItem>
-                    <SelectItem value='2'>Trucking</SelectItem>
+                    <SelectItem value={String(UPLOAD_TYPES.FREIGHT_DOC)}>
+                      Freight
+                    </SelectItem>
+                    <SelectItem value={String(UPLOAD_TYPES.TRUCKING_DOC)}>
+                      Trucking
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

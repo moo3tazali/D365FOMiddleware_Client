@@ -1,12 +1,8 @@
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-
-interface Payload {
-  companyId: string;
-  billingCodeId: string;
-  dataFile: File;
-}
+import { useServices } from '@/hooks/use-services';
+import { useMutation } from '@/hooks/use-mutation';
 
 const acceptedTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -51,42 +47,35 @@ export const useUploadEnteries = () => {
     },
   });
 
-  const onFreightUpload = (payload: Payload) => {
-    // TODO: Implement
-    console.log('onFreightUpload', payload);
-  };
+  const { accountReceivable } = useServices();
 
-  const onTruckingUpload = (payload: Payload) => {
-    // TODO: Implement
-    console.log('onTruckingUpload', payload);
-  };
+  const { mutate, isPending } = useMutation({
+    operationName: 'upload Entries',
+    mutationFn: accountReceivable.upload,
+    formControl: form.control,
+  });
 
   const onSubmit = (values: FormData) => {
     const files = values.dataFile!;
 
-    const payload = {
-      companyId: values.companyId,
-      billingCodeId: values.billingCodeId,
-      dataFile: files[0],
-    } satisfies Payload;
+    const options = {
+      data: {
+        companyId: values.companyId,
+        billingCodeId: values.billingCodeId,
+        dataFile: files[0],
+      },
+      type: values.type,
+    };
 
-    switch (values.type) {
-      case '1':
-        onFreightUpload(payload);
-        break;
-      case '2':
-        onTruckingUpload(payload);
-        break;
-      default:
-        break;
-    }
+    mutate(options);
   };
 
   return {
     form: {
       ...form,
-      isPending: false,
+      isPending,
       onSubmit: form.handleSubmit(onSubmit),
     },
+    UPLOAD_TYPES: accountReceivable.UPLOAD_TYPES,
   };
 };

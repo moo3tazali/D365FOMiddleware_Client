@@ -1,0 +1,75 @@
+import { Sync } from './core/sync';
+import { API_ROUTES } from './core/api-routes';
+
+interface UploadData {
+  companyId: string;
+  billingCodeId?: string;
+  dataFile: File;
+}
+
+interface UploadResponse {}
+
+const syncService = Sync.getInstance();
+
+export class AccountReceivable {
+  private static _instance: AccountReceivable;
+  public readonly UPLOAD_TYPES = {
+    FREIGHT_DOC: 1,
+    TRUCKING_DOC: 2,
+    FREIGHT_CREDIT_NOTE_DOC: 3,
+    TRUCKING_CREDIT_NOTE_DOC: 4,
+  };
+
+  private constructor() {}
+
+  public static getInstance(): AccountReceivable {
+    if (!AccountReceivable._instance) {
+      AccountReceivable._instance = new AccountReceivable();
+    }
+
+    return AccountReceivable._instance;
+  }
+
+  public upload = async (options: {
+    type: number | string;
+    data: UploadData;
+  }): Promise<UploadResponse> => {
+    const { data, type } = options;
+
+    if (
+      [this.UPLOAD_TYPES.FREIGHT_DOC, this.UPLOAD_TYPES.TRUCKING_DOC].includes(
+        Number(type)
+      ) &&
+      !data.billingCodeId
+    ) {
+      throw new Error('billingCodeId is required for this upload type.');
+    }
+
+    const apiRoute = await this._getUploadApiRoute(type);
+
+    return syncService.save<UploadResponse, UploadData>(apiRoute, data, {
+      formData: true,
+    });
+  };
+
+  private async _getUploadApiRoute(type: number | string) {
+    switch (Number(type)) {
+      case this.UPLOAD_TYPES.FREIGHT_DOC:
+        return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE.FREIGHT_DOCUMENT;
+      case this.UPLOAD_TYPES.TRUCKING_DOC:
+        return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE.TRUCKING_DOCUMENT;
+      case this.UPLOAD_TYPES.FREIGHT_CREDIT_NOTE_DOC:
+        return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE
+          .FREIGHT_CREDIT_NOTE_DOCUMENT;
+      case this.UPLOAD_TYPES.TRUCKING_CREDIT_NOTE_DOC:
+        return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE
+          .TRUCKING_CREDIT_NOTE_DOCUMENT;
+      default:
+        throw new Error(
+          `Invalid upload type, Upload type must satisfies ${Object.values(
+            this.UPLOAD_TYPES
+          )}`
+        );
+    }
+  }
+}

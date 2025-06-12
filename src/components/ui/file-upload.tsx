@@ -269,7 +269,7 @@ export const FileUploaderContent = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ children, className, ...props }, ref) => {
-  const { orientation } = useFileUpload();
+  const { orientation, isLOF } = useFileUpload();
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -283,7 +283,8 @@ export const FileUploaderContent = forwardRef<
         ref={ref}
         className={cn(
           'flex rounded-xl gap-1',
-          orientation === 'horizontal' ? 'flex-raw flex-wrap' : 'flex-col',
+          orientation === 'horizontal' ? 'flex-row flex-wrap' : 'flex-col',
+          isLOF && 'pointer-events-none! text-muted-foreground!',
           className
         )}
       >
