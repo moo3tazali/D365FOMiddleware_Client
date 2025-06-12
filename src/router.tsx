@@ -35,6 +35,7 @@ export const ROUTES = {
     },
     ACCOUNTS_RECEIVABLE: {
       HOME: '/dashboard/accounts-receivable',
+      NEW: '/dashboard/accounts-receivable/upload-entries',
     },
     CASH_MANAGEMENT: {
       HOME: '/dashboard/cash-management',

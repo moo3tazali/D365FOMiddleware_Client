@@ -7,19 +7,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 //   useRouter,
 // } from '@tanstack/react-router';
 
-const formSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'Email is required')
-    .email('Invalid email address'),
+const FormSchema = z.object({
+  email: z.string().min(1, 'Email is required').email('Invalid email address'),
   password: z.string().min(1, 'Password is required'),
 });
 
-type FormData = z.infer<typeof formSchema>;
+type FormData = z.infer<typeof FormSchema>;
 
 export const useLogin = () => {
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(FormSchema),
     defaultValues: {
       email: '',
       password: '',
