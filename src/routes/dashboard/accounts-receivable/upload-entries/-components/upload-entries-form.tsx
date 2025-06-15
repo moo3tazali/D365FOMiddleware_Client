@@ -42,7 +42,7 @@ export const UploadEntriesForm = () => {
             name='type'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Entry Type</FormLabel>
+                <FormLabel>Target Service</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -81,7 +81,9 @@ export const UploadEntriesForm = () => {
             name='billingCodeId'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Target Service</FormLabel>
+                <FormLabel>
+                  Billing Classification
+                </FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}

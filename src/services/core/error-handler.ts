@@ -39,23 +39,45 @@ export class ErrorHandler {
 
   private _handleAxiosError(error: AxiosError): ErrorRes {
     if (error.response) {
-      return error.response.data as ErrorRes;
+      const err = error.response.data as
+        | ErrorRes
+        | { status: 500; title: string };
+
+      if ('status' in err && err.status === 500) {
+        return {
+          code: 500,
+          success: false,
+          message: `Unknown Server Error: ${JSON.stringify(
+            err.title
+          )}`,
+          errors: '',
+        };
+      }
+
+      return {
+        ...err,
+        message: `${
+          (err as ErrorRes).message
+        }: ${JSON.stringify((err as ErrorRes).errors)}`,
+      } as ErrorRes;
     }
 
     if (error.request) {
       return {
         code: 0,
         success: false,
-        message: 'Network Error',
-        errors:
+        message:
           'Network Error: Unable to connect to server.',
+        errors: '',
       };
     }
 
     return {
       code: 0,
       success: false,
-      message: `Request Error`,
+      message: `Request Error: ${JSON.stringify(
+        error.message
+      )}`,
       errors: error.message,
     };
   }
@@ -65,8 +87,10 @@ export class ErrorHandler {
       return {
         code: 0,
         success: false,
-        message: `Expected Error`,
         errors: error.message,
+        message: `Expected Error: ${JSON.stringify(
+          error.message
+        )}`,
       };
     }
 

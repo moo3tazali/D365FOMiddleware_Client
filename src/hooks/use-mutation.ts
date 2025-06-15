@@ -110,11 +110,9 @@ export const useMutation = <
 
       // show error toast
       toast.error(
-        toastMsgs?.error ?? error?.message
-          ? `${error.message}: ${JSON.stringify(
-              error.errors
-            )}`
-          : `${operation} failed!`
+        toastMsgs?.error ??
+          error?.message ??
+          `${operation} failed!`
       );
 
       // set form errors

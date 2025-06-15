@@ -22,7 +22,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   isPending?: boolean;
-  error?: Error | null;
+  error?: string | null;
   header?: React.ReactNode;
   footer?: React.ReactNode;
 }
@@ -50,7 +50,7 @@ function DataTable<TData, TValue>({
     }
 
     if (error) {
-      return error.message;
+      return error;
     }
 
     return 'No results.';

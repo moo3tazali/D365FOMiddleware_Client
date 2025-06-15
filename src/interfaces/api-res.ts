@@ -15,6 +15,7 @@ export interface SuccessRes<T> {
 
 export interface PaginationRes<T> {
   items: T[];
-  maxCount: number;
-  skipCount: number;
+  pageSize: number;
+  pageNumber: number;
+  totalCount: number;
 }
