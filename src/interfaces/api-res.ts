@@ -1,30 +1,20 @@
 export interface ErrorRes {
-  status: {
-    code: number;
-    message: string;
-    error: true;
-    validationsErrors: {
-      [key: string]: string[];
-    } | null;
-  };
-  data: null;
+  message: string;
+  success: boolean;
+  code: number;
+  errors: string;
 }
 
 export interface SuccessRes<T> {
-  status: {
-    code: number;
-    message: string;
-    error: false;
-    validationsErrors: null;
-  };
+  message: string;
+  success: boolean;
+  code: number;
+  error: string;
   data: T;
 }
 
 export interface PaginationRes<T> {
   items: T[];
-  meta: {
-    count: number;
-    skip: number;
-    limit: number;
-  };
+  maxCount: number;
+  skipCount: number;
 }

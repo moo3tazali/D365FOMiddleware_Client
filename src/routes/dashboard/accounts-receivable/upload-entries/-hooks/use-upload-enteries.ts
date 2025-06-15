@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useServices } from '@/hooks/use-services';
 import { useMutation } from '@/hooks/use-mutation';
+import { useState } from 'react';
 
 const acceptedTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -10,28 +11,36 @@ const acceptedTypes = [
 ];
 
 const FormSchema = z.object({
-  type: z.string().min(1, 'Please select the type of entry.'),
+  type: z
+    .string()
+    .min(1, 'Please select the type of entry.'),
   companyId: z.string(),
   billingCodeId: z
     .string()
-    .min(1, 'Please select the target service billing classification.'),
-  dataFile: z.custom<File[] | null>().superRefine((value, ctx) => {
-    if (!value || value.length === 0) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Please select a file.',
-      });
+    .min(
+      1,
+      'Please select the target service billing classification.'
+    ),
+  dataFile: z
+    .custom<File[] | null>()
+    .superRefine((value, ctx) => {
+      if (!value || value.length === 0) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Please select a file.',
+        });
 
-      return;
-    }
+        return;
+      }
 
-    if (!acceptedTypes.includes(value?.[0].type)) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Please select a valid file type (Excel).',
-      });
-    }
-  }),
+      if (!acceptedTypes.includes(value?.[0].type)) {
+        ctx.addIssue({
+          code: 'custom',
+          message:
+            'Please select a valid file type (Excel).',
+        });
+      }
+    }),
 });
 
 type FormData = z.infer<typeof FormSchema>;
@@ -46,6 +55,8 @@ export const useUploadEnteries = () => {
       dataFile: null,
     },
   });
+
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const { accountReceivable } = useServices();
 
@@ -65,6 +76,8 @@ export const useUploadEnteries = () => {
         dataFile: files[0],
       },
       type: values.type,
+      uploadProgress: (prog: number) =>
+        setUploadProgress(prog),
     };
 
     mutate(options);
@@ -74,6 +87,7 @@ export const useUploadEnteries = () => {
     form: {
       ...form,
       isPending,
+      uploadProgress,
       onSubmit: form.handleSubmit(onSubmit),
     },
     UPLOAD_TYPES: accountReceivable.UPLOAD_TYPES,

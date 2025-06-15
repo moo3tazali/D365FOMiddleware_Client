@@ -1,4 +1,8 @@
-import { CloudUpload, Paperclip, Upload } from 'lucide-react';
+import {
+  CloudUpload,
+  Paperclip,
+  Upload,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -24,6 +28,7 @@ import {
   FileUploaderItem,
 } from '@/components/ui/file-upload';
 import { useUploadEnteries } from '../-hooks/use-upload-enteries';
+import { Progress } from '@/components/ui/progress';
 
 export const UploadEntriesForm = () => {
   const { form, UPLOAD_TYPES } = useUploadEnteries();
@@ -50,10 +55,18 @@ export const UploadEntriesForm = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value={String(UPLOAD_TYPES.FREIGHT_DOC)}>
+                    <SelectItem
+                      value={String(
+                        UPLOAD_TYPES.FREIGHT_DOC
+                      )}
+                    >
                       Freight
                     </SelectItem>
-                    <SelectItem value={String(UPLOAD_TYPES.TRUCKING_DOC)}>
+                    <SelectItem
+                      value={String(
+                        UPLOAD_TYPES.TRUCKING_DOC
+                      )}
+                    >
                       Trucking
                     </SelectItem>
                   </SelectContent>
@@ -81,9 +94,15 @@ export const UploadEntriesForm = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value='INV-FW'>Invoices</SelectItem>
-                    <SelectItem value='OR-FW'>Official Receipts</SelectItem>
-                    <SelectItem value='OF-FW'>Ocean Freight</SelectItem>
+                    <SelectItem value='INV-FW'>
+                      Invoices
+                    </SelectItem>
+                    <SelectItem value='OR-FW'>
+                      Official Receipts
+                    </SelectItem>
+                    <SelectItem value='OF-FW'>
+                      Ocean Freight
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -97,7 +116,9 @@ export const UploadEntriesForm = () => {
           name='dataFile'
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor='dataFile'>Select File</FormLabel>
+              <FormLabel htmlFor='dataFile'>
+                Select File
+              </FormLabel>
               <FormControl>
                 <FileUploader
                   value={field.value}
@@ -121,7 +142,9 @@ export const UploadEntriesForm = () => {
                     <div className='flex items-center justify-center flex-col p-8 w-full '>
                       <CloudUpload className='text-gray-500 w-10 h-10' />
                       <p className='mb-1 text-sm text-gray-500 dark:text-gray-400'>
-                        <span className='font-semibold'>Click to upload</span>
+                        <span className='font-semibold'>
+                          Click to upload
+                        </span>
                         &nbsp; or drag and drop
                       </p>
                       <p className='text-xs text-gray-500 dark:text-gray-400'>
@@ -133,9 +156,15 @@ export const UploadEntriesForm = () => {
                     {field.value &&
                       field.value.length > 0 &&
                       field.value.map((file, i) => (
-                        <FileUploaderItem key={i} index={i}>
-                          <Paperclip className='h-4 w-4 stroke-current' />
-                          <span>{file.name}</span>
+                        <FileUploaderItem index={i} key={i}>
+                          <div className='flex items-center gap-1.5'>
+                            <Paperclip className='size-4 stroke-current' />
+                            <span>{file.name}</span>
+                          </div>
+                          <Progress
+                            size='xs'
+                            progress={form.uploadProgress}
+                          />
                         </FileUploaderItem>
                       ))}
                   </FileUploaderContent>

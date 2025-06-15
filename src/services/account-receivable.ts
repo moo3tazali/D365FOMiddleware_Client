@@ -33,31 +33,49 @@ export class AccountReceivable {
   public upload = async (options: {
     type: number | string;
     data: UploadData;
+    uploadProgress?: (prog: number) => void;
   }): Promise<UploadResponse> => {
     const { data, type } = options;
 
     if (
-      [this.UPLOAD_TYPES.FREIGHT_DOC, this.UPLOAD_TYPES.TRUCKING_DOC].includes(
-        Number(type)
-      ) &&
+      [
+        this.UPLOAD_TYPES.FREIGHT_DOC,
+        this.UPLOAD_TYPES.TRUCKING_DOC,
+      ].includes(Number(type)) &&
       !data.billingCodeId
     ) {
-      throw new Error('billingCodeId is required for this upload type.');
+      throw new Error(
+        'billingCodeId is required for this upload type.'
+      );
     }
 
     const apiRoute = await this._getUploadApiRoute(type);
 
-    return syncService.save<UploadResponse, UploadData>(apiRoute, data, {
-      formData: true,
-    });
+    return syncService.save<UploadResponse, UploadData>(
+      apiRoute,
+      data,
+      {
+        formData: true,
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) /
+              (progressEvent?.total || 1)
+          );
+          if (!options.uploadProgress) return;
+          options.uploadProgress(percentCompleted);
+        },
+      }
+    );
   };
 
   private async _getUploadApiRoute(type: number | string) {
     switch (Number(type)) {
       case this.UPLOAD_TYPES.FREIGHT_DOC:
-        return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE.FREIGHT_DOCUMENT;
+        return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE
+          .FREIGHT_DOCUMENT;
       case this.UPLOAD_TYPES.TRUCKING_DOC:
-        return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE.TRUCKING_DOCUMENT;
+        return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE
+          .TRUCKING_DOCUMENT;
       case this.UPLOAD_TYPES.FREIGHT_CREDIT_NOTE_DOC:
         return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE
           .FREIGHT_CREDIT_NOTE_DOCUMENT;

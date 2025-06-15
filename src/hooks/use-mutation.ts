@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import type {
   Control,
   FieldValues,
-  Path,
+  // Path,
 } from 'react-hook-form';
 import {
   useQueryClient,
@@ -32,7 +32,7 @@ interface Props<
   };
   mutationFn: MutationFunction<TData, TVariables>;
   onError?: (
-    error: ErrorRes['status'],
+    error: ErrorRes,
     variables: TVariables,
     context: unknown
   ) => Promise<unknown> | unknown;
@@ -102,11 +102,7 @@ export const useMutation = <
         onSuccess(data, variables, context);
       }
     },
-    onError: (
-      error: ErrorRes['status'],
-      variables,
-      context
-    ) => {
+    onError: (error: ErrorRes, variables, context) => {
       // remove loading toast
       if (loadingRef.current) {
         toast.dismiss(loadingRef.current);
@@ -114,9 +110,11 @@ export const useMutation = <
 
       // show error toast
       toast.error(
-        toastMsgs?.error ??
-          error.message ??
-          `${operation} failed!`
+        toastMsgs?.error ?? error?.message
+          ? `${error.message}: ${JSON.stringify(
+              error.errors
+            )}`
+          : `${operation} failed!`
       );
 
       // set form errors
@@ -128,19 +126,19 @@ export const useMutation = <
         });
 
         // set field errors
-        if (error.validationsErrors) {
-          Object.entries(error.validationsErrors).forEach(
-            ([key, value]) => {
-              formControl.setError(
-                key as Path<TFieldValues>,
-                {
-                  type: 'manual',
-                  message: value.join(', '),
-                }
-              );
-            }
-          );
-        }
+        // if (error.validationsErrors) {
+        //   Object.entries(error.validationsErrors).forEach(
+        //     ([key, value]) => {
+        //       formControl.setError(
+        //         key as Path<TFieldValues>,
+        //         {
+        //           type: 'manual',
+        //           message: value.join(', '),
+        //         }
+        //       );
+        //     }
+        //   );
+        // }
       }
 
       // call onError

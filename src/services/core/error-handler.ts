@@ -2,8 +2,6 @@ import { AxiosError } from 'axios';
 
 import type { ErrorRes } from '@/interfaces/api-res';
 
-type AppError = ErrorRes['status'];
-
 export class ErrorHandler {
   private static _instance: ErrorHandler;
 
@@ -27,11 +25,11 @@ export class ErrorHandler {
     throw appError;
   }
 
-  public getError(error: unknown): AppError {
+  public getError(error: unknown): ErrorRes {
     return this._handleError(error);
   }
 
-  private _handleError(error: unknown): AppError {
+  private _handleError(error: unknown): ErrorRes {
     if (error instanceof AxiosError) {
       return this._handleAxiosError(error);
     }
@@ -39,47 +37,44 @@ export class ErrorHandler {
     return this._handleGenericError(error);
   }
 
-  private _handleAxiosError(error: AxiosError): AppError {
+  private _handleAxiosError(error: AxiosError): ErrorRes {
     if (error.response) {
-      const err = error.response.data as ErrorRes;
-      return {
-        ...err.status,
-      };
+      return error.response.data as ErrorRes;
     }
 
     if (error.request) {
       return {
         code: 0,
-        message:
+        success: false,
+        message: 'Network Error',
+        errors:
           'Network Error: Unable to connect to server.',
-        error: true,
-        validationsErrors: null,
       };
     }
 
     return {
       code: 0,
-      message: `Request Error: ${error.message}`,
-      error: true,
-      validationsErrors: null,
+      success: false,
+      message: `Request Error`,
+      errors: error.message,
     };
   }
 
-  private _handleGenericError(error: unknown): AppError {
+  private _handleGenericError(error: unknown): ErrorRes {
     if (error instanceof Error) {
       return {
         code: 0,
-        message: error.message,
-        error: true,
-        validationsErrors: null,
+        success: false,
+        message: `Expected Error`,
+        errors: error.message,
       };
     }
 
     return {
       code: 0,
-      message: 'Unknown error occurred.',
-      error: true,
-      validationsErrors: null,
+      success: false,
+      message: 'Unknown Error',
+      errors: '',
     };
   }
 }

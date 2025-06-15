@@ -8,7 +8,10 @@ import { serialize } from 'object-to-formdata';
 import { Env, ENV } from './env';
 import { Token } from './token';
 import { ErrorHandler } from './error-handler';
-import { ApiRoutes, type BuildUrlOptions } from './api-routes';
+import {
+  ApiRoutes,
+  type BuildUrlOptions,
+} from './api-routes';
 import type { SuccessRes } from '@/interfaces/api-res';
 
 interface SyncOptions {
@@ -34,7 +37,8 @@ export class Sync {
   private readonly _withAuth: boolean = false;
   private readonly _env = Env.getInstance();
   private readonly _token = Token.getInstance();
-  private readonly _errorHandler = ErrorHandler.getInstance();
+  private readonly _errorHandler =
+    ErrorHandler.getInstance();
   private readonly _apiRoutes = ApiRoutes.getInstance();
 
   private constructor(isPublic: boolean) {
@@ -112,7 +116,10 @@ export class Sync {
     return res.data;
   }
 
-  public async del(url: TUrl, config?: GetRequestConfig): Promise<void> {
+  public async del(
+    url: TUrl,
+    config?: GetRequestConfig
+  ): Promise<void> {
     const builtUrl = this._apiRoutes.build(url, {
       params: config?.params,
       query: config?.query,
@@ -123,7 +130,9 @@ export class Sync {
     );
   }
 
-  private async _handle<T>(fn: () => Promise<T>): Promise<T> {
+  private async _handle<T>(
+    fn: () => Promise<T>
+  ): Promise<T> {
     try {
       const res = (await fn()) as AxiosResponse<T>;
       return res.data;
@@ -133,14 +142,18 @@ export class Sync {
   }
 
   private _injectToken(): void {
-    this._axiosInstance.interceptors.request.use(async (config) => {
-      const token = await this._token.getToken();
+    this._axiosInstance.interceptors.request.use(
+      async (config) => {
+        const token = await this._token.getToken();
 
-      if (!token) {
-        throw new Error('Failed to inject token, Token is missing!!');
+        if (!token) {
+          throw new Error(
+            'Failed to inject token, Token is missing!!'
+          );
+        }
+        config.headers.Authorization = `Bearer ${token}`;
+        return config;
       }
-      config.headers.Authorization = `Bearer ${token}`;
-      return config;
-    });
+    );
   }
 }
