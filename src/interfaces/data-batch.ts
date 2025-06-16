@@ -1,3 +1,5 @@
+import type { TPaginationSearchQuery } from './search-query';
+
 export enum TEntryProcessorTypes {
   AccountReceivableFreight = 1,
   AccountReceivableTrucking = 2,
@@ -27,6 +29,13 @@ export interface TDataBatch {
   description?: string;
   successCount: number;
   errorCount: number;
-  totalCount: number;
+  totalUploadedCount: number;
+  totalFormattedCount: number;
   status: TDataBatchStatus;
+}
+
+export interface IDataBatchQuery
+  extends TPaginationSearchQuery {
+  batchNumber?: number;
+  entryProcessorType?: number;
 }

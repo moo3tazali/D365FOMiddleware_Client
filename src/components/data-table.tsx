@@ -18,13 +18,16 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+import type { PaginationRes } from '@/interfaces/api-res';
+import { RowsPagination } from './rows-pagination';
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  data?: TData[] | PaginationRes<TData>;
   isPending?: boolean;
   error?: string | null;
-  header?: React.ReactNode;
-  footer?: React.ReactNode;
+  header?: React.ReactNode | React.ElementType;
+  footer?: React.ReactNode | React.ElementType;
 }
 
 interface TableViewProps<TData, TValue> {
@@ -44,6 +47,12 @@ function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const isMobile = useIsMobile();
 
+  const items = React.useMemo(() => {
+    if (!data) return [];
+    if (Array.isArray(data)) return data;
+    return data.items || [];
+  }, [data]);
+
   const message = React.useMemo(() => {
     if (isPending) {
       return 'Loading...';
@@ -56,27 +65,43 @@ function DataTable<TData, TValue>({
     return 'No results.';
   }, [isPending, error]);
 
+  const paginationData = React.useMemo(() => {
+    if (!data) return;
+    if (Array.isArray(data)) return;
+    return {
+      pageSize: data.pageSize,
+      pageNumber: data.pageNumber,
+      totalCount: data.totalCount,
+    };
+  }, [data]);
+
   return (
     <div className='space-y-4'>
-      {header && header}
+      {header && typeof header === 'function'
+        ? React.createElement(header)
+        : header}
 
       {isMobile ? (
         <MobileTableView
           columns={columns}
-          data={data}
+          data={items}
           message={message}
           isError={!!error}
         />
       ) : (
         <DesktopTableView
           columns={columns}
-          data={data}
+          data={items}
           message={message}
           isError={!!error}
         />
       )}
 
-      {footer && footer}
+      <RowsPagination paginationData={paginationData} />
+
+      {footer && typeof footer === 'function'
+        ? React.createElement(footer)
+        : footer}
     </div>
   );
 }

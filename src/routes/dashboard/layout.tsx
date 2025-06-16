@@ -8,13 +8,13 @@ import { useCookies } from 'react-cookie';
 import { ROUTES } from '@/router';
 import { AuthGuard } from '@/guards/auth-guard';
 import {
-  SIDEBAR_COOKIE_NAME,
   SidebarInset,
   SidebarProvider,
 } from '@/components/ui/sidebar';
 import { DashboardSidebar } from './-components/dashboard-sidebar';
 import { DashboardHeader } from './-components/dashboard-header';
 import { NotFoundFallback } from '@/components/fallback';
+import { SIDEBAR_COOKIE_NAME } from '@/constants/cookies';
 
 export const Route = createFileRoute('/dashboard')({
   component: DashboardLayout,

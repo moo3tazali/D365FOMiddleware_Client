@@ -12,3 +12,11 @@ export type FlattenObj<T> = T extends object
         : FlattenObj<T[K]>;
     }[keyof T]
   : never;
+
+export const tryParse = <T>(value: string): T | null => {
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return null;
+  }
+};
