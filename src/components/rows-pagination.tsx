@@ -57,14 +57,20 @@ export const RowsPagination = memo(
     return (
       <div className='w-full flex items-center justify-between gap-2'>
         <div className='flex items-center gap-2'>
-          <Label className='whitespace-nowrap'>
+          <Label
+            htmlFor='rows-per-page'
+            className='whitespace-nowrap'
+          >
             Rows per page:
           </Label>
           <Select
             value={currentSize.toString()}
             onValueChange={handlePageSizeChange}
           >
-            <SelectTrigger className='w-[75px]'>
+            <SelectTrigger
+              className='w-[75px]'
+              id='rows-per-page'
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

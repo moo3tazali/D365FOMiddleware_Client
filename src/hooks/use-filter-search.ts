@@ -9,7 +9,16 @@ import type {
 } from '@/interfaces/search-query';
 import { useCallback, useMemo } from 'react';
 
-export const useFilterSearch = () => {
+export const useFilterSearch = <TFilter extends object>(
+  keys: (keyof TFilter)[]
+): [
+  values: Record<
+    keyof TFilter,
+    TFilter[keyof TFilter] | undefined
+  >,
+  set: (key: keyof TFilter, value: QueryValue) => void,
+  remove: (key: keyof TFilter) => void
+] => {
   const navigate = useNavigate();
 
   const search = useSearch({
@@ -32,8 +41,8 @@ export const useFilterSearch = () => {
     return Array.isArray(parsed) ? parsed : [];
   }, [search]);
 
-  const addFilter = useCallback(
-    (key: string, value: QueryValue) => {
+  const set = useCallback(
+    (key: keyof TFilter, value: QueryValue) => {
       const updatedFilters = [
         // remove old filter with same key if exists
         ...currentFilters.filter((f) => f.key !== key),
@@ -52,8 +61,8 @@ export const useFilterSearch = () => {
     [currentFilters, navigate]
   );
 
-  const removeFilter = useCallback(
-    (key: string) => {
+  const remove = useCallback(
+    (key: keyof TFilter) => {
       if (!currentFilters.length) return;
 
       const updatedFilters = currentFilters.filter(
@@ -78,8 +87,31 @@ export const useFilterSearch = () => {
     [currentFilters, navigate]
   );
 
-  return {
-    addFilter,
-    removeFilter,
-  };
+  const get = useCallback(
+    (key: keyof TFilter) => {
+      const filter = currentFilters.find(
+        (f) => f.key === key
+      );
+      if (!filter) return;
+      return filter?.value as TFilter[keyof TFilter];
+    },
+    [currentFilters]
+  );
+
+  const values = useMemo(() => {
+    const result: Record<
+      keyof TFilter,
+      TFilter[keyof TFilter] | undefined
+    > = {} as Record<
+      keyof TFilter,
+      TFilter[keyof TFilter] | undefined
+    >;
+
+    for (const key of keys || []) {
+      result[key] = get(key);
+    }
+    return result;
+  }, [get, keys]);
+
+  return [values, set, remove];
 };

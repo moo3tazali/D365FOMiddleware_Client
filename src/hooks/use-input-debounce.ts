@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 export const useInputDebounce = (
   inputRef: React.RefObject<
     HTMLInputElement | HTMLTextAreaElement | null
-  >
+  >,
+  cb?: (value: string) => void
 ): string => {
   const [finalValue, setFinalValue] = useState<string>('');
   const timeoutRef = useRef<number | undefined>(undefined);
@@ -26,6 +27,7 @@ export const useInputDebounce = (
         if (currentValue !== lastValueRef.current) {
           lastValueRef.current = currentValue;
           setFinalValue(currentValue);
+          cb?.(currentValue);
         }
       }, 500);
     };
@@ -38,7 +40,7 @@ export const useInputDebounce = (
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [inputRef]);
+  }, [inputRef, cb]);
 
   return finalValue;
 };

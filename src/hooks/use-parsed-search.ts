@@ -14,7 +14,7 @@ interface ParsedSearch {
 
 export const useParsedSearch = <
   TFilter extends object
->(): ParsedSearch & Pick<TFilter, keyof TFilter> => {
+>(): ParsedSearch & TFilter => {
   const [{ rows_per_page }] = useCookies([
     PAGE_SIZE_COOKIE_NAME,
   ]);
@@ -38,7 +38,7 @@ export const useParsedSearch = <
     search.size || rows_per_page || DEFAULT_PAGE_SIZE;
 
   const filters = useMemo(() => {
-    const initial = {} as Pick<TFilter, keyof TFilter>;
+    const initial = {} as TFilter;
 
     if (!search.filters) return initial;
 

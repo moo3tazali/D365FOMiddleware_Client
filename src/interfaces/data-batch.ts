@@ -34,8 +34,11 @@ export interface TDataBatch {
   status: TDataBatchStatus;
 }
 
-export interface IDataBatchQuery
-  extends TPaginationSearchQuery {
+export interface TDataBatchFilter {
   batchNumber?: number;
   entryProcessorType?: number;
 }
+
+export interface IDataBatchQuery
+  extends TPaginationSearchQuery,
+    TDataBatchFilter {}

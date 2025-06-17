@@ -1,10 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
 
 import { useServices } from '@/hooks/use-services';
 import {
@@ -12,26 +6,20 @@ import {
   type ColumnDef,
 } from '@/components/data-table';
 import {
+  TDataBatchStatus,
   TEntryProcessorTypes,
-  type IDataBatchQuery,
   type TDataBatch,
+  type TDataBatchFilter,
 } from '@/interfaces/data-batch';
 import { useParsedSearch } from '@/hooks/use-parsed-search';
-import { Input } from '@/components/ui/input';
-import { useInputDebounce } from '@/hooks/use-input-debounce';
-import { useFilterSearch } from '@/hooks/use-filter-search';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { DataBatchFilters } from './data-batch-filters';
+import { enumToOptions } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 
 export const DataBatchTable = () => {
   const { dataBatch } = useServices();
 
-  const searchQueries = useParsedSearch<IDataBatchQuery>();
+  const searchQueries = useParsedSearch<TDataBatchFilter>();
 
   const { data, isPending, error } = useQuery(
     dataBatch.freightDocumentQueryOptions(searchQueries)
@@ -39,7 +27,7 @@ export const DataBatchTable = () => {
 
   return (
     <DataTable
-      header={Filters}
+      header={DataBatchFilters}
       data={data}
       columns={columns}
       error={error?.message}
@@ -52,18 +40,16 @@ const columns: ColumnDef<TDataBatch>[] = [
   {
     accessorKey: 'description',
     header: 'Description',
+    cell: ({ getValue }) => (
+      <CellDescription value={getValue<string>()} />
+    ),
   },
   {
     accessorKey: 'entryProcessorType',
     header: 'Module',
-  },
-  {
-    accessorKey: 'successCount',
-    header: 'Success Count',
-  },
-  {
-    accessorKey: 'errorCount',
-    header: 'Error Count',
+    cell: ({ getValue }) => (
+      <CellEntryProcessorType value={getValue<number>()} />
+    ),
   },
   {
     accessorKey: 'totalUploadedCount',
@@ -74,85 +60,82 @@ const columns: ColumnDef<TDataBatch>[] = [
     header: 'Total Formatted',
   },
   {
+    accessorKey: 'successCount',
+    header: 'Success Count',
+  },
+  {
+    accessorKey: 'errorCount',
+    header: 'Error Count',
+  },
+  {
     accessorKey: 'creationDate',
     header: 'Created At',
-    cell: ({ row }) => {
-      const value = row.getValue('creationDate') as string;
-      return new Date(value).toLocaleString();
-    },
+    cell: ({ getValue }) => (
+      <CellCreatedAt value={getValue<string>()} />
+    ),
   },
   {
     accessorKey: 'status',
     header: 'Status',
+    cell: ({ getValue }) => (
+      <CellStatus value={getValue<number>()} />
+    ),
   },
 ];
 
-const Filters = () => {
+const CellCreatedAt = ({ value }: { value: string }) => {
+  return new Date(value).toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+};
+
+const CellDescription = ({ value }: { value: string }) => {
   return (
-    <div className='flex items-center justify-between gap-2.5'>
-      <TargetBatchNumberFilter />
-      <EntryProcessorTypeFilter />
+    <div className='md:truncate md:max-w-xs' title={value}>
+      {value}
     </div>
   );
 };
 
-const TargetBatchNumberFilter = () => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const value = useInputDebounce(inputRef);
-  const { addFilter, removeFilter } = useFilterSearch();
+const entryProcessorOptions = enumToOptions(
+  TEntryProcessorTypes
+);
 
-  useEffect(() => {
-    if (value) {
-      addFilter('batchNumber', +value);
-    } else {
-      removeFilter('batchNumber');
-    }
-  }, [value, addFilter, removeFilter]);
-
+const CellEntryProcessorType = ({
+  value,
+}: {
+  value: number;
+}) => {
   return (
-    <Input
-      ref={inputRef}
-      placeholder='Filter by target batch number...'
-      className='max-w-sm'
-      type='number'
-    />
+    entryProcessorOptions.find(
+      ({ value: optionValue }) => optionValue === value
+    )?.label ?? ''
   );
 };
 
-const entryProcessorOptions = Object.entries(
-  TEntryProcessorTypes
-)
-  .filter(([, value]) => typeof value === 'number')
-  .map(([key, value]) => ({
-    label: key.replace(/([a-z])([A-Z])/g, '$1 $2'), // insert space before capital
-    value: value as number,
-  }));
-
-const EntryProcessorTypeFilter = () => {
-  const [value, setValue] = useState<string>('');
-
-  const SelectItems = useMemo(
-    () =>
-      entryProcessorOptions.map(({ label, value }) => (
-        <SelectItem value={String(value)}>
-          {label}
-        </SelectItem>
-      )),
-    []
-  );
-
+const statusOptions = enumToOptions(TDataBatchStatus);
+const statusColorMap = {
+  [TDataBatchStatus.Pending]: 'warning',
+  [TDataBatchStatus.Processing]: 'info',
+  [TDataBatchStatus.Completed]: 'success',
+  [TDataBatchStatus.Canceled]: 'destructive',
+} as const;
+const CellStatus = ({
+  value,
+}: {
+  value: keyof typeof statusColorMap;
+}) => {
   return (
-    <Select
-      onValueChange={setValue}
-      defaultValue={value}
-      disabled={false}
-      name='entryProcessorType'
+    <Badge
+      dot
+      variant='ghost'
+      color={statusColorMap[value]}
     >
-      <SelectTrigger className='w-full max-w-sm'>
-        <SelectValue placeholder='Filter by module...' />
-      </SelectTrigger>
-
-      <SelectContent>{SelectItems}</SelectContent>
-    </Select>
+      {statusOptions.find(
+        ({ value: optionValue }) => optionValue === value
+      )?.label ?? ''}
+    </Badge>
   );
 };
