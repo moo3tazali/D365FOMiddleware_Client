@@ -15,6 +15,11 @@ import { useParsedSearch } from '@/hooks/use-parsed-search';
 import { DataBatchFilters } from './data-batch-filters';
 import { enumToOptions } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export const DataBatchTable = () => {
   const { dataBatch } = useServices();
@@ -93,9 +98,14 @@ const CellCreatedAt = ({ value }: { value: string }) => {
 
 const CellDescription = ({ value }: { value: string }) => {
   return (
-    <div className='md:truncate md:max-w-xs' title={value}>
-      {value}
-    </div>
+    <Tooltip delayDuration={300}>
+      <TooltipTrigger className='md:truncate md:max-w-3xs cursor-text'>
+        {value}
+      </TooltipTrigger>
+      <TooltipContent className='hidden md:block'>
+        {value}
+      </TooltipContent>
+    </Tooltip>
   );
 };
 
