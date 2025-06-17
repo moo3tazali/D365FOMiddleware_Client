@@ -40,7 +40,7 @@ function DashboardLayout() {
     <AuthGuard>
       <SidebarProvider defaultOpen={sidebar_state}>
         <DashboardSidebar />
-        <SidebarInset>
+        <SidebarInset className='overflow-hidden'>
           <DashboardHeader />
           <div className='flex-1 p-4 border-t'>
             <Outlet />

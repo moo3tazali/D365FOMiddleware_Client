@@ -15,11 +15,6 @@ import { useParsedSearch } from '@/hooks/use-parsed-search';
 import { DataBatchFilters } from './data-batch-filters';
 import { enumToOptions } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
 export const DataBatchTable = () => {
   const { dataBatch } = useServices();
@@ -45,9 +40,6 @@ const columns: ColumnDef<TDataBatch>[] = [
   {
     accessorKey: 'description',
     header: 'Description',
-    cell: ({ getValue }) => (
-      <CellDescription value={getValue<string>()} />
-    ),
   },
   {
     accessorKey: 'entryProcessorType',
@@ -94,19 +86,6 @@ const CellCreatedAt = ({ value }: { value: string }) => {
     month: '2-digit',
     year: 'numeric',
   });
-};
-
-const CellDescription = ({ value }: { value: string }) => {
-  return (
-    <Tooltip delayDuration={300}>
-      <TooltipTrigger className='md:truncate md:max-w-3xs cursor-text'>
-        {value}
-      </TooltipTrigger>
-      <TooltipContent className='hidden md:block'>
-        {value}
-      </TooltipContent>
-    </Tooltip>
-  );
 };
 
 const entryProcessorOptions = enumToOptions(

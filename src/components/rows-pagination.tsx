@@ -42,16 +42,16 @@ export const RowsPagination = memo(
       handleNextPage,
     } = usePagination();
 
-    if (!paginationData) return null;
+    const disabled = !paginationData;
 
     // Calculate display values using URL params
     const startItem = (currentPage - 1) * currentSize + 1;
     const endItem = Math.min(
       currentPage * currentSize,
-      paginationData.totalCount
+      paginationData?.totalCount || 0
     );
     const maxPage = Math.ceil(
-      paginationData.totalCount / currentSize
+      (paginationData?.totalCount || 0) / currentSize
     );
 
     return (
@@ -66,6 +66,7 @@ export const RowsPagination = memo(
           <Select
             value={currentSize.toString()}
             onValueChange={handlePageSizeChange}
+            disabled={disabled}
           >
             <SelectTrigger
               className='w-[75px]'
@@ -86,7 +87,7 @@ export const RowsPagination = memo(
         <div className='flex items-center gap-2'>
           <span className='text-sm text-muted-foreground whitespace-nowrap'>
             {startItem}-{endItem} of{' '}
-            {paginationData.totalCount}
+            {paginationData?.totalCount || 0}
           </span>
           <Pagination>
             <PaginationContent>
@@ -95,7 +96,7 @@ export const RowsPagination = memo(
                   aria-label='Go to previous page'
                   size='icon'
                   variant='ghost'
-                  disabled={currentPage === 1}
+                  disabled={currentPage === 1 || disabled}
                   onClick={handlePreviousPage}
                 >
                   <ChevronLeftIcon className='h-4 w-4' />
@@ -106,10 +107,12 @@ export const RowsPagination = memo(
                   aria-label='Go to next page'
                   size='icon'
                   variant='ghost'
-                  disabled={currentPage >= maxPage}
+                  disabled={
+                    currentPage >= maxPage || disabled
+                  }
                   onClick={() =>
                     handleNextPage(
-                      paginationData.totalCount
+                      paginationData?.totalCount || 0
                     )
                   }
                 >

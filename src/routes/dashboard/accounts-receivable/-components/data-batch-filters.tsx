@@ -20,8 +20,10 @@ export const DataBatchFilters = () => {
   return (
     <div className='flex items-center gap-2.5 max-w-2xl'>
       <span className='shrink-0 break-keep'>Filter by</span>
-      <EntryProcessorTypeFilter />
-      <TargetBatchNumberFilter />
+      <div className='grid grid-cols-2 gap-2.5 flex-1'>
+        <EntryProcessorTypeFilter />
+        <TargetBatchNumberFilter />
+      </div>
     </div>
   );
 };

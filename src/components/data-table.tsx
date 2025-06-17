@@ -10,6 +10,7 @@ import { Card } from '@/components/ui/card';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 import {
+  ClampText,
   Table,
   TableBody,
   TableCell,
@@ -45,7 +46,7 @@ function DataTable<TData, TValue>({
   header,
   footer,
 }: DataTableProps<TData, TValue>) {
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(1024);
 
   const items = React.useMemo(() => {
     if (!data) return [];
@@ -120,59 +121,58 @@ const DesktopTableView = React.memo(
     });
 
     return (
-      <div className='rounded-md border'>
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length &&
-            !isError ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={
-                    row.getIsSelected() && 'selected'
-                  }
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                );
+              })}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows?.length && !isError ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                data-state={
+                  row.getIsSelected() && 'selected'
+                }
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    <ClampText>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
                       )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className='h-24 text-center'
-                >
-                  {message}
-                </TableCell>
+                    </ClampText>
+                  </TableCell>
+                ))}
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={columns.length}
+                className='h-24 text-center align-middle'
+              >
+                {message}
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     );
   }
 ) as <TData, TValue>(
@@ -194,14 +194,14 @@ const MobileTableView = React.memo(
 
     if (table.getRowModel().rows?.length === 0 || isError) {
       return (
-        <div className='h-24 text-center flex items-center justify-center'>
+        <Card className='h-56 text-center flex items-center justify-center'>
           {message}
-        </div>
+        </Card>
       );
     }
 
     return (
-      <div className='space-y-4'>
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         {table.getRowModel().rows.map((row) => (
           <Card key={row.id} className='p-4'>
             <div className='space-y-3'>
@@ -215,7 +215,7 @@ const MobileTableView = React.memo(
                 return (
                   <div
                     key={cell.id}
-                    className='flex items-center justify-between gap-4'
+                    className='grid grid-cols-3 gap-4'
                   >
                     <span className='text-sm font-medium text-muted-foreground'>
                       {header &&
@@ -224,7 +224,7 @@ const MobileTableView = React.memo(
                           header.getContext()
                         )}
                     </span>
-                    <span className='text-sm text-right'>
+                    <span className='text-sm col-span-2'>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
