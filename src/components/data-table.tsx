@@ -145,9 +145,7 @@ const DesktopTableView = React.memo(
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                data-state={
-                  row.getIsSelected() && 'selected'
-                }
+                data-state={row.getIsSelected() && 'selected'}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
@@ -175,9 +173,7 @@ const DesktopTableView = React.memo(
       </Table>
     );
   }
-) as <TData, TValue>(
-  props: TableViewProps<TData, TValue>
-) => React.JSX.Element;
+) as <TData, TValue>(props: TableViewProps<TData, TValue>) => React.JSX.Element;
 
 const MobileTableView = React.memo(
   <TData, TValue>({
@@ -203,20 +199,27 @@ const MobileTableView = React.memo(
     return (
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         {table.getRowModel().rows.map((row) => (
-          <Card key={row.id} className='p-4'>
+          <Card key={row.id} className='p-4 relative'>
             <div className='space-y-3'>
               {row.getVisibleCells().map((cell) => {
                 const header = table
                   .getFlatHeaders()
-                  .find(
-                    (h) => h.column.id === cell.column.id
+                  .find((h) => h.column.id === cell.column.id);
+
+                const isActionCell = cell.id.includes('action');
+
+                if (isActionCell)
+                  return (
+                    <div className='absolute top-1 end-1'>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </div>
                   );
 
                 return (
-                  <div
-                    key={cell.id}
-                    className='grid grid-cols-3 gap-4'
-                  >
+                  <div key={cell.id} className='grid grid-cols-3 gap-4'>
                     <span className='text-sm font-medium text-muted-foreground'>
                       {header &&
                         flexRender(
@@ -224,7 +227,7 @@ const MobileTableView = React.memo(
                           header.getContext()
                         )}
                     </span>
-                    <span className='text-sm col-span-2'>
+                    <span className='text-sm col-span-2 pe-3'>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -239,9 +242,7 @@ const MobileTableView = React.memo(
       </div>
     );
   }
-) as <TData, TValue>(
-  props: TableViewProps<TData, TValue>
-) => React.JSX.Element;
+) as <TData, TValue>(props: TableViewProps<TData, TValue>) => React.JSX.Element;
 
 export { DataTable };
 export type { ColumnDef, DataTableProps };

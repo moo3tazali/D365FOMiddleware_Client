@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { MoreVertical } from 'lucide-react';
 
 import { useServices } from '@/hooks/use-services';
 import { DataTable, type ColumnDef } from '@/components/data-table';
@@ -11,6 +12,14 @@ import { DataBatchFilters } from './data-batch-filters';
 import { enumToOptions } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { useSearch } from '@tanstack/react-router';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenuContent,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
+import toast from 'react-hot-toast';
 
 export const DataBatchTable = () => {
   const { dataBatch } = useServices();
@@ -77,6 +86,10 @@ const columns: ColumnDef<TDataBatch>[] = [
     header: 'Status',
     cell: ({ getValue }) => <CellStatus value={getValue<number>()} />,
   },
+  {
+    id: 'action',
+    cell: ({ row }) => <CellAction row={row.original} />,
+  },
 ];
 
 const CellCreatedAt = ({ value }: { value: string }) => {
@@ -110,5 +123,30 @@ const CellStatus = ({ value }: { value: keyof typeof statusColorMap }) => {
       {statusOptions.find(({ value: optionValue }) => optionValue === value)
         ?.label ?? ''}
     </Badge>
+  );
+};
+
+const CellAction = ({ row }: { row: TDataBatch }) => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant='ghost' className='h-8 w-8 p-0'>
+          <span className='sr-only'>Open menu</span>
+          <MoreVertical />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align='end'>
+        <DropdownMenuItem
+          onClick={() => {
+            navigator.clipboard.writeText(row.id);
+            toast.success('Copied batch number to clipboard');
+          }}
+        >
+          Copy Batch Number
+        </DropdownMenuItem>
+        <DropdownMenuItem>View</DropdownMenuItem>
+        <DropdownMenuItem>Download</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
