@@ -30,16 +30,13 @@ export const DataBatchFilters = () => {
 
 const TargetBatchNumberFilter = () => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [{ batchNumber }, set, remove] =
-    useFilterSearch<TDataBatchFilter>(['batchNumber']);
-
-  const defaultValue = batchNumber
-    ? String(batchNumber)
-    : '';
+  const [{ batchNumber }, set, remove] = useFilterSearch<TDataBatchFilter>([
+    'batchNumber',
+  ]);
 
   useInputDebounce(inputRef, (value) => {
     if (value) {
-      set('batchNumber', +value);
+      set('batchNumber', value);
     } else {
       remove('batchNumber');
     }
@@ -48,23 +45,18 @@ const TargetBatchNumberFilter = () => {
   return (
     <Input
       ref={inputRef}
-      defaultValue={defaultValue}
+      defaultValue={batchNumber ?? ''}
       placeholder='Enter batch number...'
-      type='number'
       name='batchNumber'
     />
   );
 };
 
-const entryProcessorOptions = enumToOptions(
-  TEntryProcessorTypes
-);
+const entryProcessorOptions = enumToOptions(TEntryProcessorTypes);
 
 const EntryProcessorTypeFilter = () => {
   const [{ entryProcessorType }, set, remove] =
-    useFilterSearch<TDataBatchFilter>([
-      'entryProcessorType',
-    ]);
+    useFilterSearch<TDataBatchFilter>(['entryProcessorType']);
 
   const [value, setValue] = useState<string>(
     entryProcessorType ? String(entryProcessorType) : ''
@@ -73,9 +65,7 @@ const EntryProcessorTypeFilter = () => {
   const SelectItems = useMemo(
     () =>
       entryProcessorOptions.map(({ label, value }) => (
-        <SelectItem value={String(value)}>
-          {label}
-        </SelectItem>
+        <SelectItem value={String(value)}>{label}</SelectItem>
       )),
     []
   );

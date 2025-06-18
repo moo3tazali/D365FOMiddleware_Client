@@ -37,6 +37,10 @@ export const DataBatchTable = () => {
 
 const columns: ColumnDef<TDataBatch>[] = [
   {
+    accessorKey: 'id',
+    header: 'Batch Number',
+  },
+  {
     accessorKey: 'description',
     header: 'Description',
   },

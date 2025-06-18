@@ -35,8 +35,8 @@ export interface TDataBatch {
 }
 
 export interface TDataBatchFilter {
-  batchNumber?: number;
-  entryProcessorType?: number;
+  batchNumber?: string;
+  entryProcessorType?: string;
 }
 
 export interface IDataBatchQuery
