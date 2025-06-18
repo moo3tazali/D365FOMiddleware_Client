@@ -1,25 +1,24 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useServices } from '@/hooks/use-services';
-import {
-  DataTable,
-  type ColumnDef,
-} from '@/components/data-table';
+import { DataTable, type ColumnDef } from '@/components/data-table';
 import {
   TDataBatchStatus,
   TEntryProcessorTypes,
   type TDataBatch,
-  type TDataBatchFilter,
 } from '@/interfaces/data-batch';
-import { useParsedSearch } from '@/hooks/use-parsed-search';
 import { DataBatchFilters } from './data-batch-filters';
 import { enumToOptions } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { useSearch } from '@tanstack/react-router';
 
 export const DataBatchTable = () => {
   const { dataBatch } = useServices();
 
-  const searchQueries = useParsedSearch<TDataBatchFilter>();
+  const searchQueries = useSearch({
+    strict: false,
+    structuralSharing: true,
+  });
 
   const { data, isPending, error } = useQuery(
     dataBatch.freightDocumentQueryOptions(searchQueries)
@@ -50,33 +49,29 @@ const columns: ColumnDef<TDataBatch>[] = [
   },
   {
     accessorKey: 'totalUploadedCount',
-    header: 'Total Uploaded',
+    header: 'Uploaded',
   },
   {
     accessorKey: 'totalFormattedCount',
-    header: 'Total Formatted',
+    header: 'Formatted',
   },
   {
     accessorKey: 'successCount',
-    header: 'Success Count',
+    header: 'Success',
   },
   {
     accessorKey: 'errorCount',
-    header: 'Error Count',
+    header: 'Error',
   },
   {
     accessorKey: 'creationDate',
     header: 'Created At',
-    cell: ({ getValue }) => (
-      <CellCreatedAt value={getValue<string>()} />
-    ),
+    cell: ({ getValue }) => <CellCreatedAt value={getValue<string>()} />,
   },
   {
     accessorKey: 'status',
     header: 'Status',
-    cell: ({ getValue }) => (
-      <CellStatus value={getValue<number>()} />
-    ),
+    cell: ({ getValue }) => <CellStatus value={getValue<number>()} />,
   },
 ];
 
@@ -88,15 +83,9 @@ const CellCreatedAt = ({ value }: { value: string }) => {
   });
 };
 
-const entryProcessorOptions = enumToOptions(
-  TEntryProcessorTypes
-);
+const entryProcessorOptions = enumToOptions(TEntryProcessorTypes);
 
-const CellEntryProcessorType = ({
-  value,
-}: {
-  value: number;
-}) => {
+const CellEntryProcessorType = ({ value }: { value: number }) => {
   return (
     entryProcessorOptions.find(
       ({ value: optionValue }) => optionValue === value
@@ -111,20 +100,11 @@ const statusColorMap = {
   [TDataBatchStatus.Completed]: 'success',
   [TDataBatchStatus.Canceled]: 'destructive',
 } as const;
-const CellStatus = ({
-  value,
-}: {
-  value: keyof typeof statusColorMap;
-}) => {
+const CellStatus = ({ value }: { value: keyof typeof statusColorMap }) => {
   return (
-    <Badge
-      dot
-      variant='ghost'
-      color={statusColorMap[value]}
-    >
-      {statusOptions.find(
-        ({ value: optionValue }) => optionValue === value
-      )?.label ?? ''}
+    <Badge dot variant='ghost' color={statusColorMap[value]}>
+      {statusOptions.find(({ value: optionValue }) => optionValue === value)
+        ?.label ?? ''}
     </Badge>
   );
 };

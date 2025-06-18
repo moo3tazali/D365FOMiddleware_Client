@@ -18,7 +18,7 @@ export enum TDataBatchStatus {
 }
 
 export interface TDataBatch {
-  id?: string;
+  id: string;
   creationDate: string; // ISO date string
   createdBy?: string;
   lastModifiedDate?: string;

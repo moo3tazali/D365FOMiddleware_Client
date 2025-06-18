@@ -1,16 +1,9 @@
-import {
-  createFileRoute,
-  Outlet,
-  redirect,
-} from '@tanstack/react-router';
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import { useCookies } from 'react-cookie';
 
 import { ROUTES } from '@/router';
 import { AuthGuard } from '@/guards/auth-guard';
-import {
-  SidebarInset,
-  SidebarProvider,
-} from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { DashboardSidebar } from './-components/dashboard-sidebar';
 import { DashboardHeader } from './-components/dashboard-header';
 import { NotFoundFallback } from '@/components/fallback';
@@ -32,9 +25,7 @@ export const Route = createFileRoute('/dashboard')({
 });
 
 function DashboardLayout() {
-  const [{ sidebar_state }] = useCookies([
-    SIDEBAR_COOKIE_NAME,
-  ]);
+  const [{ sidebar_state }] = useCookies([SIDEBAR_COOKIE_NAME]);
 
   return (
     <AuthGuard>

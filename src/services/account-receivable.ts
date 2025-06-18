@@ -1,5 +1,6 @@
 import { Sync } from './core/sync';
 import { API_ROUTES } from './core/api-routes';
+import type { TDataBatch } from '@/interfaces/data-batch';
 
 interface UploadData {
   companyId: string;
@@ -7,12 +8,14 @@ interface UploadData {
   dataFile: File;
 }
 
-interface UploadResponse {}
+interface UploadResponse extends TDataBatch {}
 
 const syncService = Sync.getInstance();
 
 export class AccountReceivable {
   private static _instance: AccountReceivable;
+
+  public readonly mutationKey = 'account-receivable-upload';
   public readonly UPLOAD_TYPES = {
     FREIGHT_DOC: 1,
     TRUCKING_DOC: 2,
@@ -38,44 +41,34 @@ export class AccountReceivable {
     const { data, type } = options;
 
     if (
-      [
-        this.UPLOAD_TYPES.FREIGHT_DOC,
-        this.UPLOAD_TYPES.TRUCKING_DOC,
-      ].includes(Number(type)) &&
+      [this.UPLOAD_TYPES.FREIGHT_DOC, this.UPLOAD_TYPES.TRUCKING_DOC].includes(
+        Number(type)
+      ) &&
       !data.billingCodeId
     ) {
-      throw new Error(
-        'billingCodeId is required for this upload type.'
-      );
+      throw new Error('billingCodeId is required for this upload type.');
     }
 
     const apiRoute = await this._getUploadApiRoute(type);
 
-    return syncService.save<UploadResponse, UploadData>(
-      apiRoute,
-      data,
-      {
-        formData: true,
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) /
-              (progressEvent?.total || 1)
-          );
-          if (!options.uploadProgress) return;
-          options.uploadProgress(percentCompleted);
-        },
-      }
-    );
+    return syncService.save<UploadResponse, UploadData>(apiRoute, data, {
+      formData: true,
+      onUploadProgress: (progressEvent) => {
+        const percentCompleted = Math.round(
+          (progressEvent.loaded * 100) / (progressEvent?.total || 1)
+        );
+        if (!options.uploadProgress) return;
+        options.uploadProgress(percentCompleted);
+      },
+    });
   };
 
   private async _getUploadApiRoute(type: number | string) {
     switch (Number(type)) {
       case this.UPLOAD_TYPES.FREIGHT_DOC:
-        return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE
-          .FREIGHT_DOCUMENT;
+        return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE.FREIGHT_DOCUMENT;
       case this.UPLOAD_TYPES.TRUCKING_DOC:
-        return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE
-          .TRUCKING_DOCUMENT;
+        return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE.TRUCKING_DOCUMENT;
       case this.UPLOAD_TYPES.FREIGHT_CREDIT_NOTE_DOC:
         return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE
           .FREIGHT_CREDIT_NOTE_DOCUMENT;

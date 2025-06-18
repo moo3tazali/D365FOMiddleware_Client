@@ -5,6 +5,38 @@
 
 @theme inline {
   --font-cairo: 'Cairo', sans-serif;
+  --grid-template-columns-fill-50: repeat(auto-fill, minmax(50px, 1fr));
+  --grid-template-columns-fill-100: repeat(auto-fill, minmax(100px, 1fr));
+  --grid-template-columns-fill-125: repeat(auto-fill, minmax(125px, 1fr));
+  --grid-template-columns-fill-150: repeat(auto-fill, minmax(150px, 1fr));
+  --grid-template-columns-fill-175: repeat(auto-fill, minmax(175px, 1fr));
+  --grid-template-columns-fill-200: repeat(auto-fill, minmax(200px, 1fr));
+  --grid-template-columns-fill-250: repeat(auto-fill, minmax(250px, 1fr));
+  --grid-template-columns-fill-300: repeat(auto-fill, minmax(300px, 1fr));
+  --grid-template-columns-fill-350: repeat(auto-fill, minmax(350px, 1fr));
+  --grid-template-columns-fill-400: repeat(auto-fill, minmax(400px, 1fr));
+  --grid-template-columns-fill-450: repeat(auto-fill, minmax(450px, 1fr));
+  --grid-template-columns-fill-500: repeat(auto-fill, minmax(500px, 1fr));
+  --grid-template-columns-fill-550: repeat(auto-fill, minmax(550px, 1fr));
+  --grid-template-columns-fill-600: repeat(auto-fill, minmax(600px, 1fr));
+  --grid-template-columns-fill-650: repeat(auto-fill, minmax(650px, 1fr));
+  --grid-template-columns-fill-700: repeat(auto-fill, minmax(700px, 1fr));
+  --grid-template-columns-fit-50: repeat(auto-fit, minmax(50px, 1fr));
+  --grid-template-columns-fit-100: repeat(auto-fit, minmax(100px, 1fr));
+  --grid-template-columns-fit-125: repeat(auto-fit, minmax(125px, 1fr));
+  --grid-template-columns-fit-150: repeat(auto-fit, minmax(150px, 1fr));
+  --grid-template-columns-fit-175: repeat(auto-fit, minmax(175px, 1fr));
+  --grid-template-columns-fit-200: repeat(auto-fit, minmax(200px, 1fr));
+  --grid-template-columns-fit-250: repeat(auto-fit, minmax(250px, 1fr));
+  --grid-template-columns-fit-300: repeat(auto-fit, minmax(300px, 1fr));
+  --grid-template-columns-fit-350: repeat(auto-fit, minmax(350px, 1fr));
+  --grid-template-columns-fit-400: repeat(auto-fit, minmax(400px, 1fr));
+  --grid-template-columns-fit-450: repeat(auto-fit, minmax(450px, 1fr));
+  --grid-template-columns-fit-500: repeat(auto-fit, minmax(500px, 1fr));
+  --grid-template-columns-fit-550: repeat(auto-fit, minmax(550px, 1fr));
+  --grid-template-columns-fit-600: repeat(auto-fit, minmax(600px, 1fr));
+  --grid-template-columns-fit-650: repeat(auto-fit, minmax(650px, 1fr));
+  --grid-template-columns-fit-700: repeat(auto-fit, minmax(700px, 1fr));
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -85,7 +117,7 @@
   --popover: oklch(0.21 0.006 285.885);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.546 0.245 262.881);
-  --primary-foreground: oklch(0.379 0.146 265.522);
+  --primary-foreground: oklch(0.95 0.1 265.5);
   --secondary: oklch(0.274 0.006 286.033);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.274 0.006 286.033);

@@ -1,3 +1,4 @@
+import { Frame } from '@/components/ui/frame';
 import { ROUTES, type TRoutes } from '@/router';
 import { Link } from '@tanstack/react-router';
 import { useMemo } from 'react';
@@ -31,9 +32,7 @@ const Module = ({
 }) => {
   return (
     <Link to={to}>
-      <div className='aspect-video rounded-xl bg-muted/50 flex items-center justify-center font-medium hover:bg-muted/70'>
-        {children}
-      </div>
+      <Frame>{children}</Frame>
     </Link>
   );
 };

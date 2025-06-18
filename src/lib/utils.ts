@@ -7,13 +7,12 @@ export function cn(...inputs: ClassValue[]) {
 
 export type FlattenObj<T> = T extends object
   ? {
-      [K in keyof T]: T[K] extends string
-        ? T[K]
-        : FlattenObj<T[K]>;
+      [K in keyof T]: T[K] extends string ? T[K] : FlattenObj<T[K]>;
     }[keyof T]
   : never;
 
-export const tryParse = <T>(value: string): T | null => {
+export const tryParse = <T>(value?: string): T | null => {
+  if (!value) return null;
   try {
     return JSON.parse(value) as T;
   } catch {
@@ -21,9 +20,7 @@ export const tryParse = <T>(value: string): T | null => {
   }
 };
 
-export const enumToOptions = <
-  T extends Record<string, string | number>
->(
+export const enumToOptions = <T extends Record<string, string | number>>(
   enumObj: T
 ): { label: string; value: number }[] => {
   return Object.entries(enumObj)

@@ -4,12 +4,15 @@ import { Sync } from './core/sync';
 import type {
   IDataBatchQuery,
   TDataBatch,
+  TDataBatchFilter,
 } from '@/interfaces/data-batch';
 import { queryOptions } from '@tanstack/react-query';
+import { SearchQuery } from './core/search-query';
 
 export class DataBatch {
   private static _instance: DataBatch;
   private readonly syncService = Sync.getInstance();
+  private readonly searchQuery = SearchQuery.getInstance();
 
   public readonly queryKey = 'data-batch';
 
@@ -26,19 +29,19 @@ export class DataBatch {
   public list = async (
     query?: IDataBatchQuery
   ): Promise<PaginationRes<TDataBatch>> => {
-    return this.syncService.fetch<
-      PaginationRes<TDataBatch>
-    >(API_ROUTES.DATA_MIGRATION.DATA_BATCH.LIST, {
-      query: query && { ...query },
-    });
+    return this.syncService.fetch<PaginationRes<TDataBatch>>(
+      API_ROUTES.DATA_MIGRATION.DATA_BATCH.LIST,
+      {
+        query: query && { ...query },
+      }
+    );
   };
 
-  public freightDocumentQueryOptions = (
-    query?: IDataBatchQuery
-  ) => {
-    const queryKey: (string | IDataBatchQuery)[] = [
-      this.queryKey,
-    ];
+  public freightDocumentQueryOptions = (searchQuery?: {}) => {
+    const query =
+      this.searchQuery.getParsedSearch<TDataBatchFilter>(searchQuery);
+
+    const queryKey: (string | IDataBatchQuery)[] = [this.queryKey];
 
     if (query) queryKey.push(query);
 

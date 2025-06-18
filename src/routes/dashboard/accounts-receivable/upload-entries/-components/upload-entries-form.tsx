@@ -1,10 +1,5 @@
-import {
-  CloudUpload,
-  Paperclip,
-  Upload,
-} from 'lucide-react';
+import { CloudUpload, Paperclip } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -27,11 +22,11 @@ import {
   FileUploaderContent,
   FileUploaderItem,
 } from '@/components/ui/file-upload';
-import { useUploadEnteries } from '../-hooks/use-upload-enteries';
+import { useUploadEntries } from '../-hooks/use-upload-entries';
 import { Progress } from '@/components/ui/progress';
 
 export const UploadEntriesForm = () => {
-  const { form, UPLOAD_TYPES } = useUploadEnteries();
+  const { form, UPLOAD_TYPES } = useUploadEntries();
 
   return (
     <Form {...form}>
@@ -55,18 +50,10 @@ export const UploadEntriesForm = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem
-                      value={String(
-                        UPLOAD_TYPES.FREIGHT_DOC
-                      )}
-                    >
+                    <SelectItem value={String(UPLOAD_TYPES.FREIGHT_DOC)}>
                       Freight
                     </SelectItem>
-                    <SelectItem
-                      value={String(
-                        UPLOAD_TYPES.TRUCKING_DOC
-                      )}
-                    >
+                    <SelectItem value={String(UPLOAD_TYPES.TRUCKING_DOC)}>
                       Trucking
                     </SelectItem>
                   </SelectContent>
@@ -81,9 +68,7 @@ export const UploadEntriesForm = () => {
             name='billingCodeId'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  Billing Classification
-                </FormLabel>
+                <FormLabel>Billing Classification</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -96,15 +81,9 @@ export const UploadEntriesForm = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value='INV-FW'>
-                      Invoices
-                    </SelectItem>
-                    <SelectItem value='OR-FW'>
-                      Official Receipts
-                    </SelectItem>
-                    <SelectItem value='OF-FW'>
-                      Ocean Freight
-                    </SelectItem>
+                    <SelectItem value='INV-FW'>Invoices</SelectItem>
+                    <SelectItem value='OR-FW'>Official Receipts</SelectItem>
+                    <SelectItem value='OF-FW'>Ocean Freight</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -118,9 +97,7 @@ export const UploadEntriesForm = () => {
           name='dataFile'
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor='dataFile'>
-                Select File
-              </FormLabel>
+              <FormLabel htmlFor='dataFile'>Select File</FormLabel>
               <FormControl>
                 <FileUploader
                   value={field.value}
@@ -144,9 +121,7 @@ export const UploadEntriesForm = () => {
                     <div className='flex items-center justify-center flex-col p-8 w-full '>
                       <CloudUpload className='text-gray-500 w-10 h-10' />
                       <p className='mb-1 text-sm text-gray-500 dark:text-gray-400'>
-                        <span className='font-semibold'>
-                          Click to upload
-                        </span>
+                        <span className='font-semibold'>Click to upload</span>
                         &nbsp; or drag and drop
                       </p>
                       <p className='text-xs text-gray-500 dark:text-gray-400'>
@@ -161,12 +136,11 @@ export const UploadEntriesForm = () => {
                         <FileUploaderItem index={i} key={i}>
                           <div className='flex items-center gap-1.5'>
                             <Paperclip className='size-4 stroke-current' />
-                            <span>{file.name}</span>
+                            <span className='block max-w-xs truncate sm:max-w-full'>
+                              {file.name}
+                            </span>
                           </div>
-                          <Progress
-                            size='xs'
-                            progress={form.uploadProgress}
-                          />
+                          <Progress size='xs' progress={form.uploadProgress} />
                         </FileUploaderItem>
                       ))}
                   </FileUploaderContent>
@@ -177,15 +151,13 @@ export const UploadEntriesForm = () => {
             </FormItem>
           )}
         />
-        <Button
+
+        <button
           type='submit'
-          size='lg'
-          className='w-full flex sm:max-w-xs ms-auto'
-          disabled={form.isPending}
-        >
-          <Upload className='size-5' />
-          Upload
-        </Button>
+          id='upload_entries_btn'
+          className='hidden absolute'
+          aria-disabled={form.isPending}
+        />
       </form>
     </Form>
   );
