@@ -1,3 +1,6 @@
+import { memo } from 'react';
+import { Link, useLocation } from '@tanstack/react-router';
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -6,24 +9,22 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Link, useLocation } from '@tanstack/react-router';
-import { memo } from 'react';
 
 export const DashboardHeader = () => {
   return (
-    <header className='flex h-16 md:h-20 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 group-has-[[data-collapsible=icon]]/sidebar-wrapper:md:h-16'>
-      <div className='flex items-center gap-2 px-4'>
+    <header className='flex h-16 px-4 md:h-20 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 group-has-[[data-collapsible=icon]]/sidebar-wrapper:md:h-16'>
+      <div className='flex items-center gap-2'>
         <SidebarTrigger className='-ml-1' />
 
-        <Separator
-          orientation='vertical'
-          className='mr-2 !h-4'
-        />
+        <Separator orientation='vertical' className='mr-2 !h-4' />
 
         <HeaderBreadcrumb />
       </div>
+
+      <ThemeToggle />
     </header>
   );
 };
@@ -45,15 +46,7 @@ const HeaderBreadcrumb = memo(() => {
 HeaderBreadcrumb.displayName = 'HeaderBreadcrumb';
 
 const CrumbItem = memo(
-  ({
-    name,
-    to,
-    isLast,
-  }: {
-    name: string;
-    to: string;
-    isLast: boolean;
-  }) => {
+  ({ name, to, isLast }: { name: string; to: string; isLast: boolean }) => {
     if (isLast)
       return (
         <BreadcrumbItem>
