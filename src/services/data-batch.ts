@@ -37,6 +37,17 @@ export class DataBatch {
     );
   };
 
+  public downloadEnhancedRecordList = async (query?: {
+    batchId?: string;
+  }): Promise<void> => {
+    await this.syncService.download(
+      API_ROUTES.DATA_MIGRATION.DATA_BATCH.DOWNLOAD_ENHANCED_RECORD_LIST,
+      {
+        query,
+      }
+    );
+  };
+
   public freightDocumentQueryOptions = (searchQuery?: {}) => {
     const query =
       this.searchQuery.getParsedSearch<TDataBatchFilter>(searchQuery);

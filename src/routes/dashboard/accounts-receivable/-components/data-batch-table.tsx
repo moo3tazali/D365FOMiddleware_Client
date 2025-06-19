@@ -12,6 +12,7 @@ import { enumToOptions } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { useSearch } from '@tanstack/react-router';
 import { TableActionCol } from '@/components/table-action-col';
+import { useDataBatchAction } from '../-hooks/use-data-batch-action';
 
 export const DataBatchTable = () => {
   const { dataBatch } = useServices();
@@ -119,11 +120,12 @@ const CellStatus = ({ value }: { value: keyof typeof statusColorMap }) => {
 };
 
 const CellAction = ({ row }: { row: TDataBatch }) => {
+  const { onDownload } = useDataBatchAction(row);
   return (
     <TableActionCol>
       <TableActionCol.Copy textToCopy={row.id} />
       <TableActionCol.View />
-      <TableActionCol.Download />
+      <TableActionCol.Download onClick={onDownload} />
     </TableActionCol>
   );
 };

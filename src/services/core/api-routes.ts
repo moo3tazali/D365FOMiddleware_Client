@@ -7,11 +7,9 @@ export const API_ROUTES = {
   },
   DATA_MIGRATION: {
     ACCOUNT_RECEIVABLE: {
-      FREIGHT_DOCUMENT:
-        '/DataMigration/AccountReceivable/Freight-Document',
+      FREIGHT_DOCUMENT: '/DataMigration/AccountReceivable/Freight-Document',
       FREIGHT: '/DataMigration/AccountReceivable/Freight',
-      TRUCKING_DOCUMENT:
-        '/DataMigration/AccountReceivable/Trucking-Document',
+      TRUCKING_DOCUMENT: '/DataMigration/AccountReceivable/Trucking-Document',
       TRUCKING: '/DataMigration/AccountReceivable/Trucking',
       FREIGHT_CREDIT_NOTE_DOCUMENT:
         '/DataMigration/AccountReceivable/Freight-CreditNote-Document',
@@ -24,6 +22,8 @@ export const API_ROUTES = {
     },
     DATA_BATCH: {
       LIST: '/DataMigration/DataBatch/list',
+      DOWNLOAD_ENHANCED_RECORD_LIST:
+        '/DataMigration/DataBatch/download-enhanced-record-list',
     },
   },
 } as const;
@@ -60,11 +60,7 @@ export class ApiRoutes {
     return this._buildUrl({ ...options, url });
   }
 
-  private _buildUrl({
-    url,
-    params = {},
-    query = {},
-  }: BuildUrlOptions): string {
+  private _buildUrl({ url, params = {}, query = {} }: BuildUrlOptions): string {
     let updatedUrl = url as string;
 
     for (const [key, value] of Object.entries(params)) {
@@ -78,17 +74,13 @@ export class ApiRoutes {
 
     for (const [key, value] of Object.entries(query)) {
       if (Array.isArray(value)) {
-        value.forEach((v) =>
-          queryString.append(key, String(v))
-        );
+        value.forEach((v) => queryString.append(key, String(v)));
       } else if (value !== undefined && value !== null) {
         queryString.set(key, String(value));
       }
     }
 
-    return queryString.toString()
-      ? `${updatedUrl}?${queryString}`
-      : updatedUrl;
+    return queryString.toString() ? `${updatedUrl}?${queryString}` : updatedUrl;
   }
 }
 

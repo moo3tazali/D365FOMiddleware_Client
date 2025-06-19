@@ -8,10 +8,7 @@ import { serialize } from 'object-to-formdata';
 import { Env, ENV } from './env';
 import { Token } from './token';
 import { ErrorHandler } from './error-handler';
-import {
-  ApiRoutes,
-  type BuildUrlOptions,
-} from './api-routes';
+import { ApiRoutes, type BuildUrlOptions } from './api-routes';
 import type { SuccessRes } from '@/interfaces/api-res';
 
 interface SyncOptions {
@@ -28,6 +25,12 @@ interface PostRequestConfig extends GetRequestConfig {
   formData?: boolean;
 }
 
+interface DownloadConfig {
+  params?: BuildUrlOptions['params'];
+  query?: BuildUrlOptions['query'];
+  downloadMethod?: 'get' | 'post';
+}
+
 type TUrl = BuildUrlOptions['url'];
 
 export class Sync {
@@ -37,8 +40,7 @@ export class Sync {
   private readonly _withAuth: boolean = false;
   private readonly _env = Env.getInstance();
   private readonly _token = Token.getInstance();
-  private readonly _errorHandler =
-    ErrorHandler.getInstance();
+  private readonly _errorHandler = ErrorHandler.getInstance();
   private readonly _apiRoutes = ApiRoutes.getInstance();
 
   private constructor(isPublic: boolean) {
@@ -75,16 +77,46 @@ export class Sync {
       query: config?.query,
     });
 
-    const res = await this._handle<SuccessRes<TRes>>(() =>
-      this._axiosInstance.get(builtUrl, config)
-    );
+    return this._handle<TRes>(() => this._axiosInstance.get(builtUrl, config));
+  }
 
-    return res.data;
+  public async download(
+    url: TUrl,
+    config?: DownloadConfig
+  ): Promise<{ blob: Blob; fileName: string }> {
+    const builtUrl = this._apiRoutes.build(url, {
+      params: config?.params,
+      query: config?.query,
+    });
+
+    try {
+      let res: AxiosResponse<Blob>;
+
+      if (config && config?.downloadMethod) {
+        const downloadMethod = config?.downloadMethod;
+        res = await this._axiosInstance?.[downloadMethod](builtUrl, {
+          responseType: 'blob',
+        });
+      } else {
+        res = await this._axiosInstance.post(builtUrl, undefined, {
+          responseType: 'blob',
+        });
+      }
+
+      const fileName = await this._downloadFileFromResponse(res);
+
+      return {
+        blob: res.data,
+        fileName,
+      };
+    } catch (error) {
+      return this._errorHandler.throwError(error);
+    }
   }
 
   public async save<TRes, TData>(
     url: TUrl,
-    data: TData,
+    data?: TData,
     config?: PostRequestConfig
   ): Promise<TRes> {
     const builtUrl = this._apiRoutes.build(url, {
@@ -94,66 +126,99 @@ export class Sync {
 
     const method = config?.saveMethod;
 
-    const payload = config?.formData
-      ? serialize(data, {
-          indices: true,
-          nullsAsUndefineds: true,
-        })
-      : data;
+    const payload =
+      config?.formData && data
+        ? serialize(data, {
+            indices: true,
+            nullsAsUndefineds: true,
+          })
+        : data;
 
     if (!method) {
-      const res = await this._handle<SuccessRes<TRes>>(() =>
+      return this._handle<TRes>(() =>
         this._axiosInstance.post(builtUrl, payload, config)
       );
-
-      return res.data;
     }
 
-    const res = await this._handle<SuccessRes<TRes>>(() =>
+    return this._handle<TRes>(() =>
       this._axiosInstance[method](builtUrl, payload, config)
     );
-
-    return res.data;
   }
 
-  public async del(
+  public async del<TRes = void>(
     url: TUrl,
     config?: GetRequestConfig
-  ): Promise<void> {
+  ): Promise<TRes> {
     const builtUrl = this._apiRoutes.build(url, {
       params: config?.params,
       query: config?.query,
     });
 
-    return this._handle<void>(() =>
+    return this._handle<TRes>(() =>
       this._axiosInstance.delete(builtUrl, config)
     );
   }
 
-  private async _handle<T>(
-    fn: () => Promise<T>
-  ): Promise<T> {
+  private async _handle<T>(fn: () => Promise<T>): Promise<T> {
     try {
-      const res = (await fn()) as AxiosResponse<T>;
-      return res.data;
+      const res = (await fn()) as AxiosResponse<SuccessRes<T>>;
+      return res.data.data;
     } catch (error) {
       return this._errorHandler.throwError(error);
     }
   }
 
-  private _injectToken(): void {
-    this._axiosInstance.interceptors.request.use(
-      async (config) => {
-        const token = await this._token.getToken();
+  private async _downloadFileFromResponse(
+    response: AxiosResponse
+  ): Promise<string> {
+    let fileName: string = 'downloaded-file';
+    const headers = response.headers;
 
-        if (!token) {
-          throw new Error(
-            'Failed to inject token, Token is missing!!'
-          );
-        }
-        config.headers.Authorization = `Bearer ${token}`;
-        return config;
+    if (headers) {
+      const contentDisposition = headers?.['content-disposition'] as
+        | string
+        | undefined;
+
+      if (contentDisposition) {
+        fileName = this._getFileNameFromHeader(contentDisposition) ?? fileName;
       }
-    );
+    }
+
+    const url = window.URL.createObjectURL(response.data);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+
+    return fileName;
+  }
+
+  private _getFileNameFromHeader(headerValue: string): string | null {
+    const filenameStarMatch = headerValue.match(/filename\*=UTF-8''([^;]+)/i);
+    if (filenameStarMatch && filenameStarMatch[1]) {
+      return decodeURIComponent(filenameStarMatch[1]);
+    }
+
+    const filenameMatch = headerValue.match(/filename="?([^"]+)"?/i);
+    if (filenameMatch && filenameMatch[1]) {
+      return filenameMatch[1];
+    }
+
+    return null;
+  }
+
+  private _injectToken(): void {
+    this._axiosInstance.interceptors.request.use(async (config) => {
+      const token = await this._token.getToken();
+
+      if (!token) {
+        throw new Error('Failed to inject token, Token is missing!!');
+      }
+      config.headers.Authorization = `Bearer ${token}`;
+      return config;
+    });
   }
 }
