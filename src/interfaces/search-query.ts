@@ -7,12 +7,7 @@ export interface ISearchQuery {
   search?: string;
 }
 
-export type QueryValue =
-  | string
-  | number
-  | boolean
-  | string[]
-  | number[];
+export type QueryValue = string | number | boolean | string[] | number[];
 
 export type RawFilter = {
   key: string;

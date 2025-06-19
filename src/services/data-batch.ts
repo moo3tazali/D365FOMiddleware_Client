@@ -8,6 +8,7 @@ import type {
 } from '@/interfaces/data-batch';
 import { queryOptions } from '@tanstack/react-query';
 import { SearchQuery } from './core/search-query';
+import { DataBatchFilterSchema } from '@/schemas/data-batch';
 
 export class DataBatch {
   private static _instance: DataBatch;
@@ -49,8 +50,10 @@ export class DataBatch {
   };
 
   public freightDocumentQueryOptions = (searchQuery?: {}) => {
-    const query =
-      this.searchQuery.getParsedSearch<TDataBatchFilter>(searchQuery);
+    const query = this.searchQuery.getParsedSearch<TDataBatchFilter>(
+      searchQuery,
+      DataBatchFilterSchema
+    );
 
     const queryKey: (string | IDataBatchQuery)[] = [this.queryKey];
 

@@ -1,10 +1,12 @@
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
+
 import { useServices } from '@/hooks/use-services';
 import { useMutation } from '@/hooks/use-mutation';
-import { useState } from 'react';
-import { useUploadEntriesStore } from './use-upload-entries-store';
+import { useBatchStore } from './use-batch-store';
+import { useBatchQueryData } from './use-batch-query-data';
 
 const acceptedTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -38,15 +40,27 @@ const FormSchema = z.object({
 
 type FormData = z.infer<typeof FormSchema>;
 
-export const useUploadEntries = () => {
+export const useBatchForm = () => {
+  const batch = useBatchQueryData();
+
+  let defaultValues: FormData = {
+    type: '',
+    companyId: 'm-p',
+    billingCodeId: '',
+    dataFile: null,
+  };
+
+  if (batch) {
+    defaultValues = {
+      ...defaultValues,
+      type: String(batch?.targetService ?? ''),
+      billingCodeId: String(batch?.billingClassificationCode ?? ''),
+    };
+  }
+
   const form = useForm<FormData>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      type: '',
-      companyId: 'm-p',
-      billingCodeId: '',
-      dataFile: null,
-    },
+    defaultValues,
   });
 
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -60,7 +74,7 @@ export const useUploadEntries = () => {
     formControl: form.control,
   });
 
-  const setEnteries = useUploadEntriesStore((s) => s.setDataBatch);
+  const setBatch = useBatchStore((s) => s.setDataBatch);
 
   const onSubmit = (values: FormData) => {
     const files = values.dataFile!;
@@ -75,7 +89,7 @@ export const useUploadEntries = () => {
       uploadProgress: (prog: number) => setUploadProgress(prog),
     };
 
-    startUpload(options).then(setEnteries);
+    startUpload(options).then(setBatch);
   };
 
   return {

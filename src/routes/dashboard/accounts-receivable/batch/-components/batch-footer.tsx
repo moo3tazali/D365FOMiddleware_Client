@@ -3,11 +3,11 @@ import { useIsMutating } from '@tanstack/react-query';
 
 import type { TDataBatch } from '@/interfaces/data-batch';
 import { Button } from '@/components/ui/button';
-import { useUploadEntriesStore } from '../-hooks/use-upload-entries-store';
+import { useBatchStore } from '../-hooks/use-batch-store';
 import { useServices } from '@/hooks/use-services';
 
-export const UploadEntriesFooter = () => {
-  const response = useUploadEntriesStore((s) => s.dataBatch);
+export const BatchFooter = () => {
+  const response = useBatchStore((s) => s.dataBatch);
 
   const ActionBtn = (() => {
     if (!response) return <UploadBtn />;

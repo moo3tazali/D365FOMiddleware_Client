@@ -22,11 +22,11 @@ import {
   FileUploaderContent,
   FileUploaderItem,
 } from '@/components/ui/file-upload';
-import { useUploadEntries } from '../-hooks/use-upload-entries';
+import { useBatchForm } from '../-hooks/use-batch-form';
 import { Progress } from '@/components/ui/progress';
 
-export const UploadEntriesForm = () => {
-  const { form, UPLOAD_TYPES } = useUploadEntries();
+export const BatchForm = () => {
+  const { form, UPLOAD_TYPES } = useBatchForm();
 
   return (
     <Form {...form}>
@@ -97,7 +97,7 @@ export const UploadEntriesForm = () => {
           name='dataFile'
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor='dataFile'>Select File</FormLabel>
+              <FormLabel htmlFor='dataFile'>Upload New Batch</FormLabel>
               <FormControl>
                 <FileUploader
                   value={field.value}
@@ -121,8 +121,10 @@ export const UploadEntriesForm = () => {
                     <div className='flex items-center justify-center flex-col p-8 w-full '>
                       <CloudUpload className='text-gray-500 w-10 h-10' />
                       <p className='mb-1 text-sm text-gray-500 dark:text-gray-400'>
-                        <span className='font-semibold'>Click to upload</span>
-                        &nbsp; or drag and drop
+                        <span className='font-semibold'>
+                          Click to select file
+                        </span>{' '}
+                        or drag and drop
                       </p>
                       <p className='text-xs text-gray-500 dark:text-gray-400'>
                         .xlsx or .xls files only

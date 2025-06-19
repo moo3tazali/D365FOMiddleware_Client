@@ -4,6 +4,7 @@ import { PAGE_SIZE_COOKIE_NAME } from '@/constants/cookies';
 import { DEFAULT_PAGE_SIZE } from '@/constants/pagination';
 import { tryParse } from '@/lib/utils';
 import type { RawFilter } from '@/interfaces/search-query';
+import { z, type ZodSchema } from 'zod';
 
 interface ParsedSearch {
   maxCount: number;
@@ -25,23 +26,52 @@ export class SearchQuery {
     return SearchQuery._instance;
   }
 
-  public getParsedSearch = <TFilter extends object>(
-    searchQuery?: Record<string, unknown>
-  ): ParsedSearch & TFilter => {
+  public getParsedSearch(searchQuery?: Record<string, unknown>): ParsedSearch;
+
+  public getParsedSearch<TFilter extends object>(
+    searchQuery?: Record<string, unknown>,
+    filterSchema?: ZodSchema<TFilter>
+  ): ParsedSearch & TFilter;
+
+  public getParsedSearch<TFilter extends object>(
+    searchQuery?: Record<string, unknown>,
+    filterSchema?: ZodSchema<TFilter>
+  ): ParsedSearch | (ParsedSearch & TFilter) {
     const page = searchQuery?.page as string | undefined;
     const size = searchQuery?.size as string | undefined;
-    const filters = searchQuery?.filters as string | undefined;
-
     const parsedPage = this._parsePage(page);
     const parsedSize = this._parseSize(size);
-    const parsedFilters = this._parseFilters<TFilter>(filters);
+    const maxCount = parsedSize;
+    const skipCount = (parsedPage - 1) * parsedSize;
+
+    if (!searchQuery) {
+      return {
+        maxCount,
+        skipCount,
+      };
+    }
+
+    let parsedFilters: TFilter = {} as TFilter;
+
+    Object.entries(searchQuery).forEach(([key, value]) => {
+      if (key === 'filters' && typeof value === 'string') {
+        parsedFilters = {
+          ...parsedFilters,
+          ...this._parseFilters<TFilter>(value),
+        };
+      } else {
+        parsedFilters[key as keyof TFilter] = value as TFilter[keyof TFilter];
+      }
+    });
+
+    parsedFilters = this._parseAndValidateFilters(parsedFilters, filterSchema);
 
     return {
-      maxCount: parsedSize,
-      skipCount: (parsedPage - 1) * parsedSize,
+      maxCount,
+      skipCount,
       ...parsedFilters,
     };
-  };
+  }
 
   private _parseSize(size?: string): number {
     const cookieRowPerPage = this._cookies.get(PAGE_SIZE_COOKIE_NAME) as
@@ -70,5 +100,21 @@ export class SearchQuery {
     });
 
     return initial;
+  }
+
+  private _parseAndValidateFilters<TFilter extends object>(
+    filters: Partial<TFilter>,
+    schema?: ZodSchema<TFilter>
+  ): TFilter {
+    if (schema instanceof z.ZodObject) {
+      try {
+        return schema.strip().parse(filters) as TFilter;
+      } catch {
+        console.error('Invalid filters');
+        return {} as TFilter;
+      }
+    }
+
+    return filters as TFilter;
   }
 }

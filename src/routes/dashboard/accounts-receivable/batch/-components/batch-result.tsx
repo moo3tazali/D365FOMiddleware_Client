@@ -2,18 +2,20 @@ import { useMemo } from 'react';
 import { UploadCloud, SlidersHorizontal, CloudAlert } from 'lucide-react';
 
 import { Frame } from '@/components/ui/frame';
-import { useUploadEntriesStore } from '../-hooks/use-upload-entries-store';
+import { useBatchStore } from '../-hooks/use-batch-store';
 import type { TDataBatch } from '@/interfaces/data-batch';
 import { CloudCheck } from '@/assets/icons/cloud-check';
+import { useBatchQueryData } from '../-hooks/use-batch-query-data';
 
-export const UploadEntriesResult = () => {
-  const uploadedEntries = useUploadEntriesStore((s) => s.dataBatch);
+export const BatchResult = () => {
+  const batch = useBatchStore((s) => s.dataBatch);
+  const queryBatch = useBatchQueryData();
 
-  const items = useResultItems(uploadedEntries);
+  const items = useResultItems(batch || queryBatch);
 
   return (
     <div className='flex-1 space-y-5'>
-      <h3>Results</h3>
+      <h3>Batch Results</h3>
       <div className='grid grid-cols-fit-175 sm:grid-cols-fit-250 gap-2.5'>
         {items.map(({ Icon, total, label }) => (
           <Frame className='flex-col gap-5 items-stretch p-5 md:p-10 justify-between'>
@@ -53,7 +55,7 @@ const ErrorIcon = () => (
   </div>
 );
 
-const useResultItems = (entries: TDataBatch | null) => {
+const useResultItems = (entries?: TDataBatch | null) => {
   const defaultTotal = '--';
   return useMemo(
     () =>
