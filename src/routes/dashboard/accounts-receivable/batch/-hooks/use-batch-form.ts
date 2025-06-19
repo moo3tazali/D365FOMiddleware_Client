@@ -1,12 +1,13 @@
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from '@tanstack/react-router';
 
 import { useServices } from '@/hooks/use-services';
 import { useMutation } from '@/hooks/use-mutation';
-import { useBatchStore } from './use-batch-store';
 import { useBatchQueryData } from './use-batch-query-data';
+import { ROUTES } from '@/router';
 
 const acceptedTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -14,7 +15,7 @@ const acceptedTypes = [
 ];
 
 const FormSchema = z.object({
-  type: z.string().min(1, 'Please select the type of entry.'),
+  type: z.string().min(1, 'Please select the target service.'),
   companyId: z.string(),
   billingCodeId: z
     .string()
@@ -41,7 +42,7 @@ const FormSchema = z.object({
 type FormData = z.infer<typeof FormSchema>;
 
 export const useBatchForm = () => {
-  const batch = useBatchQueryData();
+  const [batch, setBatch] = useBatchQueryData();
 
   let defaultValues: FormData = {
     type: '',
@@ -74,23 +75,32 @@ export const useBatchForm = () => {
     formControl: form.control,
   });
 
-  const setBatch = useBatchStore((s) => s.setDataBatch);
+  const navigate = useNavigate();
 
-  const onSubmit = (values: FormData) => {
-    const files = values.dataFile!;
+  const onSubmit = useCallback(
+    (values: FormData) => {
+      const files = values.dataFile!;
 
-    const options = {
-      data: {
-        companyId: values.companyId,
-        billingCodeId: values.billingCodeId,
-        dataFile: files[0],
-      },
-      type: values.type,
-      uploadProgress: (prog: number) => setUploadProgress(prog),
-    };
+      const options = {
+        data: {
+          companyId: values.companyId,
+          billingCodeId: values.billingCodeId,
+          dataFile: files[0],
+        },
+        type: values.type,
+        uploadProgress: (prog: number) => setUploadProgress(prog),
+      };
 
-    startUpload(options).then(setBatch);
-  };
+      startUpload(options).then((data) => {
+        setBatch(data);
+        navigate({
+          to: ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH,
+          search: { batchId: data.id },
+        });
+      });
+    },
+    [startUpload, navigate, setBatch]
+  );
 
   return {
     form: {

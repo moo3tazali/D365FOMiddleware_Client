@@ -3,18 +3,18 @@ import { useIsMutating } from '@tanstack/react-query';
 
 import type { TDataBatch } from '@/interfaces/data-batch';
 import { Button } from '@/components/ui/button';
-import { useBatchStore } from '../-hooks/use-batch-store';
 import { useServices } from '@/hooks/use-services';
+import { useBatchQueryData } from '../-hooks/use-batch-query-data';
 
 export const BatchFooter = () => {
-  const response = useBatchStore((s) => s.dataBatch);
+  const [batch] = useBatchQueryData();
 
   const ActionBtn = (() => {
-    if (!response) return <UploadBtn />;
+    if (!batch) return <UploadBtn />;
 
-    if (response && response.errorCount) return <UploadBtn />;
+    if (batch && batch.errorCount) return <UploadBtn />;
 
-    return <SubmitBtn data={response} />;
+    return <SubmitBtn data={batch} />;
   })();
 
   return ActionBtn;
@@ -47,6 +47,7 @@ const SubmitBtn = ({ data }: { data: TDataBatch }) => {
     <Button
       size='lg'
       className='w-full flex sm:max-w-xs ms-auto'
+      variant='success'
       disabled={false}
       onClick={() => {
         console.log(data);

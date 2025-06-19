@@ -4,6 +4,7 @@ export function Description({
   className,
   ...props
 }: React.ComponentProps<'p'>) {
+  if (!props?.children) return null;
   return (
     <p
       data-slot='description'

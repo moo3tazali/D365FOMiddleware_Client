@@ -1,12 +1,15 @@
 import { useSearch } from '@tanstack/react-router';
-import { useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 
 import { useServices } from '@/hooks/use-services';
-
 import type { PaginationRes } from '@/interfaces/api-res';
 import type { TDataBatch } from '@/interfaces/data-batch';
 
-export const useBatchQueryData = (): TDataBatch | undefined => {
+export const useBatchQueryData = (): [
+  value: TDataBatch | undefined,
+  setValue: (newBatch: TDataBatch) => void
+] => {
   const queryClient = useQueryClient();
 
   const { batchId } = useSearch({
@@ -15,14 +18,33 @@ export const useBatchQueryData = (): TDataBatch | undefined => {
 
   const { dataBatch } = useServices();
 
-  const queryData = queryClient.getQueriesData({
-    predicate: (query) =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (query.queryKey?.[1] as any)?.batchNumber === batchId &&
-      query.queryKey?.[0] === dataBatch.queryKey,
-  })?.[0]?.[1] as PaginationRes<TDataBatch> | undefined;
+  const { data } = useSuspenseQuery(
+    dataBatch.freightDocumentQueryOptions({
+      page: 1,
+      size: 1,
+      batchNumber: batchId,
+    })
+  );
 
-  if (!queryData) return;
+  const setValue = useCallback(
+    (newBatch: TDataBatch): void => {
+      const newQueryKey = [
+        dataBatch.queryKey,
+        { batchNumber: newBatch.id, maxCount: 1, skipCount: 0 },
+      ];
+      queryClient.setQueryData<PaginationRes<TDataBatch>>(newQueryKey, {
+        pageNumber: 1,
+        totalCount: 1,
+        pageSize: 1,
+        items: [newBatch],
+      });
+    },
+    [dataBatch.queryKey, queryClient]
+  );
 
-  return queryData.items[0];
+  if (!data || !batchId) return [undefined, setValue];
+
+  const value = data.items.find((item) => item.id === batchId);
+
+  return [value, setValue];
 };

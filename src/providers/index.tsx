@@ -7,8 +7,20 @@ import { ServicesProvider } from './services-provider';
 import { services } from '@/services';
 import { ThemeProvider } from './theme-provider';
 
-// app services
-const queryClient = new QueryClient();
+// 🔧 Configure the main query client for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // ✅ Data is considered fresh for 5 minutes → avoids refetching on hover/focus
+      gcTime: 1000 * 60 * 30, // 🕒 Unused queries stay in cache for 30 minutes before garbage collection
+      refetchOnWindowFocus: false, // 🚫 Don't refetch data just by focusing the window/tab
+      retry: 1, // 🔁 Retry failed requests once (instead of 3 times by default)
+    },
+    mutations: {
+      retry: 0, // (Optional) Don’t retry mutations by default
+    },
+  },
+});
 
 type Props = {
   children: React.ReactNode;
