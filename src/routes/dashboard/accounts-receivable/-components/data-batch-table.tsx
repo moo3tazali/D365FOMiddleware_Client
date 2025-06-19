@@ -10,9 +10,10 @@ import {
 import { DataBatchFilters } from './data-batch-filters';
 import { enumToOptions } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { useSearch } from '@tanstack/react-router';
+import { Link, useSearch } from '@tanstack/react-router';
 import { TableActionCol } from '@/components/table-action-col';
 import { useDataBatchAction } from '../-hooks/use-data-batch-action';
+import { ROUTES } from '@/router';
 
 export const DataBatchTable = () => {
   const { dataBatch } = useServices();
@@ -41,6 +42,7 @@ const columns: ColumnDef<TDataBatch>[] = [
   {
     accessorKey: 'id',
     header: 'Batch Number',
+    cell: ({ getValue }) => <CellId value={getValue<string>()} />,
   },
   {
     accessorKey: 'description',
@@ -85,6 +87,17 @@ const columns: ColumnDef<TDataBatch>[] = [
   },
 ];
 
+const CellId = ({ value }: { value: string }) => {
+  return (
+    <Link
+      to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH}
+      search={{ batchId: value }}
+    >
+      {value}
+    </Link>
+  );
+};
+
 const CellCreatedAt = ({ value }: { value: string }) => {
   return new Date(value).toLocaleDateString('en-GB', {
     day: '2-digit',
@@ -120,11 +133,11 @@ const CellStatus = ({ value }: { value: keyof typeof statusColorMap }) => {
 };
 
 const CellAction = ({ row }: { row: TDataBatch }) => {
-  const { onDownload } = useDataBatchAction(row);
+  const { onDownload, onView } = useDataBatchAction(row);
   return (
     <TableActionCol>
       <TableActionCol.Copy textToCopy={row.id} />
-      <TableActionCol.View />
+      <TableActionCol.View onClick={onView} />
       <TableActionCol.Download onClick={onDownload} />
     </TableActionCol>
   );

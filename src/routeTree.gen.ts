@@ -22,7 +22,7 @@ import { Route as DashboardAccountsPayablePageImport } from './routes/dashboard/
 import { Route as DashboardhomePageImport } from './routes/dashboard/(home)/page'
 import { Route as PublichomePageImport } from './routes/_public/(home)/page'
 import { Route as AuthLoginPageImport } from './routes/_auth/login/page'
-import { Route as DashboardAccountsReceivableUploadEntriesPageImport } from './routes/dashboard/accounts-receivable/upload-entries/page'
+import { Route as DashboardAccountsReceivableBatchPageImport } from './routes/dashboard/accounts-receivable/batch/page'
 
 // Create/Update Routes
 
@@ -93,10 +93,10 @@ const AuthLoginPageRoute = AuthLoginPageImport.update({
   getParentRoute: () => AuthLayoutRoute,
 } as any)
 
-const DashboardAccountsReceivableUploadEntriesPageRoute =
-  DashboardAccountsReceivableUploadEntriesPageImport.update({
-    id: '/accounts-receivable/upload-entries/',
-    path: '/accounts-receivable/upload-entries/',
+const DashboardAccountsReceivableBatchPageRoute =
+  DashboardAccountsReceivableBatchPageImport.update({
+    id: '/accounts-receivable/batch/',
+    path: '/accounts-receivable/batch/',
     getParentRoute: () => DashboardLayoutRoute,
   } as any)
 
@@ -181,11 +181,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSettingsPageImport
       parentRoute: typeof DashboardLayoutImport
     }
-    '/dashboard/accounts-receivable/upload-entries/': {
-      id: '/dashboard/accounts-receivable/upload-entries/'
-      path: '/accounts-receivable/upload-entries'
-      fullPath: '/dashboard/accounts-receivable/upload-entries'
-      preLoaderRoute: typeof DashboardAccountsReceivableUploadEntriesPageImport
+    '/dashboard/accounts-receivable/batch/': {
+      id: '/dashboard/accounts-receivable/batch/'
+      path: '/accounts-receivable/batch'
+      fullPath: '/dashboard/accounts-receivable/batch'
+      preLoaderRoute: typeof DashboardAccountsReceivableBatchPageImport
       parentRoute: typeof DashboardLayoutImport
     }
   }
@@ -225,7 +225,7 @@ interface DashboardLayoutRouteChildren {
   DashboardAccountsReceivablePageRoute: typeof DashboardAccountsReceivablePageRoute
   DashboardCashManagementPageRoute: typeof DashboardCashManagementPageRoute
   DashboardSettingsPageRoute: typeof DashboardSettingsPageRoute
-  DashboardAccountsReceivableUploadEntriesPageRoute: typeof DashboardAccountsReceivableUploadEntriesPageRoute
+  DashboardAccountsReceivableBatchPageRoute: typeof DashboardAccountsReceivableBatchPageRoute
 }
 
 const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
@@ -234,8 +234,8 @@ const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
   DashboardAccountsReceivablePageRoute: DashboardAccountsReceivablePageRoute,
   DashboardCashManagementPageRoute: DashboardCashManagementPageRoute,
   DashboardSettingsPageRoute: DashboardSettingsPageRoute,
-  DashboardAccountsReceivableUploadEntriesPageRoute:
-    DashboardAccountsReceivableUploadEntriesPageRoute,
+  DashboardAccountsReceivableBatchPageRoute:
+    DashboardAccountsReceivableBatchPageRoute,
 }
 
 const DashboardLayoutRouteWithChildren = DashboardLayoutRoute._addFileChildren(
@@ -253,7 +253,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/accounts-receivable': typeof DashboardAccountsReceivablePageRoute
   '/dashboard/cash-management': typeof DashboardCashManagementPageRoute
   '/dashboard/settings': typeof DashboardSettingsPageRoute
-  '/dashboard/accounts-receivable/upload-entries': typeof DashboardAccountsReceivableUploadEntriesPageRoute
+  '/dashboard/accounts-receivable/batch': typeof DashboardAccountsReceivableBatchPageRoute
 }
 
 export interface FileRoutesByTo {
@@ -266,7 +266,7 @@ export interface FileRoutesByTo {
   '/dashboard/accounts-receivable': typeof DashboardAccountsReceivablePageRoute
   '/dashboard/cash-management': typeof DashboardCashManagementPageRoute
   '/dashboard/settings': typeof DashboardSettingsPageRoute
-  '/dashboard/accounts-receivable/upload-entries': typeof DashboardAccountsReceivableUploadEntriesPageRoute
+  '/dashboard/accounts-receivable/batch': typeof DashboardAccountsReceivableBatchPageRoute
 }
 
 export interface FileRoutesById {
@@ -282,7 +282,7 @@ export interface FileRoutesById {
   '/dashboard/accounts-receivable/': typeof DashboardAccountsReceivablePageRoute
   '/dashboard/cash-management/': typeof DashboardCashManagementPageRoute
   '/dashboard/settings/': typeof DashboardSettingsPageRoute
-  '/dashboard/accounts-receivable/upload-entries/': typeof DashboardAccountsReceivableUploadEntriesPageRoute
+  '/dashboard/accounts-receivable/batch/': typeof DashboardAccountsReceivableBatchPageRoute
 }
 
 export interface FileRouteTypes {
@@ -298,7 +298,7 @@ export interface FileRouteTypes {
     | '/dashboard/accounts-receivable'
     | '/dashboard/cash-management'
     | '/dashboard/settings'
-    | '/dashboard/accounts-receivable/upload-entries'
+    | '/dashboard/accounts-receivable/batch'
   fileRoutesByTo: FileRoutesByTo
   to:
     | ''
@@ -310,7 +310,7 @@ export interface FileRouteTypes {
     | '/dashboard/accounts-receivable'
     | '/dashboard/cash-management'
     | '/dashboard/settings'
-    | '/dashboard/accounts-receivable/upload-entries'
+    | '/dashboard/accounts-receivable/batch'
   id:
     | '__root__'
     | '/_auth'
@@ -324,7 +324,7 @@ export interface FileRouteTypes {
     | '/dashboard/accounts-receivable/'
     | '/dashboard/cash-management/'
     | '/dashboard/settings/'
-    | '/dashboard/accounts-receivable/upload-entries/'
+    | '/dashboard/accounts-receivable/batch/'
   fileRoutesById: FileRoutesById
 }
 
@@ -376,7 +376,7 @@ export const routeTree = rootRoute
         "/dashboard/accounts-receivable/",
         "/dashboard/cash-management/",
         "/dashboard/settings/",
-        "/dashboard/accounts-receivable/upload-entries/"
+        "/dashboard/accounts-receivable/batch/"
       ]
     },
     "/_auth/forget-password": {
@@ -411,8 +411,8 @@ export const routeTree = rootRoute
       "filePath": "dashboard/settings/page.tsx",
       "parent": "/dashboard"
     },
-    "/dashboard/accounts-receivable/upload-entries/": {
-      "filePath": "dashboard/accounts-receivable/upload-entries/page.tsx",
+    "/dashboard/accounts-receivable/batch/": {
+      "filePath": "dashboard/accounts-receivable/batch/page.tsx",
       "parent": "/dashboard"
     }
   }

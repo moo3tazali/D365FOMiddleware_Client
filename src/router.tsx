@@ -10,6 +10,7 @@ export const router = createRouter({
   context: {
     auth: undefined!,
     queryClient: undefined!,
+    services: undefined!,
   },
   defaultPreload: 'intent',
   scrollRestoration: true,
@@ -35,7 +36,7 @@ export const ROUTES = {
     },
     ACCOUNTS_RECEIVABLE: {
       HOME: '/dashboard/accounts-receivable',
-      NEW: '/dashboard/accounts-receivable/upload-entries',
+      BATCH: '/dashboard/accounts-receivable/batch',
     },
     CASH_MANAGEMENT: {
       HOME: '/dashboard/cash-management',

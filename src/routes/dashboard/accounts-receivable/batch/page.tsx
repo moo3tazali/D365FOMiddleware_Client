@@ -6,7 +6,7 @@ import { UploadEntriesResult } from './-components/upload-entries-result';
 import { UploadEntriesFooter } from './-components/upload-entries-footer';
 
 export const Route = createFileRoute(
-  '/dashboard/accounts-receivable/upload-entries/'
+  '/dashboard/accounts-receivable/batch/'
 )({
   component: UploadEntriesPage,
 });
