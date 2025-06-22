@@ -1,7 +1,4 @@
-import {
-  useNavigate,
-  useSearch,
-} from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useCallback, useMemo } from 'react';
 import { useCookies } from 'react-cookie';
 
@@ -10,44 +7,39 @@ import {
   PAGE_SIZE_COOKIE_NAME,
 } from '@/constants/cookies';
 import { DEFAULT_PAGE_SIZE } from '@/constants/pagination';
+import { tryParse } from '@/lib/utils';
 
 export const usePagination = () => {
-  const [{ rows_per_page }, setCookie] = useCookies([
-    PAGE_SIZE_COOKIE_NAME,
-  ]);
+  const [{ rows_per_page }, setCookie] = useCookies([PAGE_SIZE_COOKIE_NAME]);
+  const cookiesMaxSize = rows_per_page as number | undefined;
+
   const navigate = useNavigate();
-  const search = useSearch({
+
+  const { maxCount, skipCount } = useSearch({
     strict: false,
     structuralSharing: true,
-    select: (s: { page?: string; size?: string }) => ({
-      page: s.page ? +s.page : undefined,
-      size: s.size ? +s.size : undefined,
+    select: (s: { maxCount?: string; skipCount?: string }) => ({
+      maxCount:
+        tryParse<number>(s.maxCount) || cookiesMaxSize || DEFAULT_PAGE_SIZE,
+      skipCount: tryParse<number>(s.skipCount) || 0,
     }),
   });
 
   // Get current values from URL params with defaults
   const currentPage = useMemo(
-    () => search.page || 1,
-    [search.page]
-  );
-
-  const currentSize = useMemo(
-    () =>
-      search.size ||
-      (rows_per_page as number) ||
-      DEFAULT_PAGE_SIZE,
-    [search.size, rows_per_page]
+    () => Math.floor(skipCount / maxCount) + 1 || 1,
+    [maxCount, skipCount]
   );
 
   const updateUrlAndTriggerChange = useCallback(
-    (page: number, size: number) => {
+    (maxCount: number, skipCount: number) => {
       navigate({
         resetScroll: false,
         search: (prev) =>
           ({
             ...prev,
-            page,
-            size,
+            maxCount,
+            skipCount,
           } as never),
       });
     },
@@ -57,7 +49,7 @@ export const usePagination = () => {
   const handlePageSizeChange = useCallback(
     (newSize: string) => {
       const size = Number(newSize);
-      updateUrlAndTriggerChange(1, size);
+      updateUrlAndTriggerChange(size, 0);
       setCookie(PAGE_SIZE_COOKIE_NAME, size, {
         maxAge: PAGE_SIZE_COOKIE_MAX_AGE,
       });
@@ -67,29 +59,25 @@ export const usePagination = () => {
 
   const handlePreviousPage = useCallback(() => {
     if (currentPage > 1) {
-      updateUrlAndTriggerChange(
-        currentPage - 1,
-        currentSize
-      );
+      const newSkipCount = (currentPage - 2) * maxCount;
+      updateUrlAndTriggerChange(maxCount, newSkipCount);
     }
-  }, [currentPage, currentSize, updateUrlAndTriggerChange]);
+  }, [currentPage, maxCount, updateUrlAndTriggerChange]);
 
   const handleNextPage = useCallback(
     (totalCount: number) => {
-      const maxPage = Math.ceil(totalCount / currentSize);
+      const maxPage = Math.ceil(totalCount / maxCount);
       if (currentPage < maxPage) {
-        updateUrlAndTriggerChange(
-          currentPage + 1,
-          currentSize
-        );
+        const newSkipCount = currentPage * maxCount;
+        updateUrlAndTriggerChange(maxCount, newSkipCount);
       }
     },
-    [currentPage, currentSize, updateUrlAndTriggerChange]
+    [currentPage, maxCount, updateUrlAndTriggerChange]
   );
 
   return {
     currentPage,
-    currentSize,
+    currentSize: maxCount,
     handlePageSizeChange,
     handlePreviousPage,
     handleNextPage,

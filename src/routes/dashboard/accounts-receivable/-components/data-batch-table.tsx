@@ -14,6 +14,7 @@ import { Link, useSearch } from '@tanstack/react-router';
 import { TableActionCol } from '@/components/table-action-col';
 import { useDataBatchAction } from '../-hooks/use-data-batch-action';
 import { ROUTES } from '@/router';
+import { Button } from '@/components/ui/button';
 
 export const DataBatchTable = () => {
   const { dataBatch } = useServices();
@@ -89,12 +90,14 @@ const columns: ColumnDef<TDataBatch>[] = [
 
 const CellId = ({ value }: { value: string }) => {
   return (
-    <Link
-      to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.VIEW}
-      params={{ batchId: value }}
-    >
-      {value}
-    </Link>
+    <Button asChild variant='link'>
+      <Link
+        to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.VIEW}
+        params={{ batchId: value }}
+      >
+        {value}
+      </Link>
+    </Button>
   );
 };
 
@@ -133,12 +136,19 @@ const CellStatus = ({ value }: { value: keyof typeof statusColorMap }) => {
 };
 
 const CellAction = ({ row }: { row: TDataBatch }) => {
-  const { onDownload, onView } = useDataBatchAction(row);
+  const { onDownload, onView, onDownloadError } = useDataBatchAction(row);
   return (
     <TableActionCol>
-      <TableActionCol.Copy textToCopy={row.id} />
+      {/* <TableActionCol.Copy textToCopy={row.id}>
+        Copy Batch Number
+      </TableActionCol.Copy> */}
       <TableActionCol.View onClick={onView} />
-      <TableActionCol.Download onClick={onDownload} />
+      <TableActionCol.Download variant='primary' onClick={onDownload}>
+        Download Batch
+      </TableActionCol.Download>
+      <TableActionCol.Download variant='destructive' onClick={onDownloadError}>
+        Download Errors
+      </TableActionCol.Download>
     </TableActionCol>
   );
 };

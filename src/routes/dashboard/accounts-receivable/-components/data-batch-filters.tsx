@@ -2,7 +2,6 @@ import { useMemo, useRef, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
 import { useInputDebounce } from '@/hooks/use-input-debounce';
-import { useFilterSearch } from '@/hooks/use-filter-search';
 import {
   Select,
   SelectContent,
@@ -10,11 +9,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  TEntryProcessorTypes,
-  type TDataBatchFilter,
-} from '@/interfaces/data-batch';
+import { TEntryProcessorTypes } from '@/interfaces/data-batch';
 import { enumToOptions } from '@/lib/utils';
+import { useSearchQuery } from '@/hooks/use-search-query';
 
 export const DataBatchFilters = () => {
   return (
@@ -30,9 +27,7 @@ export const DataBatchFilters = () => {
 
 const TargetBatchNumberFilter = () => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [{ batchNumber }, set, remove] = useFilterSearch<TDataBatchFilter>([
-    'batchNumber',
-  ]);
+  const [{ batchNumber }, set, remove] = useSearchQuery(['batchNumber']);
 
   useInputDebounce(inputRef, (value) => {
     if (value) {
@@ -55,8 +50,9 @@ const TargetBatchNumberFilter = () => {
 const entryProcessorOptions = enumToOptions(TEntryProcessorTypes);
 
 const EntryProcessorTypeFilter = () => {
-  const [{ entryProcessorType }, set, remove] =
-    useFilterSearch<TDataBatchFilter>(['entryProcessorType']);
+  const [{ entryProcessorType }, set, remove] = useSearchQuery([
+    'entryProcessorType',
+  ]);
 
   const [value, setValue] = useState<string>(
     entryProcessorType ? String(entryProcessorType) : ''

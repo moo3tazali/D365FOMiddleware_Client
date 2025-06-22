@@ -1,10 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from 'lucide-react';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -50,17 +47,12 @@ export const RowsPagination = memo(
       currentPage * currentSize,
       paginationData?.totalCount || 0
     );
-    const maxPage = Math.ceil(
-      (paginationData?.totalCount || 0) / currentSize
-    );
+    const maxPage = Math.ceil((paginationData?.totalCount || 0) / currentSize);
 
     return (
       <div className='w-full flex items-center justify-between gap-2'>
         <div className='flex items-center gap-2'>
-          <Label
-            htmlFor='rows-per-page'
-            className='whitespace-nowrap'
-          >
+          <Label htmlFor='rows-per-page' className='whitespace-nowrap'>
             Rows per page:
           </Label>
           <Select
@@ -68,13 +60,11 @@ export const RowsPagination = memo(
             onValueChange={handlePageSizeChange}
             disabled={disabled}
           >
-            <SelectTrigger
-              className='w-[75px]'
-              id='rows-per-page'
-            >
+            <SelectTrigger className='w-[75px]' id='rows-per-page'>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value='5'>5</SelectItem>
               <SelectItem value='10'>10</SelectItem>
               <SelectItem value='20'>20</SelectItem>
               <SelectItem value='50'>50</SelectItem>
@@ -86,8 +76,7 @@ export const RowsPagination = memo(
 
         <div className='flex items-center gap-2'>
           <span className='text-sm text-muted-foreground whitespace-nowrap'>
-            {startItem}-{endItem} of{' '}
-            {paginationData?.totalCount || 0}
+            {startItem}-{endItem} of {paginationData?.totalCount || 0}
           </span>
           <Pagination>
             <PaginationContent>
@@ -107,13 +96,9 @@ export const RowsPagination = memo(
                   aria-label='Go to next page'
                   size='icon'
                   variant='ghost'
-                  disabled={
-                    currentPage >= maxPage || disabled
-                  }
+                  disabled={currentPage >= maxPage || disabled}
                   onClick={() =>
-                    handleNextPage(
-                      paginationData?.totalCount || 0
-                    )
+                    handleNextPage(paginationData?.totalCount || 0)
                   }
                 >
                   <ChevronRightIcon className='h-4 w-4' />

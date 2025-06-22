@@ -1,7 +1,3 @@
-import type { z } from 'zod';
-import type { TPaginationSearchQuery } from './search-query';
-import type { DataBatchFilterSchema } from '@/schemas/data-batch';
-
 export enum TEntryProcessorTypes {
   AccountReceivableFreight = 1,
   AccountReceivableTrucking = 2,
@@ -37,9 +33,3 @@ export interface TDataBatch {
   totalFormattedCount: number;
   status: TDataBatchStatus;
 }
-
-export type TDataBatchFilter = z.infer<typeof DataBatchFilterSchema>;
-
-export interface IDataBatchQuery
-  extends TPaginationSearchQuery,
-    TDataBatchFilter {}

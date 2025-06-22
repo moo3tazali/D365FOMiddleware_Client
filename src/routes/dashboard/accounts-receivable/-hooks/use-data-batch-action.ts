@@ -19,6 +19,11 @@ export const useDataBatchAction = (data: TDataBatch) => {
     mutationFn: () => dataBatch.downloadEnhancedRecordList({ batchId }),
   });
 
+  const { mutateAsync: onDownloadError } = useMutation({
+    operationName: 'download record errors',
+    mutationFn: () => dataBatch.downloadBatchErrorList({ batchId }),
+  });
+
   const onView = useCallback(() => {
     navigate({
       to: ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.VIEW,
@@ -26,5 +31,5 @@ export const useDataBatchAction = (data: TDataBatch) => {
     });
   }, [batchId, navigate]);
 
-  return { onDownload, onView };
+  return { onDownload, onView, onDownloadError };
 };

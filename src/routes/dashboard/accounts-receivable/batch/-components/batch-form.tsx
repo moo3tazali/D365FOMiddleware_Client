@@ -111,7 +111,7 @@ export const BatchForm = () => {
                     },
                     multiple: false,
                     maxFiles: 1,
-                    maxSize: 1024 * 1024 * 10, // 10MB
+                    maxSize: 1024 * 1024 * 250, // 250MB
                   }}
                   className='relative bg-background rounded-lg p-2'
                   disabled={form.isPending}

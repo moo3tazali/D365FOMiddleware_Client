@@ -19,11 +19,7 @@ export const useBatchQueryData = (): [
   const { dataBatch } = useServices();
 
   const { data } = useSuspenseQuery(
-    dataBatch.freightDocumentQueryOptions({
-      page: 1,
-      size: 1,
-      batchNumber: batchId,
-    })
+    dataBatch.freightDocumentByIdQueryOptions(batchId)
   );
 
   const setValue = useCallback(

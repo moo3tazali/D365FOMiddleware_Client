@@ -24,6 +24,8 @@ export const API_ROUTES = {
       LIST: '/DataMigration/DataBatch/list',
       DOWNLOAD_ENHANCED_RECORD_LIST:
         '/DataMigration/DataBatch/download-enhanced-record-list',
+      DOWNLOAD_BATCH_ERROR_LIST:
+        '/DataMigration/DataBatch/download-batch-error-list',
       ERROR_LIST: '/DataMigration/DataBatch/error-list',
     },
   },

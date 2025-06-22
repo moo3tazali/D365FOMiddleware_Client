@@ -1,15 +1,9 @@
 import Cookies from 'universal-cookie';
+import { z, type ZodSchema } from 'zod';
 
 import { PAGE_SIZE_COOKIE_NAME } from '@/constants/cookies';
 import { DEFAULT_PAGE_SIZE } from '@/constants/pagination';
 import { tryParse } from '@/lib/utils';
-import type { RawFilter } from '@/interfaces/search-query';
-import { z, type ZodSchema } from 'zod';
-
-interface ParsedSearch {
-  maxCount: number;
-  skipCount: number;
-}
 
 export class SearchQuery {
   private static _instance: SearchQuery;
@@ -26,95 +20,44 @@ export class SearchQuery {
     return SearchQuery._instance;
   }
 
-  public getParsedSearch(searchQuery?: Record<string, unknown>): ParsedSearch;
-
-  public getParsedSearch<TFilter extends object>(
-    searchQuery?: Record<string, unknown>,
-    filterSchema?: ZodSchema<TFilter>
-  ): ParsedSearch & TFilter;
-
-  public getParsedSearch<TFilter extends object>(
-    searchQuery?: Record<string, unknown>,
-    filterSchema?: ZodSchema<TFilter>
-  ): ParsedSearch | (ParsedSearch & TFilter) {
-    const page = searchQuery?.page as string | undefined;
-    const size = searchQuery?.size as string | undefined;
-    const parsedPage = this._parsePage(page);
-    const parsedSize = this._parseSize(size);
-    const maxCount = parsedSize;
-    const skipCount = (parsedPage - 1) * parsedSize;
-
-    if (!searchQuery) {
-      return {
-        maxCount,
-        skipCount,
-      };
+  public getParsedSearch<T extends object>(
+    schema: ZodSchema<T>,
+    searchQuery?: Record<string, unknown>
+  ): T {
+    if (!(schema instanceof z.ZodObject)) {
+      throw new Error('Invalid schema');
     }
 
-    let parsedFilters: TFilter = {} as TFilter;
-
-    Object.entries(searchQuery).forEach(([key, value]) => {
-      if (key === 'filters' && typeof value === 'string') {
-        parsedFilters = {
-          ...parsedFilters,
-          ...this._parseFilters<TFilter>(value),
-        };
-      } else {
-        parsedFilters[key as keyof TFilter] = value as TFilter[keyof TFilter];
-      }
-    });
-
-    parsedFilters = this._parseAndValidateFilters(parsedFilters, filterSchema);
-
-    return {
-      maxCount,
-      skipCount,
-      ...parsedFilters,
-    };
-  }
-
-  private _parseSize(size?: string): number {
-    const cookieRowPerPage = this._cookies.get(PAGE_SIZE_COOKIE_NAME) as
+    const cookiesMaxCount = this._cookies.get(PAGE_SIZE_COOKIE_NAME) as
       | number
       | undefined;
+    const maxCount =
+      tryParse<number>(searchQuery?.maxCount as string | undefined) ||
+      cookiesMaxCount ||
+      DEFAULT_PAGE_SIZE;
+    const skipCount =
+      tryParse<number>(searchQuery?.skipCount as string | undefined) || 0;
 
-    return tryParse<number>(size) || cookieRowPerPage || DEFAULT_PAGE_SIZE;
-  }
+    const newSearchQuery = {
+      ...searchQuery,
+      maxCount,
+      skipCount,
+    };
 
-  private _parsePage(page?: string): number {
-    return tryParse<number>(page) || 1;
-  }
-
-  private _parseFilters<TFilter>(filters?: string): TFilter {
-    const initial = {} as TFilter;
-
-    if (!filters) return initial;
-
-    const parsed = tryParse<RawFilter[]>(filters);
-    if (!parsed) return initial;
-
-    parsed.forEach(({ key, value }) => {
-      if (!value) return;
-
-      initial[key as keyof TFilter] = value as TFilter[keyof TFilter];
-    });
-
-    return initial;
-  }
-
-  private _parseAndValidateFilters<TFilter extends object>(
-    filters: Partial<TFilter>,
-    schema?: ZodSchema<TFilter>
-  ): TFilter {
-    if (schema instanceof z.ZodObject) {
-      try {
-        return schema.strip().parse(filters) as TFilter;
-      } catch {
-        console.error('Invalid filters');
-        return {} as TFilter;
+    try {
+      return schema.strip().parse(newSearchQuery) as T;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new Error(
+          Object.entries(error.flatten().fieldErrors)
+            .map(
+              ([field, messages]) => `${field}: ${(messages || []).join(', ')}`
+            )
+            .join(' | ')
+        );
       }
-    }
 
-    return filters as TFilter;
+      throw error;
+    }
   }
 }

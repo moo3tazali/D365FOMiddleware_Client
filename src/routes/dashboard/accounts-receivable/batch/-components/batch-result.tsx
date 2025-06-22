@@ -14,6 +14,7 @@ import { useBatchQueryData } from '../-hooks/use-batch-query-data';
 import { Description } from '@/components/ui/description';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Link } from '@tanstack/react-router';
+import { ROUTES } from '@/router';
 
 export const BatchResult = () => {
   const [batch] = useBatchQueryData();
@@ -42,13 +43,19 @@ export const BatchResult = () => {
       </div>
 
       {batch && !!batch.totalUploadedCount && (
-        <BatchResultAlert errorCount={batch.errorCount} />
+        <BatchResultAlert errorCount={batch.errorCount} batchId={batch.id} />
       )}
     </div>
   );
 };
 
-const BatchResultAlert = ({ errorCount }: { errorCount: number }) => {
+const BatchResultAlert = ({
+  errorCount,
+  batchId,
+}: {
+  errorCount: number;
+  batchId: string;
+}) => {
   if (!errorCount)
     return (
       <Alert variant='default'>
@@ -73,7 +80,8 @@ const BatchResultAlert = ({ errorCount }: { errorCount: number }) => {
       <AlertDescription>
         <Link
           className='underline text-sm text-destructive hover:opacity-80'
-          to=''
+          to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.ERRORS}
+          params={{ batchId }}
         >
           Click here to review error details
         </Link>

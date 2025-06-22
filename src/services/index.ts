@@ -1,6 +1,7 @@
 import { AccountReceivable } from './account-receivable';
 import { Auth } from './auth';
 import { DataBatch } from './data-batch';
+import { DataBatchError } from './data-batch-error';
 import { User } from './user';
 
 export const services = {
@@ -8,6 +9,7 @@ export const services = {
   userService: User.getInstance(),
   accountReceivable: AccountReceivable.getInstance(),
   dataBatch: DataBatch.getInstance(),
+  dataBatchError: DataBatchError.getInstance(),
 } as const;
 
 export type TServices = typeof services;

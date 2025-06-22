@@ -12,11 +12,7 @@ export const Route = createFileRoute(
     const batchNumber = params.batchId;
     const { queryClient, services } = context;
     await queryClient.prefetchQuery(
-      services.dataBatch.freightDocumentQueryOptions({
-        page: 1,
-        size: 1,
-        batchNumber,
-      })
+      services.dataBatch.freightDocumentByIdQueryOptions(batchNumber)
     );
   },
 });
