@@ -12,6 +12,7 @@ import {
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { z } from 'zod';
 
 export const DashboardHeader = () => {
   return (
@@ -30,7 +31,7 @@ export const DashboardHeader = () => {
 };
 
 const HeaderBreadcrumb = memo(() => {
-  const { breadcrumbs } = useGenerateBreadCrumbs();
+  const { breadcrumbs } = useGenerateBreadCrumbs(['batch']);
 
   return (
     <Breadcrumb>
@@ -69,27 +70,57 @@ const CrumbItem = memo(
 
 CrumbItem.displayName = 'CrumbItem';
 
-const useGenerateBreadCrumbs = () => {
+// Batch ID schema validation
+const batchIdSchema = z.string().ulid();
+
+const useGenerateBreadCrumbs = (excludedSegments: string[] = []) => {
   const { pathname } = useLocation();
 
+  // Get clean path segments
   const segments = pathname.split('/').filter(Boolean);
 
-  let path = '';
+  const { breadcrumbs } = segments.reduce(
+    (acc, segment) => {
+      // Always update the full path
+      const nextPath = `${acc.currentPath}/${segment}`;
 
-  const breadcrumbs = segments.map((segment, index) => {
-    // eslint-disable-next-line react-compiler/react-compiler
-    path += `/${segment}`;
+      // Skip rendering this segment in the UI
+      if (excludedSegments.includes(segment)) {
+        return { ...acc, currentPath: nextPath };
+      }
 
-    const name = segment
-      .replace(/-/g, ' ')
-      .replace(/\b\w/g, (char) => char.toUpperCase());
+      let name: string;
+      const isValidBatchId = batchIdSchema.safeParse(segment).success;
 
-    return {
-      name,
-      to: path,
-      isLast: index === segments.length - 1,
-    };
-  });
+      if (isValidBatchId) {
+        name = `Batch #...${segment.slice(-6)}`;
+      } else {
+        name = segment
+          .replace(/-/g, ' ')
+          .replace(/\b\w/g, (char) => char.toUpperCase());
+      }
+
+      acc.breadcrumbs.push({
+        name,
+        to: nextPath,
+        isLast: false, // we fix this later
+      });
+
+      return {
+        breadcrumbs: acc.breadcrumbs,
+        currentPath: nextPath,
+      };
+    },
+    {
+      breadcrumbs: [] as { name: string; to: string; isLast: boolean }[],
+      currentPath: '',
+    }
+  );
+
+  // fix isLast flag properly
+  if (breadcrumbs.length > 0) {
+    breadcrumbs[breadcrumbs.length - 1].isLast = true;
+  }
 
   return { breadcrumbs };
 };

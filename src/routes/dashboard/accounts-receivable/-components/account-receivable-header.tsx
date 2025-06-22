@@ -10,7 +10,7 @@ export const AccountsReceivableHeader = () => {
 
       <div className='flex-1 flex justify-end gap-4'>
         <Button asChild className='w-full sm:max-w-xs'>
-          <Link to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH}>
+          <Link to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.NEW}>
             Upload Entries
           </Link>
         </Button>

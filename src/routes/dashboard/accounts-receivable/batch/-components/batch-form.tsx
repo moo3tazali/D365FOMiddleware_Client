@@ -97,7 +97,9 @@ export const BatchForm = () => {
           name='dataFile'
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor='dataFile'>Upload New Batch</FormLabel>
+              <FormLabel asChild>
+                <span>Upload New Batch</span>
+              </FormLabel>
               <FormControl>
                 <FileUploader
                   value={field.value}

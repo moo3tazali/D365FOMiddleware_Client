@@ -94,8 +94,8 @@ export const useBatchForm = () => {
       startUpload(options).then((data) => {
         setBatch(data);
         navigate({
-          to: ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH,
-          search: { batchId: data.id },
+          to: ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.VIEW,
+          params: { batchId: data.id },
         });
       });
     },

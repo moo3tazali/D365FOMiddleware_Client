@@ -36,7 +36,11 @@ export const ROUTES = {
     },
     ACCOUNTS_RECEIVABLE: {
       HOME: '/dashboard/accounts-receivable',
-      BATCH: '/dashboard/accounts-receivable/batch',
+      BATCH: {
+        NEW: '/dashboard/accounts-receivable/batch/new',
+        VIEW: '/dashboard/accounts-receivable/batch/$batchId',
+        ERRORS: '/dashboard/accounts-receivable/batch/$batchId/errors',
+      },
     },
     CASH_MANAGEMENT: {
       HOME: '/dashboard/cash-management',

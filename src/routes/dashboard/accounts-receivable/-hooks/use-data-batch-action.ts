@@ -21,8 +21,8 @@ export const useDataBatchAction = (data: TDataBatch) => {
 
   const onView = useCallback(() => {
     navigate({
-      to: ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH,
-      search: { batchId },
+      to: ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.VIEW,
+      params: { batchId },
     });
   }, [batchId, navigate]);
 

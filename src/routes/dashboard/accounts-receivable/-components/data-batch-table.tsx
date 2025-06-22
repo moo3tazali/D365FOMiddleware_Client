@@ -90,8 +90,8 @@ const columns: ColumnDef<TDataBatch>[] = [
 const CellId = ({ value }: { value: string }) => {
   return (
     <Link
-      to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH}
-      search={{ batchId: value }}
+      to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.VIEW}
+      params={{ batchId: value }}
     >
       {value}
     </Link>

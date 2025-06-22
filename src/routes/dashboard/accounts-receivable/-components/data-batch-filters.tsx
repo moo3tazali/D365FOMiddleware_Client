@@ -65,7 +65,9 @@ const EntryProcessorTypeFilter = () => {
   const SelectItems = useMemo(
     () =>
       entryProcessorOptions.map(({ label, value }) => (
-        <SelectItem value={String(value)}>{label}</SelectItem>
+        <SelectItem key={value} value={String(value)}>
+          {label}
+        </SelectItem>
       )),
     []
   );

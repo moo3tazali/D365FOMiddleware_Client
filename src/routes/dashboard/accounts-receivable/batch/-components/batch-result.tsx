@@ -28,7 +28,10 @@ export const BatchResult = () => {
       </div>
       <div className='grid grid-cols-fit-175 sm:grid-cols-fit-250 gap-2.5'>
         {items.map(({ Icon, total, label }) => (
-          <Frame className='flex-col gap-5 items-stretch p-5 md:p-10 justify-between'>
+          <Frame
+            key={label}
+            className='flex-col gap-5 items-stretch p-5 md:p-10 justify-between'
+          >
             <div className='flex items-center justify-between'>
               <span className='text-[clamp(1rem,1.5vw,1.5rem)]'>{total}</span>
               <Icon />
@@ -38,7 +41,9 @@ export const BatchResult = () => {
         ))}
       </div>
 
-      {batch && <BatchResultAlert errorCount={batch.errorCount} />}
+      {batch && !!batch.totalUploadedCount && (
+        <BatchResultAlert errorCount={batch.errorCount} />
+      )}
     </div>
   );
 };

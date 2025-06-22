@@ -1,4 +1,4 @@
-import { useSearch } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 import { useCallback } from 'react';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 
@@ -12,8 +12,8 @@ export const useBatchQueryData = (): [
 ] => {
   const queryClient = useQueryClient();
 
-  const { batchId } = useSearch({
-    from: '/dashboard/accounts-receivable/batch/',
+  const { batchId } = useParams({
+    strict: false,
   });
 
   const { dataBatch } = useServices();

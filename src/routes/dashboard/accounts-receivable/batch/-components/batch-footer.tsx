@@ -10,7 +10,7 @@ export const BatchFooter = () => {
   const [batch] = useBatchQueryData();
 
   const ActionBtn = (() => {
-    if (!batch) return <UploadBtn />;
+    if (!batch || !batch?.totalUploadedCount) return <UploadBtn />;
 
     if (batch && batch.errorCount) return <UploadBtn />;
 
