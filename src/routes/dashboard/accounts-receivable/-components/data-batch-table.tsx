@@ -90,7 +90,7 @@ const columns: ColumnDef<TDataBatch>[] = [
 
 const CellId = ({ value }: { value: string }) => {
   return (
-    <Button asChild variant='link'>
+    <Button asChild variant='link' className='!p-0 items-start break-words'>
       <Link
         to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.VIEW}
         params={{ batchId: value }}

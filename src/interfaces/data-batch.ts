@@ -17,19 +17,18 @@ export enum TDataBatchStatus {
 
 export interface TDataBatch {
   id: string;
+  billingCodeId?: string;
+  apiServiceType: number;
   creationDate: string; // ISO date string
   createdBy?: string;
   lastModifiedDate?: string;
   lastModifiedBy?: string;
   notes?: string;
-  sourceRequest?: string;
   entryProcessorType: TEntryProcessorTypes;
-  billingClassificationCode: number;
-  targetService: number;
   description?: string;
   successCount: number;
   errorCount: number;
-  totalUploadedCount: number;
   totalFormattedCount: number;
+  totalUploadedCount: number;
   status: TDataBatchStatus;
 }

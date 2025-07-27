@@ -1,5 +1,5 @@
 import { useParams } from '@tanstack/react-router';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 
 import { useServices } from '@/hooks/use-services';
@@ -22,6 +22,11 @@ export const useBatchQueryData = (): [
     dataBatch.freightDocumentByIdQueryOptions(batchId)
   );
 
+  const value = useMemo(
+    () => data.items.find((item) => item.id === batchId),
+    [data.items, batchId]
+  );
+
   const setValue = useCallback(
     (newBatch: TDataBatch): void => {
       const newQueryKey = [
@@ -39,8 +44,6 @@ export const useBatchQueryData = (): [
   );
 
   if (!data || !batchId) return [undefined, setValue];
-
-  const value = data.items.find((item) => item.id === batchId);
 
   return [value, setValue];
 };

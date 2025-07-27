@@ -63,6 +63,13 @@ export class AccountReceivable {
     });
   };
 
+  public isCreditNote(type: number | string) {
+    return [
+      this.UPLOAD_TYPES.FREIGHT_CREDIT_NOTE_DOC,
+      this.UPLOAD_TYPES.TRUCKING_CREDIT_NOTE_DOC,
+    ].includes(Number(type));
+  }
+
   private async _getUploadApiRoute(type: number | string) {
     switch (Number(type)) {
       case this.UPLOAD_TYPES.FREIGHT_DOC:
@@ -77,9 +84,11 @@ export class AccountReceivable {
           .TRUCKING_CREDIT_NOTE_DOCUMENT;
       default:
         throw new Error(
-          `Invalid upload type, Upload type must satisfies ${Object.values(
+          `Invalid upload type, Upload type must satisfies ${Object.entries(
             this.UPLOAD_TYPES
-          )}`
+          )
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', ')}`
         );
     }
   }

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@tanstack/react-router';
@@ -8,36 +8,50 @@ import { useServices } from '@/hooks/use-services';
 import { useMutation } from '@/hooks/use-mutation';
 import { useBatchQueryData } from './use-batch-query-data';
 import { ROUTES } from '@/router';
+import { AccountReceivable } from '@/services/account-receivable';
 
 const acceptedTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'application/vnd.ms-excel',
 ];
 
-const FormSchema = z.object({
-  type: z.string().min(1, 'Please select the target service.'),
-  companyId: z.string(),
-  billingCodeId: z
-    .string()
-    .min(1, 'Please select the target service billing classification.'),
-  dataFile: z.custom<File[] | null>().superRefine((value, ctx) => {
-    if (!value || value.length === 0) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Please select a file.',
-      });
+const FormSchema = z
+  .object({
+    type: z.string().min(1, 'Please select the target service.'),
+    companyId: z.string(),
+    billingCodeId: z.string().optional(),
+    dataFile: z.custom<File[] | null>().superRefine((value, ctx) => {
+      if (!value || value.length === 0) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Please select a file.',
+        });
 
-      return;
-    }
+        return;
+      }
 
-    if (!acceptedTypes.includes(value?.[0].type)) {
+      if (!acceptedTypes.includes(value?.[0].type)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Please select a valid file type (Excel).',
+        });
+      }
+    }),
+  })
+  .superRefine((data, ctx) => {
+    const type = Number(data.type);
+    const billingCode = data.billingCodeId;
+    const isBillingCodeRequired =
+      !AccountReceivable.getInstance().isCreditNote(type);
+
+    if (isBillingCodeRequired && (!billingCode || billingCode.trim() === '')) {
       ctx.addIssue({
+        path: ['billingCodeId'],
         code: 'custom',
-        message: 'Please select a valid file type (Excel).',
+        message: 'Please select the target service billing classification.',
       });
     }
-  }),
-});
+  });
 
 type FormData = z.infer<typeof FormSchema>;
 
@@ -54,8 +68,8 @@ export const useBatchForm = () => {
   if (batch) {
     defaultValues = {
       ...defaultValues,
-      type: String(batch?.targetService ?? ''),
-      billingCodeId: String(batch?.billingClassificationCode ?? ''),
+      type: String(batch?.entryProcessorType ?? ''),
+      billingCodeId: String(batch?.billingCodeId ?? ''),
     };
   }
 
@@ -65,6 +79,8 @@ export const useBatchForm = () => {
   });
 
   const [uploadProgress, setUploadProgress] = useState(0);
+
+  const [billingCodeKey, setBillingCodeKey] = useState(crypto.randomUUID());
 
   const { accountReceivable } = useServices();
 
@@ -76,6 +92,18 @@ export const useBatchForm = () => {
   });
 
   const navigate = useNavigate();
+
+  const type = form.watch('type');
+
+  const isBillingCodeDisabled = useMemo(
+    () => accountReceivable.isCreditNote(type),
+    [type, accountReceivable]
+  );
+
+  const isDisabled = useMemo(
+    () => (batch && !batch.errorCount) || isPending,
+    [batch, isPending]
+  );
 
   const onSubmit = useCallback(
     (values: FormData) => {
@@ -102,11 +130,19 @@ export const useBatchForm = () => {
     [startUpload, navigate, setBatch]
   );
 
+  useEffect(() => {
+    if (!type) return;
+    form.resetField('billingCodeId');
+    setBillingCodeKey(crypto.randomUUID());
+  }, [type, form]);
+
   return {
     form: {
       ...form,
-      isPending,
       uploadProgress,
+      billingCodeKey,
+      isBillingCodeDisabled,
+      isDisabled,
       onSubmit: form.handleSubmit(onSubmit),
     },
     UPLOAD_TYPES: accountReceivable.UPLOAD_TYPES,

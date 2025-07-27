@@ -41,7 +41,7 @@ export const BatchForm = () => {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
-                  disabled={form.isPending}
+                  disabled={form.isDisabled}
                   name='type'
                 >
                   <FormControl>
@@ -55,6 +55,16 @@ export const BatchForm = () => {
                     </SelectItem>
                     <SelectItem value={String(UPLOAD_TYPES.TRUCKING_DOC)}>
                       Trucking
+                    </SelectItem>
+                    <SelectItem
+                      value={String(UPLOAD_TYPES.FREIGHT_CREDIT_NOTE_DOC)}
+                    >
+                      Freight Credit Note
+                    </SelectItem>
+                    <SelectItem
+                      value={String(UPLOAD_TYPES.TRUCKING_CREDIT_NOTE_DOC)}
+                    >
+                      Trucking Credit Note
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -72,8 +82,9 @@ export const BatchForm = () => {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
-                  disabled={form.isPending}
+                  disabled={form.isBillingCodeDisabled || form.isDisabled}
                   name='billingCodeId'
+                  key={form.billingCodeKey}
                 >
                   <FormControl>
                     <SelectTrigger className='w-full'>
@@ -114,7 +125,7 @@ export const BatchForm = () => {
                     maxSize: 1024 * 1024 * 250, // 250MB
                   }}
                   className='relative bg-background rounded-lg p-2'
-                  disabled={form.isPending}
+                  disabled={form.isDisabled}
                 >
                   <FileInput
                     id='dataFile'
@@ -160,7 +171,7 @@ export const BatchForm = () => {
           type='submit'
           id='upload_entries_btn'
           className='hidden absolute'
-          aria-disabled={form.isPending}
+          aria-disabled={form.isDisabled}
         />
       </form>
     </Form>
