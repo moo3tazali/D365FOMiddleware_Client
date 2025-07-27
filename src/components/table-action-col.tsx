@@ -4,6 +4,7 @@ import {
   Download as DonwloadIcon,
   MoreVertical,
   Telescope,
+  Trash2,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -79,3 +80,17 @@ const Download = ({
 };
 
 TableActionCol.Download = Download;
+
+const Delete = ({
+  children = 'Delete',
+  ...props
+}: React.ComponentProps<typeof DropdownMenuItem>) => {
+  return (
+    <DropdownMenuItem {...props}>
+      <Trash2 />
+      {children}
+    </DropdownMenuItem>
+  );
+};
+
+TableActionCol.Delete = Delete;

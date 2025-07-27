@@ -27,6 +27,7 @@ export const API_ROUTES = {
       DOWNLOAD_BATCH_ERROR_LIST:
         '/DataMigration/DataBatch/download-batch-error-list',
       ERROR_LIST: '/DataMigration/DataBatch/error-list',
+      DELETE: '/DataMigration/DataBatch',
     },
   },
 } as const;

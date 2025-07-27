@@ -136,7 +136,8 @@ const CellStatus = ({ value }: { value: keyof typeof statusColorMap }) => {
 };
 
 const CellAction = ({ row }: { row: TDataBatch }) => {
-  const { onDownload, onView, onDownloadError } = useDataBatchAction(row);
+  const { onDownload, onView, onDownloadError, onDelete } =
+    useDataBatchAction(row);
   return (
     <TableActionCol>
       {/* <TableActionCol.Copy textToCopy={row.id}>
@@ -149,6 +150,9 @@ const CellAction = ({ row }: { row: TDataBatch }) => {
       <TableActionCol.Download variant='destructive' onClick={onDownloadError}>
         Download Errors
       </TableActionCol.Download>
+      <TableActionCol.Delete variant='destructive' onClick={onDelete}>
+        Delete Batch
+      </TableActionCol.Delete>
     </TableActionCol>
   );
 };

@@ -65,6 +65,12 @@ export class DataBatch {
     );
   };
 
+  public deleteBatch = async (query: { batchId: string }): Promise<void> => {
+    await this.syncService.del(API_ROUTES.DATA_MIGRATION.DATA_BATCH.DELETE, {
+      query: { id: query.batchId },
+    });
+  };
+
   public freightDocumentQueryOptions = (searchQuery?: {}) => {
     const query = this.searchQuery.getParsedSearch(
       DataBatchQuerySchema,

@@ -24,6 +24,12 @@ export const useDataBatchAction = (data: TDataBatch) => {
     mutationFn: () => dataBatch.downloadBatchErrorList({ batchId }),
   });
 
+  const { mutateAsync: onDelete } = useMutation({
+    operationName: 'delete record',
+    mutationFn: () => dataBatch.deleteBatch({ batchId }),
+    refetchQueries: [[dataBatch.queryKey]],
+  });
+
   const onView = useCallback(() => {
     navigate({
       to: ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.VIEW,
@@ -31,5 +37,5 @@ export const useDataBatchAction = (data: TDataBatch) => {
     });
   }, [batchId, navigate]);
 
-  return { onDownload, onView, onDownloadError };
+  return { onDownload, onView, onDownloadError, onDelete };
 };
