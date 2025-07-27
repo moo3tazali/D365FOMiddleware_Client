@@ -3,11 +3,10 @@ import { DataBatchHeader } from './-components/data-batch-header';
 import { DataBatchTable } from './-components/data-batch-table';
 import { ErrorFallback, LoadingFallback } from '@/components/fallback';
 
-export const Route = createFileRoute('/dashboard/accounts-receivable/')({
-  component: AccountsReceivablePage,
+export const Route = createFileRoute('/dashboard/ledger/')({
+  component: LedgerPage,
   beforeLoad: async ({ context, search }) => {
     const { services, queryClient } = context;
-
     await queryClient.prefetchQuery(
       services.dataBatch.freightDocumentQueryOptions(search)
     );
@@ -16,7 +15,7 @@ export const Route = createFileRoute('/dashboard/accounts-receivable/')({
   errorComponent: ErrorFallback,
 });
 
-function AccountsReceivablePage() {
+function LedgerPage() {
   return (
     <div className='h-full space-y-10'>
       <DataBatchHeader />

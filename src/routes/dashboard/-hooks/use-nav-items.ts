@@ -6,6 +6,7 @@ import {
   HandCoins,
   Wallet,
   Settings,
+  BookOpen,
 } from 'lucide-react';
 
 import { ROUTES } from '@/router';
@@ -25,9 +26,7 @@ export const useNavItems = () => {
         title: 'Accounts Payable',
         url: ROUTES.DASHBOARD.ACCOUNTS_PAYABLE.HOME,
         icon: Landmark,
-        isActive: pathname.startsWith(
-          ROUTES.DASHBOARD.ACCOUNTS_PAYABLE.HOME
-        ),
+        isActive: pathname.startsWith(ROUTES.DASHBOARD.ACCOUNTS_PAYABLE.HOME),
       },
       {
         title: 'Accounts Receivable',
@@ -41,17 +40,19 @@ export const useNavItems = () => {
         title: 'Cash Management',
         url: ROUTES.DASHBOARD.CASH_MANAGEMENT.HOME,
         icon: Wallet,
-        isActive: pathname.startsWith(
-          ROUTES.DASHBOARD.CASH_MANAGEMENT.HOME
-        ),
+        isActive: pathname.startsWith(ROUTES.DASHBOARD.CASH_MANAGEMENT.HOME),
+      },
+      {
+        title: 'Ledger',
+        url: ROUTES.DASHBOARD.LEDGER.HOME,
+        icon: BookOpen,
+        isActive: pathname.startsWith(ROUTES.DASHBOARD.LEDGER.HOME),
       },
       {
         title: 'Settings',
         url: ROUTES.DASHBOARD.SETTINGS.HOME,
         icon: Settings,
-        isActive: pathname.startsWith(
-          ROUTES.DASHBOARD.SETTINGS.HOME
-        ),
+        isActive: pathname.startsWith(ROUTES.DASHBOARD.SETTINGS.HOME),
       },
     ],
     [pathname]

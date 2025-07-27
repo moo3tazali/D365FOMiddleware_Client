@@ -48,7 +48,7 @@ const TargetBatchNumberFilter = () => {
 };
 
 const entryProcessorOptions = enumToOptions(TEntryProcessorTypes).filter(
-  (item) => item.label.startsWith('Account Receivable')
+  (item) => item.label.startsWith('Ledger')
 );
 
 const EntryProcessorTypeFilter = () => {

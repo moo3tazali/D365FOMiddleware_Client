@@ -6,7 +6,7 @@ import { AuthGuard } from '@/guards/auth-guard';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { DashboardSidebar } from './-components/dashboard-sidebar';
 import { DashboardHeader } from './-components/dashboard-header';
-import { NotFoundFallback } from '@/components/fallback';
+import { ErrorFallback, NotFoundFallback } from '@/components/fallback';
 import { SIDEBAR_COOKIE_NAME } from '@/constants/cookies';
 
 export const Route = createFileRoute('/dashboard')({
@@ -22,6 +22,7 @@ export const Route = createFileRoute('/dashboard')({
       });
   },
   notFoundComponent: NotFoundFallback,
+  errorComponent: ErrorFallback,
 });
 
 function DashboardLayout() {

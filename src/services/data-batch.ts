@@ -3,17 +3,23 @@ import { z } from 'zod';
 import type { PaginationRes } from '@/interfaces/api-res';
 import { API_ROUTES } from './core/api-routes';
 import { Sync } from './core/sync';
-import type { TDataBatch } from '@/interfaces/data-batch';
+import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
 import { queryOptions } from '@tanstack/react-query';
 import { SearchQuery } from './core/search-query';
 import { PaginationSchema } from '@/schemas/pagination-schema';
 
 const DataBatchQuerySchema = PaginationSchema.extend({
-  batchNumber: z.string().optional(),
-  entryProcessorType: z.number().optional(),
+  batchNumber: z.string().ulid('Invalid batch number').optional(),
+  entryProcessorType: z
+    .array(z.number(), {
+      invalid_type_error: 'Entry processor type must be an array of numbers',
+    })
+    .optional(),
 });
 
 export type DataBatchQuery = z.infer<typeof DataBatchQuerySchema>;
+
+type TModule = 'Account Receivable' | 'Ledger';
 
 export class DataBatch {
   private static _instance: DataBatch;
@@ -72,10 +78,13 @@ export class DataBatch {
   };
 
   public freightDocumentQueryOptions = (searchQuery?: {}) => {
-    const query = this.searchQuery.getParsedSearch(
-      DataBatchQuerySchema,
-      searchQuery
-    );
+    const entryProcessorType =
+      this._getDefaultEntryProcessorType('Account Receivable');
+
+    const query = this.searchQuery.getParsedSearch(DataBatchQuerySchema, {
+      entryProcessorType,
+      ...searchQuery,
+    });
 
     const queryKey: (string | DataBatchQuery)[] = [this.queryKey];
 
@@ -103,4 +112,24 @@ export class DataBatch {
       queryFn: () => this.list(query),
     });
   };
+
+  private _getDefaultEntryProcessorType(module: TModule) {
+    switch (module) {
+      case 'Account Receivable':
+        return [
+          TEntryProcessorTypes.AccountReceivableFreight,
+          TEntryProcessorTypes.AccountReceivableTrucking,
+          TEntryProcessorTypes.AccountReceivableFreightCreditNote,
+          TEntryProcessorTypes.AccountReceivableTruckingCreditNote,
+        ];
+      case 'Ledger':
+        return [
+          TEntryProcessorTypes.LedgerFreightClosingEntry,
+          TEntryProcessorTypes.LedgerTruckingClosingEntry,
+          TEntryProcessorTypes.LedgerFreightVendorEntry,
+        ];
+      default:
+        return [];
+    }
+  }
 }
