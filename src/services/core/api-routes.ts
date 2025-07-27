@@ -6,6 +6,15 @@ export const API_ROUTES = {
     REGISTER: '/auth/register',
   },
   DATA_MIGRATION: {
+    DATA_BATCH: {
+      LIST: '/DataMigration/DataBatch/list',
+      DOWNLOAD_ENHANCED_RECORD_LIST:
+        '/DataMigration/DataBatch/download-enhanced-record-list',
+      DOWNLOAD_BATCH_ERROR_LIST:
+        '/DataMigration/DataBatch/download-batch-error-list',
+      ERROR_LIST: '/DataMigration/DataBatch/error-list',
+      DELETE: '/DataMigration/DataBatch',
+    },
     ACCOUNT_RECEIVABLE: {
       FREIGHT_DOCUMENT: '/DataMigration/AccountReceivable/Freight-Document',
       FREIGHT: '/DataMigration/AccountReceivable/Freight',
@@ -20,14 +29,19 @@ export const API_ROUTES = {
       TRUCKING_CREDIT_NOTE:
         '/DataMigration/AccountReceivable/Trucking-CreditNote',
     },
-    DATA_BATCH: {
-      LIST: '/DataMigration/DataBatch/list',
-      DOWNLOAD_ENHANCED_RECORD_LIST:
-        '/DataMigration/DataBatch/download-enhanced-record-list',
-      DOWNLOAD_BATCH_ERROR_LIST:
-        '/DataMigration/DataBatch/download-batch-error-list',
-      ERROR_LIST: '/DataMigration/DataBatch/error-list',
-      DELETE: '/DataMigration/DataBatch',
+    LEDGER: {
+      FREIGHT_CLOSING_DOCUMENT:
+        '/DataMigration/Ledger/Freight-Closing-Document',
+      FREIGHT_CLOSING: '/DataMigration/Ledger/Freight-Closing',
+      TRUCKING_CLOSING_DOCUMENT:
+        '/DataMigration/Ledger/Trucking-Closing-Document',
+      TRUCKING_CLOSING: '/DataMigration/Ledger/Trucking-Closing',
+      FREIGHT_VENDOR_ACCRUAL_DOCUMENT:
+        '/DataMigration/Ledger/Freight-Vendor-Accrual-Document',
+      FREIGHT_VENDOR_ACCRUAL: '/DataMigration/Ledger/Freight-Vendor-Accrual',
+      TRUCKING_VENDOR_ACCRUAL_DOCUMENT:
+        '/DataMigration/Ledger/Trucking-Vendor-Accrual-Document',
+      TRUCKING_VENDOR_ACCRUAL: '/DataMigration/Ledger/Trucking-Vendor-Accrual',
     },
   },
 } as const;

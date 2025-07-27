@@ -31,7 +31,7 @@ export const BatchForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.onSubmit} className='space-y-5'>
-        <div className='flex flex-col lg:flex-row gap-5 *:flex-1'>
+        <div className='max-w-xl'>
           <FormField
             control={form.control}
             name='type'
@@ -50,51 +50,26 @@ export const BatchForm = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value={String(UPLOAD_TYPES.FREIGHT_DOC)}>
-                      Freight
-                    </SelectItem>
-                    <SelectItem value={String(UPLOAD_TYPES.TRUCKING_DOC)}>
-                      Trucking
+                    <SelectItem
+                      value={String(UPLOAD_TYPES.FREIGHT_CLOSING_DOC)}
+                    >
+                      Freight Closing
                     </SelectItem>
                     <SelectItem
-                      value={String(UPLOAD_TYPES.FREIGHT_CREDIT_NOTE_DOC)}
+                      value={String(UPLOAD_TYPES.TRUCKING_CLOSING_DOC)}
                     >
-                      Freight Credit Note
+                      Trucking Closing
                     </SelectItem>
                     <SelectItem
-                      value={String(UPLOAD_TYPES.TRUCKING_CREDIT_NOTE_DOC)}
+                      value={String(UPLOAD_TYPES.FREIGHT_VENDOR_ACCRUAL_DOC)}
                     >
-                      Trucking Credit Note
+                      Freight Vendor Accrual
                     </SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='billingCodeId'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Billing Classification</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={form.isBillingCodeDisabled || form.isDisabled}
-                  name='billingCodeId'
-                  key={form.billingCodeKey}
-                >
-                  <FormControl>
-                    <SelectTrigger className='w-full'>
-                      <SelectValue placeholder='Select the target service billing classification in dynamics' />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value='INV-FW'>Invoices</SelectItem>
-                    <SelectItem value='OR-FW'>Official Receipts</SelectItem>
-                    <SelectItem value='OF-FW'>Ocean Freight</SelectItem>
+                    <SelectItem
+                      value={String(UPLOAD_TYPES.TRUCKING_VENDOR_ACCRUAL_DOC)}
+                    >
+                      Trucking Vendor Accrual
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
