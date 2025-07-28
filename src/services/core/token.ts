@@ -2,8 +2,6 @@ import Dexie from 'dexie';
 import Cookies from 'universal-cookie';
 import { decodeJwt } from 'jose';
 
-import type { UserPayload } from '@/interfaces/user';
-
 export interface IToken {
   tokenType: string;
   accessToken: string;
@@ -110,31 +108,11 @@ export class Token {
   }
 
   // decode token to get user info payload
-  public decodeToken(token: string): UserPayload {
+  public decodeToken<T>(token: string): T {
     try {
-      const payload = decodeJwt<UserPayload>(token);
-
-      return {
-        id: payload.sub ?? '',
-        username: payload.username,
-        email: payload.email,
-        avatarPath: payload.avatarPath,
-        roles: payload.roles,
-      };
+      return decodeJwt<T>(token);
     } catch {
       throw new Error('Error decoding token');
-    }
-  }
-
-  // get current user from access token
-  public getCurrentUser(): UserPayload | null {
-    try {
-      const accessToken = this.getAccessToken();
-      if (!accessToken) return null;
-
-      return this.decodeToken(accessToken);
-    } catch {
-      return null;
     }
   }
 

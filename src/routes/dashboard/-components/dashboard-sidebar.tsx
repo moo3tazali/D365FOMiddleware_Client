@@ -18,12 +18,6 @@ import { useNavItems } from '../-hooks/use-nav-items';
 import { createElement } from 'react';
 
 export function DashboardSidebar() {
-  const user = {
-    username: 'John Doe',
-    email: 'john.doe@example.com',
-    avatarPath: '',
-  };
-
   const { items } = useNavItems();
 
   return (
@@ -48,7 +42,7 @@ export function DashboardSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );

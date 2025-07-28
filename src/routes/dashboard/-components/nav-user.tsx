@@ -1,9 +1,4 @@
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  LogOut,
-} from 'lucide-react';
+import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from 'lucide-react';
 
 import {
   SidebarMenu,
@@ -20,26 +15,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useLogout } from '@/routes/_auth/-hooks/use-logout';
+import { useAuth } from '@/hooks/use-auth';
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    username: string;
-    email: string;
-    avatarPath: string;
-  } | null;
-}) {
+export function NavUser() {
   const { isMobile } = useSidebar();
 
-  const fallback = user?.username
-    ?.slice(0, 2)
-    ?.toUpperCase();
+  const user = useAuth((state) => state.user);
+
+  const fallback = user?.username?.slice(0, 2)?.toUpperCase();
 
   return (
     <SidebarMenu>
@@ -52,8 +37,8 @@ export function NavUser({
             >
               <Avatar className='h-8 w-8 rounded-lg'>
                 <AvatarImage
-                  src={user?.avatarPath}
-                  alt={user?.username}
+                  src={user?.avatarPath ?? ''}
+                  alt={user?.username ?? ''}
                 />
                 <AvatarFallback className='rounded-lg'>
                   {fallback}
@@ -61,11 +46,9 @@ export function NavUser({
               </Avatar>
               <div className='grid flex-1 text-left text-sm leading-tight'>
                 <span className='truncate font-semibold'>
-                  {user?.username}
+                  {user?.username ?? ''}
                 </span>
-                <span className='truncate text-xs'>
-                  {user?.email}
-                </span>
+                <span className='truncate text-xs'>{user?.email ?? ''}</span>
               </div>
               <ChevronsUpDown className='ml-auto size-4' />
             </SidebarMenuButton>
@@ -80,8 +63,8 @@ export function NavUser({
               <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
                 <Avatar className='h-8 w-8 rounded-lg'>
                   <AvatarImage
-                    src={user?.avatarPath}
-                    alt={user?.username}
+                    src={user?.avatarPath ?? ''}
+                    alt={user?.username ?? ''}
                   />
                   <AvatarFallback className='rounded-lg'>
                     {fallback}
@@ -89,11 +72,9 @@ export function NavUser({
                 </Avatar>
                 <div className='grid flex-1 text-left text-sm leading-tight'>
                   <span className='truncate font-semibold'>
-                    {user?.username}
+                    {user?.username ?? ''}
                   </span>
-                  <span className='truncate text-xs'>
-                    {user?.email}
-                  </span>
+                  <span className='truncate text-xs'>{user?.email ?? ''}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -118,10 +99,10 @@ export function NavUser({
 }
 
 const LogoutButton = () => {
-  const onLogout = () => {};
+  const { onLogout, isPending } = useLogout();
 
   return (
-    <DropdownMenuItem onClick={onLogout}>
+    <DropdownMenuItem onClick={onLogout} disabled={isPending}>
       <LogOut />
       Log out
     </DropdownMenuItem>

@@ -1,6 +1,8 @@
 import { Token } from './core/token';
 import { Sync } from './core/sync';
 import { API_ROUTES } from './core/api-routes';
+import { User } from './user';
+import type { TUser } from '@/interfaces/user';
 
 export interface LoginPayload {
   email: string;
@@ -29,6 +31,7 @@ interface RefreshTokenResponse {
 
 const syncService = Sync.getInstance({ public: true });
 const tokenService = Token.getInstance();
+const userService = User.getInstance();
 
 export class Auth {
   private static _instance: Auth;
@@ -43,7 +46,7 @@ export class Auth {
     return Auth._instance;
   }
 
-  public async login(data: LoginPayload): Promise<void> {
+  public async login(data: LoginPayload): Promise<TUser> {
     try {
       const res = await syncService.save<LoginResponse, LoginPayload>(
         API_ROUTES.PUBLIC.IDENTITY.LOGIN,
@@ -51,6 +54,10 @@ export class Auth {
       );
 
       await tokenService.setToken(res);
+
+      userService.set(data);
+
+      return userService.get!;
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
@@ -84,6 +91,7 @@ export class Auth {
   public async logout(): Promise<void> {
     try {
       await tokenService.clearToken();
+      userService.clear();
     } catch (error) {
       console.error('Logout failed:', error);
       throw error;
@@ -95,6 +103,6 @@ export class Auth {
   }
 
   public getCurrentUser() {
-    return tokenService.getCurrentUser();
+    return userService.get;
   }
 }

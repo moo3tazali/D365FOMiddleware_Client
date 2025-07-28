@@ -5,6 +5,7 @@ import { useNavigate, useRouter, useSearch } from '@tanstack/react-router';
 
 import { useMutation } from '@/hooks/use-mutation';
 import { useAuth } from '@/hooks/use-auth';
+import { ROUTES } from '@/router';
 
 const FormSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email address'),
@@ -45,7 +46,7 @@ export const useLogin = () => {
       }
 
       navigate({
-        to: '/dashboard',
+        to: ROUTES.DASHBOARD.HOME,
         replace: true,
       });
     },

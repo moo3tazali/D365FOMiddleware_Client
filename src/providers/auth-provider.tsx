@@ -3,10 +3,12 @@ import { createStore, type StoreApi } from 'zustand';
 
 import type { LoginPayload } from '@/services/auth';
 import { useServices } from '@/hooks/use-services';
+import type { TUser } from '@/interfaces/user';
 
 export type TAuth = {
   isAuthenticated: boolean;
   isLoginModalOpen: boolean;
+  user: TUser | null;
   login: (data: LoginPayload) => Promise<void>;
   logout: () => Promise<void>;
 };
@@ -24,22 +26,25 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     createStore<TAuth>((setState) => ({
       isAuthenticated: authService.isAuthenticated(),
       isLoginModalOpen: false,
+      user: authService.getCurrentUser(),
       login: async (data: LoginPayload) => {
-        await authService.login(data);
+        const user = await authService.login(data);
         setState((state) => {
           if (state.isLoginModalOpen) {
             return {
               isLoginModalOpen: false,
               isAuthenticated: true,
+              user,
             };
           }
-          return { isAuthenticated: true };
+          return { isAuthenticated: true, user };
         });
       },
       logout: async () => {
         await authService.logout();
         setState({
           isAuthenticated: false,
+          user: null,
         });
       },
     }))
