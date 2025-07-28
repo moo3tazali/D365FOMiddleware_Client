@@ -4,9 +4,8 @@ import { ROUTES } from '@/router';
 
 export const Route = createFileRoute('/_auth')({
   component: AuthLayout,
-  beforeLoad: () => {
-    // TODO: check if user is authenticated
-    const isAuthenticated = false;
+  beforeLoad: ({ context: { auth } }) => {
+    const isAuthenticated = auth.isAuthenticated;
 
     if (isAuthenticated)
       throw redirect({

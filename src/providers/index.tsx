@@ -4,6 +4,7 @@ import { CookiesProvider } from 'react-cookie';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { ServicesProvider } from './services-provider';
+import { AuthProvider } from './auth-provider';
 import { services } from '@/services';
 import { ThemeProvider } from './theme-provider';
 
@@ -31,15 +32,17 @@ export const AppProviders = ({ children }: Props) => {
     <ServicesProvider services={services}>
       <CookiesProvider defaultSetOptions={{ path: '/' }}>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider>
-            {children}
-            <Toaster
-              toastOptions={{
-                className: '!text-foreground !bg-background',
-              }}
-            />
-            <ReactQueryDevtools />
-          </ThemeProvider>
+          <AuthProvider>
+            <ThemeProvider>
+              {children}
+              <Toaster
+                toastOptions={{
+                  className: '!text-foreground !bg-background',
+                }}
+              />
+              <ReactQueryDevtools />
+            </ThemeProvider>
+          </AuthProvider>
         </QueryClientProvider>
       </CookiesProvider>
     </ServicesProvider>

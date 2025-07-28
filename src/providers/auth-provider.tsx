@@ -1,52 +1,66 @@
 import { createContext, useEffect, useState } from 'react';
 import { createStore, type StoreApi } from 'zustand';
 
+import type { LoginPayload } from '@/services/auth';
 import { useServices } from '@/hooks/use-services';
 
 export type TAuth = {
   isAuthenticated: boolean;
-  reset: () => void;
+  isLoginModalOpen: boolean;
+  login: (data: LoginPayload) => Promise<void>;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<StoreApi<TAuth> | null>(null);
 
 interface AuthProviderProps {
   children: React.ReactNode;
-  isAuthenticated: boolean;
 }
 
-const AuthProvider: React.FC<AuthProviderProps> = ({
-  children,
-  isAuthenticated,
-}) => {
+const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const { authService } = useServices();
+
   const [store] = useState(() =>
     createStore<TAuth>((setState) => ({
-      isAuthenticated,
-      reset: () =>
+      isAuthenticated: authService.isAuthenticated(),
+      isLoginModalOpen: false,
+      login: async (data: LoginPayload) => {
+        await authService.login(data);
+        setState((state) => {
+          if (state.isLoginModalOpen) {
+            return {
+              isLoginModalOpen: false,
+              isAuthenticated: true,
+            };
+          }
+          return { isAuthenticated: true };
+        });
+      },
+      logout: async () => {
+        await authService.logout();
         setState({
           isAuthenticated: false,
-        }),
+        });
+      },
     }))
   );
 
-  const { userService } = useServices();
-
   useEffect(() => {
-    const checkAuth = async () => {
-      const isAuthenticated = await userService.isAuthenticated();
-
-      if (isAuthenticated) return;
-
+    // Handle authentication required events
+    const handleAuthRequired = () => {
       store.setState({
         isAuthenticated: false,
+        isLoginModalOpen: true,
       });
     };
 
-    // check auth every 1 minute
-    const checkAuthInterval = setInterval(checkAuth, 1000 * 60 * 1);
+    // Listen for auth required events
+    window.addEventListener('auth:required', handleAuthRequired);
 
-    return () => clearInterval(checkAuthInterval);
-  }, [store, userService]);
+    return () => {
+      window.removeEventListener('auth:required', handleAuthRequired);
+    };
+  }, [store, authService]);
 
   return <AuthContext.Provider value={store}>{children}</AuthContext.Provider>;
 };

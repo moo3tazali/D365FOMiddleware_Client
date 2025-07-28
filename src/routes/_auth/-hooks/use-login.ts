@@ -3,8 +3,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate, useRouter, useSearch } from '@tanstack/react-router';
 
-import { useServices } from '@/hooks/use-services';
 import { useMutation } from '@/hooks/use-mutation';
+import { useAuth } from '@/hooks/use-auth';
 
 const FormSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email address'),
@@ -22,7 +22,7 @@ export const useLogin = () => {
     },
   });
 
-  const { authService } = useServices();
+  const { isLoginModalOpen, login } = useAuth();
 
   const navigate = useNavigate();
 
@@ -33,11 +33,13 @@ export const useLogin = () => {
     select: (s: { redirect?: string }) => s?.redirect ?? '',
   });
 
-  const { mutate: login, isPending } = useMutation({
+  const { mutate: startLogin, isPending } = useMutation({
     operationName: 'login',
-    mutationFn: authService.login,
+    mutationFn: login,
     formControl: form.control,
     onSuccess: () => {
+      if (isLoginModalOpen) return;
+
       if (redirect) {
         return router.history.push(redirect);
       }
@@ -50,7 +52,7 @@ export const useLogin = () => {
   });
 
   function onSubmit(values: FormData) {
-    login(values);
+    startLogin(values);
   }
 
   return {
