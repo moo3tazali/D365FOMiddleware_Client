@@ -45,7 +45,12 @@ export class Ledger {
 
     const apiRoute = await this._getUploadApiRoute(type);
 
-    return syncService.save<UploadResponse, UploadData>(apiRoute, data, {
+    const payload = {
+      company: data.companyId,
+      dataFile: data.dataFile,
+    };
+
+    return syncService.save<UploadResponse, typeof payload>(apiRoute, payload, {
       formData: true,
       onUploadProgress: (progressEvent) => {
         const percentCompleted = Math.round(
