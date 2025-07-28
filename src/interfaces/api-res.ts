@@ -1,8 +1,7 @@
 export interface ErrorRes {
-  message: string;
-  success: boolean;
   code: number;
-  errors: string;
+  message: string;
+  validationErrors: Record<string, string[]>;
 }
 
 export interface SuccessRes<T> {

@@ -51,14 +51,14 @@ export const BatchForm = () => {
                   </FormControl>
                   <SelectContent>
                     <SelectItem
-                      value={String(UPLOAD_TYPES.FREIGHT_CLOSING_DOC)}
+                      value={String(UPLOAD_TYPES.FREIGHT_VENDOR_ACCRUAL_DOC)}
                     >
-                      Freight Closing
+                      Freight Vendor Accrual
                     </SelectItem>
                     <SelectItem
-                      value={String(UPLOAD_TYPES.TRUCKING_CLOSING_DOC)}
+                      value={String(UPLOAD_TYPES.TRUCKING_VENDOR_ACCRUAL_DOC)}
                     >
-                      Trucking Closing
+                      Trucking Vendor Accrual
                     </SelectItem>
                   </SelectContent>
                 </Select>

@@ -44,16 +44,24 @@ export class ErrorHandler {
       if (this._isServerError(err)) {
         return {
           code: 500,
-          success: false,
           message: `Unknown Server Error: ${JSON.stringify(err.title)}`,
-          errors: err.title,
+          validationErrors: {},
         };
       }
 
-      if (this._isErrorRes(err)) {
+      if (this._isErrorResOne(err)) {
         return {
-          ...err,
-          message: `${err.message}: ${JSON.stringify(err.errors)}`,
+          code: err.code,
+          message: err.message,
+          validationErrors: err.errors,
+        };
+      }
+
+      if (this._isErrorResTwo(err)) {
+        return {
+          code: err.status,
+          message: err.title,
+          validationErrors: err.errors,
         };
       }
 
@@ -74,9 +82,8 @@ export class ErrorHandler {
     if (error instanceof Error) {
       return {
         code: 0,
-        success: false,
-        errors: error.message,
         message: `Expected Error: ${JSON.stringify(error.message)}`,
+        validationErrors: {},
       };
     }
 
@@ -86,19 +93,36 @@ export class ErrorHandler {
   private _defaultError(message: string, code = 0): ErrorRes {
     return {
       code,
-      success: false,
       message,
-      errors: '',
+      validationErrors: {},
     };
   }
 
-  private _isErrorRes(data: unknown): data is ErrorRes {
+  private _isErrorResOne(data: unknown): data is {
+    code: number;
+    message: string;
+    errors: Record<string, string[]>;
+  } {
     return (
       !!data &&
       typeof data === 'object' &&
       'code' in data &&
       'success' in data &&
       'message' in data &&
+      'errors' in data
+    );
+  }
+
+  private _isErrorResTwo(data: unknown): data is {
+    status: number;
+    title: string;
+    errors: Record<string, string[]>;
+  } {
+    return (
+      !!data &&
+      typeof data === 'object' &&
+      'status' in data &&
+      'title' in data &&
       'errors' in data
     );
   }

@@ -19,7 +19,7 @@ const DataBatchQuerySchema = PaginationSchema.extend({
 
 export type DataBatchQuery = z.infer<typeof DataBatchQuerySchema>;
 
-type TModule = 'accountReceivable' | 'ledger';
+type TModule = 'accountReceivable' | 'accountPayable' | 'ledger';
 
 export class DataBatch {
   private static _instance: DataBatch;
@@ -125,7 +125,11 @@ export class DataBatch {
         return [
           TEntryProcessorTypes.LedgerFreightClosingEntry,
           TEntryProcessorTypes.LedgerTruckingClosingEntry,
-          TEntryProcessorTypes.LedgerFreightVendorEntry,
+        ];
+      case 'accountPayable':
+        return [
+          TEntryProcessorTypes.AccountPayableFreightVendorEntry,
+          TEntryProcessorTypes.AccountPayableTruckingVendorEntry,
         ];
       default:
         return [];

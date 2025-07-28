@@ -5,7 +5,8 @@ export enum TEntryProcessorTypes {
   AccountReceivableTruckingCreditNote = 4,
   LedgerFreightClosingEntry = 5,
   LedgerTruckingClosingEntry = 6,
-  LedgerFreightVendorEntry = 7,
+  AccountPayableFreightVendorEntry = 7,
+  AccountPayableTruckingVendorEntry = 8,
 }
 
 export enum TDataBatchStatus {

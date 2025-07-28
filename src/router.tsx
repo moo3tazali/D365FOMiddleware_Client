@@ -33,6 +33,11 @@ export const ROUTES = {
     HOME: '/dashboard',
     ACCOUNTS_PAYABLE: {
       HOME: '/dashboard/accounts-payable',
+      BATCH: {
+        NEW: '/dashboard/accounts-payable/batch/new',
+        VIEW: '/dashboard/accounts-payable/batch/$batchId',
+        ERRORS: '/dashboard/accounts-payable/batch/$batchId/errors',
+      },
     },
     ACCOUNTS_RECEIVABLE: {
       HOME: '/dashboard/accounts-receivable',
