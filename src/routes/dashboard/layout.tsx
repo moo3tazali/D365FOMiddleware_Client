@@ -5,7 +5,11 @@ import { ROUTES } from '@/router';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { DashboardSidebar } from './-components/dashboard-sidebar';
 import { DashboardHeader } from './-components/dashboard-header';
-import { ErrorFallback, NotFoundFallback } from '@/components/fallback';
+import {
+  ErrorFallback,
+  LoadingFallback,
+  NotFoundFallback,
+} from '@/components/fallback';
 import { SIDEBAR_COOKIE_NAME } from '@/constants/cookies';
 import { LoginModal } from '../_auth/-components/login-modal';
 
@@ -22,6 +26,7 @@ export const Route = createFileRoute('/dashboard')({
   },
   notFoundComponent: NotFoundFallback,
   errorComponent: ErrorFallback,
+  pendingComponent: LoadingFallback,
 });
 
 function DashboardLayout() {
