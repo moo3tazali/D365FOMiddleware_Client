@@ -31,7 +31,7 @@ export class User {
 
       if (!token) return null;
 
-      return tokenService.decodeToken(token);
+      return tokenService.decodeToken(token.accessToken);
     } catch {
       return null;
     }

@@ -3,6 +3,13 @@ import { decodeJwt } from 'jose';
 
 import type { UserPayload } from '@/interfaces/user';
 
+interface IToken {
+  tokenType: string;
+  accessToken: string;
+  expiresIn: number;
+  refreshToken: string;
+}
+
 export class Token {
   private static _instance: Token;
   private readonly _db: Dexie;
@@ -25,7 +32,7 @@ export class Token {
   }
 
   // save encrypted token to indexedDB
-  public async setToken(token: string) {
+  public async setToken(token: IToken) {
     try {
       await this._db
         .table(this._tableName)
@@ -36,13 +43,10 @@ export class Token {
   }
 
   // get decrypted token from indexedDB
-  public async getToken(): Promise<string | undefined> {
+  public async getToken(): Promise<IToken | undefined> {
     try {
-      const token = (
-        await this._db
-          .table(this._tableName)
-          .get(this._tokenId)
-      )?.value as string | undefined;
+      const token = (await this._db.table(this._tableName).get(this._tokenId))
+        ?.value as IToken | undefined;
 
       if (!token) return;
 
@@ -55,9 +59,7 @@ export class Token {
   // delete token from indexedDB
   public async clearToken(): Promise<void> {
     try {
-      await this._db
-        .table(this._tableName)
-        .delete(this._tokenId);
+      await this._db.table(this._tableName).delete(this._tokenId);
     } catch (error) {
       console.error('Error clearing token', error);
     }

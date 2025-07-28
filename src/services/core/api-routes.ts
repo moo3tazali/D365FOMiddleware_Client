@@ -1,9 +1,16 @@
 import type { FlattenObj } from '@/lib/utils';
 
 export const API_ROUTES = {
-  AUTH: {
-    LOGIN: '/auth/login',
-    REGISTER: '/auth/register',
+  PUBLIC: {
+    IDENTITY: {
+      REGISTER: '/public/Identity/register',
+      LOGIN: '/public/Identity/login',
+      REFRESH: '/public/Identity/refresh',
+      CONFIRM_EMAIL: '/public/Identity/confirmEmail',
+      RESEND_CONFIRMATION_EMAIL: '/public/Identity/resendConfirmationEmail',
+      FORGET_PASSWORD: '/public/Identity/forgetPassword',
+      RESET_PASSWORD: '/public/Identity/resetPassword',
+    },
   },
   DATA_MIGRATION: {
     DATA_BATCH: {
