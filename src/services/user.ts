@@ -1,5 +1,4 @@
 import type { TUser } from '@/interfaces/user';
-import { tryParse } from '@/lib/utils';
 import Cookies from 'universal-cookie';
 
 export class User {
@@ -32,18 +31,19 @@ export class User {
       username: user.email.split('@')[0],
       avatarPath: '',
     };
-    this._cookies.set(this._cookieId, JSON.stringify(this._user));
+    this._cookies.set(this._cookieId, this._user);
   }
 
   public get get(): TUser | null {
     if (!this._user) {
-      const user = this._cookies.get<string | null>(this._cookieId);
+      const user = this._cookies.get<TUser | null>(this._cookieId);
       if (user) {
-        this._user = tryParse<TUser>(user);
+        this._user = user;
       } else {
         return null;
       }
     }
+
     return this._user;
   }
 
