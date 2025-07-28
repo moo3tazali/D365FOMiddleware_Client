@@ -7,8 +7,9 @@ export const Route = createFileRoute('/dashboard/ledger/')({
   component: LedgerPage,
   beforeLoad: async ({ context, search }) => {
     const { services, queryClient } = context;
+
     await queryClient.prefetchQuery(
-      services.dataBatch.freightDocumentQueryOptions(search)
+      services.dataBatch.freightDocumentQueryOptions('ledger', search)
     );
   },
   pendingComponent: LoadingFallback,

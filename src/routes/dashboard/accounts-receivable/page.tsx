@@ -9,7 +9,10 @@ export const Route = createFileRoute('/dashboard/accounts-receivable/')({
     const { services, queryClient } = context;
 
     await queryClient.prefetchQuery(
-      services.dataBatch.freightDocumentQueryOptions(search)
+      services.dataBatch.freightDocumentQueryOptions(
+        'accountReceivable',
+        search
+      )
     );
   },
   pendingComponent: LoadingFallback,

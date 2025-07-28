@@ -1,4 +1,5 @@
 import type { TUser } from '@/interfaces/user';
+import { tryParse } from '@/lib/utils';
 import Cookies from 'universal-cookie';
 
 export class User {
@@ -38,7 +39,7 @@ export class User {
     if (!this._user) {
       const user = this._cookies.get<string | null>(this._cookieId);
       if (user) {
-        this._user = JSON.parse(user);
+        this._user = tryParse<TUser>(user);
       } else {
         return null;
       }

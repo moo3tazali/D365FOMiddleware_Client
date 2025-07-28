@@ -10,7 +10,7 @@ import { PaginationSchema } from '@/schemas/pagination-schema';
 
 const DataBatchQuerySchema = PaginationSchema.extend({
   batchNumber: z.string().ulid('Invalid batch number').optional(),
-  entryProcessorType: z
+  entryProcessorTypes: z
     .array(z.number(), {
       invalid_type_error: 'Entry processor type must be an array of numbers',
     })
@@ -19,7 +19,7 @@ const DataBatchQuerySchema = PaginationSchema.extend({
 
 export type DataBatchQuery = z.infer<typeof DataBatchQuerySchema>;
 
-type TModule = 'Account Receivable' | 'Ledger';
+type TModule = 'accountReceivable' | 'ledger';
 
 export class DataBatch {
   private static _instance: DataBatch;
@@ -77,12 +77,11 @@ export class DataBatch {
     });
   };
 
-  public freightDocumentQueryOptions = (searchQuery?: {}) => {
-    const entryProcessorType =
-      this._getDefaultEntryProcessorType('Account Receivable');
+  public freightDocumentQueryOptions = (module: TModule, searchQuery?: {}) => {
+    const entryProcessorTypes = this.getDefaultEntryProcessorType(module);
 
     const query = this.searchQuery.getParsedSearch(DataBatchQuerySchema, {
-      entryProcessorType,
+      entryProcessorTypes,
       ...searchQuery,
     });
 
@@ -113,16 +112,16 @@ export class DataBatch {
     });
   };
 
-  private _getDefaultEntryProcessorType(module: TModule) {
+  public getDefaultEntryProcessorType(module: TModule) {
     switch (module) {
-      case 'Account Receivable':
+      case 'accountReceivable':
         return [
           TEntryProcessorTypes.AccountReceivableFreight,
           TEntryProcessorTypes.AccountReceivableTrucking,
           TEntryProcessorTypes.AccountReceivableFreightCreditNote,
           TEntryProcessorTypes.AccountReceivableTruckingCreditNote,
         ];
-      case 'Ledger':
+      case 'ledger':
         return [
           TEntryProcessorTypes.LedgerFreightClosingEntry,
           TEntryProcessorTypes.LedgerTruckingClosingEntry,

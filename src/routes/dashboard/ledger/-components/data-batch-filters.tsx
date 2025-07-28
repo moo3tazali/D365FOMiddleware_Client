@@ -52,12 +52,12 @@ const entryProcessorOptions = enumToOptions(TEntryProcessorTypes).filter(
 );
 
 const EntryProcessorTypeFilter = () => {
-  const [{ entryProcessorType }, set, remove] = useSearchQuery<{
-    entryProcessorType: number[];
-  }>(['entryProcessorType']);
+  const [{ entryProcessorTypes }, set, remove] = useSearchQuery<{
+    entryProcessorTypes: number[];
+  }>(['entryProcessorTypes']);
 
   const [value, setValue] = useState<string>(
-    entryProcessorType ? String(entryProcessorType[0] ?? '') : ''
+    entryProcessorTypes ? String(entryProcessorTypes[0] ?? '') : ''
   );
 
   const SelectItems = useMemo(
@@ -74,18 +74,18 @@ const EntryProcessorTypeFilter = () => {
     <Select
       onValueChange={(value) => {
         setValue(value);
-        set('entryProcessorType', [+value]);
+        set('entryProcessorTypes', [+value]);
       }}
       value={value}
       disabled={false}
-      name='entryProcessorType'
+      name='entryProcessorTypes'
     >
       <SelectTrigger
         value={value}
         clearable
         onClear={() => {
           setValue('');
-          remove('entryProcessorType');
+          remove('entryProcessorTypes');
         }}
         className='w-full'
       >
