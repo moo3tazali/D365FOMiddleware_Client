@@ -37,8 +37,8 @@ const columns: ColumnDef<TDataBatchError>[] = [
     accessorKey: 'sourceRecordIds',
     header: 'Source Record IDs',
     cell: ({ getValue }) =>
-      (getValue() as string[]).map((id) => (
-        <Badge key={id} color='primary' className='mr-2'>
+      (getValue() as string[]).map((id, i) => (
+        <Badge key={id + i} color='primary' className='mr-2'>
           {id}
         </Badge>
       )),
