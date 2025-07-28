@@ -16,14 +16,14 @@ export class Ledger {
 
   public readonly mutationKey = 'ledger-upload';
   public readonly UPLOAD_TYPES = {
-    FREIGHT_CLOSING_DOC: 1,
+    FREIGHT_CLOSING_DOC: 5,
+    TRUCKING_CLOSING_DOC: 6,
+    FREIGHT_VENDOR_ACCRUAL_DOC: 7,
+    TRUCKING_VENDOR_ACCRUAL_DOC: 8,
     FREIGHT_CLOSING: 2,
-    TRUCKING_CLOSING_DOC: 3,
     TRUCKING_CLOSING: 4,
-    FREIGHT_VENDOR_ACCRUAL_DOC: 5,
     FREIGHT_VENDOR_ACCRUAL: 6,
-    TRUCKING_VENDOR_ACCRUAL_DOC: 7,
-    TRUCKING_VENDOR_ACCRUAL: 8,
+    TRUCKING_VENDOR_ACCRUAL: 9,
   };
 
   private constructor() {}
