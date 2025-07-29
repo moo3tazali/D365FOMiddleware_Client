@@ -2,10 +2,10 @@ import { z } from 'zod';
 import { queryOptions } from '@tanstack/react-query';
 
 import type { PaginationRes } from '@/interfaces/api-res';
-import { API_ROUTES } from './core/api-routes';
-import { Sync } from './core/sync';
+import { API_ROUTES } from '../core/api-routes';
+import { Sync } from '../core/sync';
 import type { TDataBatchError } from '@/interfaces/data-batch-error';
-import { SearchQuery } from './core/search-query';
+import { SearchQuery } from '../core/search-query';
 import { PaginationSchema } from '@/schemas/pagination-schema';
 
 const DataBatchErrorQuerySchema = PaginationSchema.extend({

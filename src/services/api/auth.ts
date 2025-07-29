@@ -1,7 +1,7 @@
-import { Token } from './core/token';
-import { Sync } from './core/sync';
-import { API_ROUTES } from './core/api-routes';
-import { User } from './user';
+import { Token } from '../core/token';
+import { Sync } from '../core/sync';
+import { API_ROUTES } from '../core/api-routes';
+import { User } from '../core/user';
 import type { TUser } from '@/interfaces/user';
 
 export interface LoginPayload {

@@ -1,5 +1,5 @@
-import { Sync } from './core/sync';
-import { API_ROUTES } from './core/api-routes';
+import { Sync } from '../core/sync';
+import { API_ROUTES } from '../core/api-routes';
 import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
 
 interface UploadData {

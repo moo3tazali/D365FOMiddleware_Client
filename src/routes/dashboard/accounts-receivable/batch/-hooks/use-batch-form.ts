@@ -9,7 +9,7 @@ import { useServices } from '@/hooks/use-services';
 import { useMutation } from '@/hooks/use-mutation';
 import { useBatchQueryData } from './use-batch-query-data';
 import { ROUTES } from '@/router';
-import { AccountReceivable } from '@/services/account-receivable';
+import { AccountReceivable } from '@/services/api/account-receivable';
 
 const acceptedTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

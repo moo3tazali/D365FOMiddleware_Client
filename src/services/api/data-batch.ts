@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 import type { PaginationRes } from '@/interfaces/api-res';
-import { API_ROUTES } from './core/api-routes';
-import { Sync } from './core/sync';
+import { API_ROUTES } from '../core/api-routes';
+import { Sync } from '../core/sync';
 import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
 import { queryOptions } from '@tanstack/react-query';
-import { SearchQuery } from './core/search-query';
+import { SearchQuery } from '../core/search-query';
 import { PaginationSchema } from '@/schemas/pagination-schema';
 
 const DataBatchQuerySchema = PaginationSchema.extend({

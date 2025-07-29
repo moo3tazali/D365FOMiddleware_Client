@@ -1,6 +1,9 @@
 import type { FlattenObj } from '@/lib/utils';
 
 export const API_ROUTES = {
+  ADMIN: {
+    APP_SETTING: '/Admin/AppSetting',
+  },
   PUBLIC: {
     IDENTITY: {
       REGISTER: '/public/Identity/register',

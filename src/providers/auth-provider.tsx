@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 import { createStore, type StoreApi } from 'zustand';
 
-import type { LoginPayload } from '@/services/auth';
+import type { LoginPayload } from '@/services/api/auth';
 import { useServices } from '@/hooks/use-services';
 import type { TUser } from '@/interfaces/user';
 

@@ -29,6 +29,7 @@ interface DataTableProps<TData, TValue> {
   error?: string | null;
   header?: React.ReactNode | React.ElementType;
   footer?: React.ReactNode | React.ElementType;
+  cardsBreakpoint?: number;
 }
 
 interface TableViewProps<TData, TValue> {
@@ -45,8 +46,9 @@ function DataTable<TData, TValue>({
   error,
   header,
   footer,
+  cardsBreakpoint = 1024,
 }: DataTableProps<TData, TValue>) {
-  const isMobile = useIsMobile(1024);
+  const isMobile = useIsMobile(cardsBreakpoint);
 
   const items = React.useMemo(() => {
     if (!data) return [];
