@@ -1,4 +1,5 @@
-import { CloudUpload, Paperclip } from 'lucide-react';
+import CloudUpload from 'lucide-react/dist/esm/icons/cloud-upload';
+import Paperclip from 'lucide-react/dist/esm/icons/paperclip';
 
 import {
   Form,

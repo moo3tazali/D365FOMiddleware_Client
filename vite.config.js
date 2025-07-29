@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import Unfonts from 'unplugin-fonts/vite';
 
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -39,6 +40,7 @@ export default defineConfig({
     }),
     viteReact(),
     tailwindcss(),
+    visualizer({ open: true }),
   ],
   build: {
     rollupOptions: {

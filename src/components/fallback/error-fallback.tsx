@@ -1,4 +1,4 @@
-import { TriangleAlert } from 'lucide-react';
+import TriangleAlert from 'lucide-react/dist/esm/icons/triangle-alert';
 
 import { Button } from '@/components/ui/button';
 

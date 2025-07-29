@@ -1,4 +1,5 @@
-import { Rocket, Upload } from 'lucide-react';
+import Upload from 'lucide-react/dist/esm/icons/upload';
+import Rocket from 'lucide-react/dist/esm/icons/rocket';
 import { useIsMutating } from '@tanstack/react-query';
 
 import type { TDataBatch } from '@/interfaces/data-batch';

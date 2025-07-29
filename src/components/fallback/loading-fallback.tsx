@@ -1,5 +1,5 @@
 import type { ComponentProps } from 'react';
-import { LoaderCircle } from 'lucide-react';
+import LoaderCircle from 'lucide-react/dist/esm/icons/loader-circle';
 
 import { cn } from '@/lib/utils';
 

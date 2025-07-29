@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { Upload } from 'lucide-react';
+import Upload from 'lucide-react/dist/esm/icons/upload';
 
 import { ROUTES } from '@/router';
 import { Button } from '@/components/ui/button';

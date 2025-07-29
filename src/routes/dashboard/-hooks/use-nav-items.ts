@@ -1,13 +1,11 @@
 import { useMemo } from 'react';
 import { useLocation } from '@tanstack/react-router';
-import {
-  Home,
-  Landmark,
-  HandCoins,
-  Wallet,
-  Settings,
-  BookOpen,
-} from 'lucide-react';
+import Home from 'lucide-react/dist/esm/icons/home';
+import Landmark from 'lucide-react/dist/esm/icons/landmark';
+import HandCoins from 'lucide-react/dist/esm/icons/hand-coins';
+import Wallet from 'lucide-react/dist/esm/icons/wallet';
+import Settings from 'lucide-react/dist/esm/icons/settings';
+import BookOpen from 'lucide-react/dist/esm/icons/book-open';
 
 import { ROUTES } from '@/router';
 

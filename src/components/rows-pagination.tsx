@@ -1,7 +1,8 @@
 'use client';
 
 import { memo } from 'react';
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import ChevronLeftIcon from 'lucide-react/dist/esm/icons/chevron-left';
+import ChevronRightIcon from 'lucide-react/dist/esm/icons/chevron-right';
 
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';

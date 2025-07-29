@@ -2,7 +2,10 @@ import { Frame } from '@/components/ui/frame';
 import { ROUTES, type TRoutes } from '@/router';
 import { Link } from '@tanstack/react-router';
 import { useMemo } from 'react';
-import { Landmark, HandCoins, Wallet, BookOpen } from 'lucide-react';
+import Landmark from 'lucide-react/dist/esm/icons/landmark';
+import HandCoins from 'lucide-react/dist/esm/icons/hand-coins';
+import Wallet from 'lucide-react/dist/esm/icons/wallet';
+import BookOpen from 'lucide-react/dist/esm/icons/book-open';
 
 export const ModuleCards = () => {
   const { modules } = useModuleItems();

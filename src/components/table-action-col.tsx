@@ -1,11 +1,9 @@
 import toast from 'react-hot-toast';
-import {
-  ClipboardCopy,
-  Download as DonwloadIcon,
-  MoreVertical,
-  Telescope,
-  Trash2,
-} from 'lucide-react';
+import ClipboardCopy from 'lucide-react/dist/esm/icons/clipboard-copy';
+import DownloadIcon from 'lucide-react/dist/esm/icons/download';
+import MoreVertical from 'lucide-react/dist/esm/icons/more-vertical';
+import Telescope from 'lucide-react/dist/esm/icons/telescope';
+import Trash2 from 'lucide-react/dist/esm/icons/trash-2';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -73,7 +71,7 @@ const Download = ({
 }: React.ComponentProps<typeof DropdownMenuItem>) => {
   return (
     <DropdownMenuItem {...props}>
-      <DonwloadIcon />
+      <DownloadIcon />
       {children}
     </DropdownMenuItem>
   );

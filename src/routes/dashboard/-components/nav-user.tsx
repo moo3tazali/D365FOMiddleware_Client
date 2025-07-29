@@ -1,4 +1,4 @@
-import { LogOut } from 'lucide-react';
+import LogOut from 'lucide-react/dist/esm/icons/log-out';
 
 import {
   SidebarMenu,
