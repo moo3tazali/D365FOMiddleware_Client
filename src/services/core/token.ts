@@ -1,6 +1,5 @@
-import Dexie from 'dexie';
+import { set, get, del } from 'idb-keyval';
 import Cookies from 'universal-cookie';
-import { decodeJwt } from 'jose';
 
 export interface IToken {
   tokenType: string;
@@ -16,18 +15,12 @@ interface IRefreshTokenData {
 
 export class Token {
   private static _instance: Token;
-  private readonly _db: Dexie;
   private readonly _cookies: Cookies;
-  private readonly _tableName = 'tokens';
   private readonly _refreshTokenId = 'refreshToken';
   private readonly _accessTokenCookieName = 'access_token';
   private readonly _tokenTypeCookieName = 'token_type';
 
   private constructor() {
-    this._db = new Dexie('dynamics_middleware');
-    this._db.version(1).stores({
-      tokens: 'id, value',
-    });
     this._cookies = new Cookies(null, {
       path: '/',
       secure: true,
@@ -110,7 +103,9 @@ export class Token {
   // decode token to get user info payload
   public decodeToken<T>(token: string): T {
     try {
-      return decodeJwt<T>(token);
+      const payload = token.split('.')[1];
+      const decoded = JSON.parse(atob(payload));
+      return decoded as T;
     } catch {
       throw new Error('Error decoding token');
     }
@@ -132,19 +127,15 @@ export class Token {
 
   // Private helper methods for IndexedDB operations
   private async _setRefreshToken(tokenData: IRefreshTokenData): Promise<void> {
-    await this._db
-      .table(this._tableName)
-      .put({ id: this._refreshTokenId, value: tokenData });
+    await set(this._refreshTokenId, tokenData);
   }
 
   private async _getRefreshTokenData(): Promise<IRefreshTokenData | undefined> {
-    const result = await this._db
-      .table(this._tableName)
-      .get(this._refreshTokenId);
-    return result?.value as IRefreshTokenData | undefined;
+    const result = await get<IRefreshTokenData>(this._refreshTokenId);
+    return result;
   }
 
   private async _clearRefreshToken(): Promise<void> {
-    await this._db.table(this._tableName).delete(this._refreshTokenId);
+    await del(this._refreshTokenId);
   }
 }

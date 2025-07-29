@@ -87,7 +87,7 @@ export default defineConfig({
           ],
 
           // Storage and state
-          'storage-vendor': ['dexie'],
+          'storage-vendor': ['idb-keyval'],
 
           // HTTP and API
           'http-vendor': ['axios'],
@@ -98,7 +98,6 @@ export default defineConfig({
             'react-error-boundary',
             'react-cookie',
             'universal-cookie',
-            'jose',
             'object-to-formdata',
           ],
         },
