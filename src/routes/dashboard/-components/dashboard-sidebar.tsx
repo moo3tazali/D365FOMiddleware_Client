@@ -11,6 +11,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/ui/logo';
 import { NavUser } from './nav-user';
@@ -25,7 +26,7 @@ export function DashboardSidebar() {
       <SidebarHeader className='h-16 md:h-20 group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 group-has-[[data-collapsible=icon]]/sidebar-wrapper:md:h-16 flex justify-center items-center'>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Logo className='group-data-[state=collapsed]:text-xs transition-all ease-linear' />
+            <NavLogo />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -47,6 +48,12 @@ export function DashboardSidebar() {
     </Sidebar>
   );
 }
+
+const NavLogo = () => {
+  const { open } = useSidebar();
+
+  return <Logo orientation={open ? 'horizontal' : 'vertical'} />;
+};
 
 const NavMain = ({
   title,
