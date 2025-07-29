@@ -52,7 +52,12 @@ export function DashboardSidebar() {
 const NavLogo = () => {
   const { open } = useSidebar();
 
-  return <Logo orientation={open ? 'horizontal' : 'vertical'} />;
+  return (
+    <Logo
+      className={open ? '' : 'w-7'}
+      orientation={open ? 'horizontal' : 'small'}
+    />
+  );
 };
 
 const NavMain = ({
