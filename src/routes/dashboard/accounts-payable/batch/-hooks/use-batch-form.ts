@@ -8,6 +8,7 @@ import { useServices } from '@/hooks/use-services';
 import { useMutation } from '@/hooks/use-mutation';
 import { useBatchQueryData } from './use-batch-query-data';
 import { ROUTES } from '@/router';
+import toast from 'react-hot-toast';
 
 const acceptedTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -63,7 +64,11 @@ export const useBatchForm = () => {
 
   const { ledger } = useServices();
 
-  const { mutateAsync: startUpload, isPending } = useMutation({
+  const {
+    mutateAsync: startUpload,
+    isPending,
+    dismissLoading,
+  } = useMutation({
     mutationKey: [ledger.mutationKey],
     operationName: 'upload',
     mutationFn: ledger.upload,
@@ -90,7 +95,13 @@ export const useBatchForm = () => {
           dataFile: files[0],
         },
         type: values.type,
-        uploadProgress: (prog: number) => setUploadProgress(prog),
+        uploadProgress: (prog: number) => {
+          const uploadComplete = prog === 100;
+          if (uploadComplete) {
+            dismissLoading(toast.loading('Data is being processed'));
+          }
+          setUploadProgress(prog);
+        },
       };
 
       startUpload(options).then((data) => {
@@ -101,7 +112,7 @@ export const useBatchForm = () => {
         });
       });
     },
-    [startUpload, navigate, setBatch]
+    [startUpload, navigate, setBatch, dismissLoading]
   );
 
   return {

@@ -1,8 +1,9 @@
 import toast from 'react-hot-toast';
-import { useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import type {
   Control,
   FieldValues,
+  Path,
   // Path,
 } from 'react-hook-form';
 import {
@@ -18,13 +19,11 @@ interface Props<
   TData = unknown,
   TVariables = unknown,
   TFieldValues extends FieldValues = FieldValues
-> extends Omit<
-    MutationObserverOptions<TData, unknown, TVariables>,
-    'onError'
-  > {
+> extends Omit<MutationObserverOptions<TData, unknown, TVariables>, 'onError'> {
   operationName: string;
   refetchQueries?: unknown[][];
   formControl?: Control<TFieldValues>;
+  disableToast?: boolean;
   toastMsgs?: {
     loading?: string;
     success?: string;
@@ -47,6 +46,7 @@ export const useMutation = <
   onMutate,
   onError,
   refetchQueries,
+  disableToast = false,
   toastMsgs,
   operationName,
   formControl,
@@ -58,91 +58,116 @@ export const useMutation = <
   const loadingRef = useRef<string | null>(null);
 
   // capitalize operation name
-  const operation =
-    operationName.charAt(0).toUpperCase() +
-    operationName.slice(1);
+  const operation = useMemo(
+    () => operationName.charAt(0).toUpperCase() + operationName.slice(1),
+    [operationName]
+  );
 
-  return useTanstackMutation({
-    mutationFn,
-    ...options,
-    onMutate: (variables) => {
-      // show loading toast
-      const loading = toast.loading(
-        toastMsgs?.loading ?? `${operation} in progress...`
-      );
+  const dismissLoading = useCallback((newLoadingId: string) => {
+    if (loadingRef.current) {
+      toast.dismiss(loadingRef.current);
+    }
+    loadingRef.current = newLoadingId;
+  }, []);
 
-      // set loading ref
-      loadingRef.current = loading;
+  return {
+    ...useTanstackMutation({
+      mutationFn,
+      ...options,
+      onMutate: (variables) => {
+        if (!disableToast) {
+          // show loading toast
+          const loading = toast.loading(
+            toastMsgs?.loading ?? `${operation} in progress...`
+          );
 
-      // call onMutate
-      if (onMutate) {
-        onMutate(variables);
-      }
-    },
-    onSuccess: (data, variables, context) => {
-      // remove loading toast
-      if (loadingRef.current) {
-        toast.dismiss(loadingRef.current);
-      }
+          // set loading ref
+          loadingRef.current = loading;
+        }
 
-      // show success toast
-      toast.success(
-        toastMsgs?.success ?? `${operation} success!`
-      );
+        // call onMutate
+        if (onMutate) {
+          onMutate(variables);
+        }
+      },
+      onSuccess: (data, variables, context) => {
+        if (!disableToast) {
+          // remove loading toast
+          if (loadingRef.current) {
+            toast.dismiss(loadingRef.current);
+          }
 
-      // refetch queries
-      if (refetchQueries) {
-        refetchQueries.forEach((queryKey) => {
-          queryClient.refetchQueries({ queryKey });
-        });
-      }
+          // show success toast
+          toast.success(toastMsgs?.success ?? `${operation} success!`);
+        }
 
-      // call onSuccess
-      if (onSuccess) {
-        onSuccess(data, variables, context);
-      }
-    },
-    onError: (error: ErrorRes, variables, context) => {
-      // remove loading toast
-      if (loadingRef.current) {
-        toast.dismiss(loadingRef.current);
-      }
+        // refetch queries
+        if (refetchQueries) {
+          refetchQueries.forEach((queryKey) => {
+            queryClient.refetchQueries({ queryKey });
+          });
+        }
 
-      // show error toast
-      toast.error(
-        toastMsgs?.error ??
-          error?.message ??
-          `${operation} failed!`
-      );
+        // call onSuccess
+        if (onSuccess) {
+          onSuccess(data, variables, context);
+        }
+      },
+      onError: (error: ErrorRes, variables, context) => {
+        if (!disableToast) {
+          // remove loading toast
+          if (loadingRef.current) {
+            toast.dismiss(loadingRef.current);
+          }
 
-      // set form errors
-      if (formControl) {
-        // set root error
-        formControl.setError('root', {
-          type: 'manual',
-          message: error.message,
-        });
+          // show error toast
+          toast.error(
+            toastMsgs?.error ?? error?.message ?? `${operation} failed!`
+          );
+        }
 
-        // set field errors
-        // if (error.validationsErrors) {
-        //   Object.entries(error.validationsErrors).forEach(
-        //     ([key, value]) => {
-        //       formControl.setError(
-        //         key as Path<TFieldValues>,
-        //         {
-        //           type: 'manual',
-        //           message: value.join(', '),
-        //         }
-        //       );
-        //     }
-        //   );
-        // }
-      }
+        // set form errors
+        if (formControl) {
+          // set root error
+          formControl.setError('root', {
+            type: 'manual',
+            message: error.message,
+          });
 
-      // call onError
-      if (onError) {
-        onError(error, variables, context);
-      }
-    },
-  });
+          // set field errors
+          const validationErrors = error?.validationErrors;
+          if (
+            validationErrors &&
+            typeof validationErrors === 'object' &&
+            Object.keys(validationErrors).length > 0
+          ) {
+            Object.entries(validationErrors).forEach(([key, value]) => {
+              if (!value) return;
+
+              let message = '';
+
+              if (Array.isArray(value)) {
+                message = value.join(', ');
+              } else if (typeof value === 'string') {
+                message = value;
+              } else {
+                message = JSON.stringify(value);
+              }
+
+              formControl.setError(key as Path<TFieldValues>, {
+                type: 'manual',
+                message,
+              });
+            });
+          }
+        }
+
+        // call onError
+        if (onError) {
+          onError(error, variables, context);
+        }
+      },
+    }),
+    dismissLoading,
+  };
 };
