@@ -23,7 +23,7 @@ export const useLogin = () => {
     },
   });
 
-  const { isLoginModalOpen, login } = useAuth();
+  const { login, isLoginModalOpen, closeLoginModal } = useAuth();
 
   const navigate = useNavigate();
 
@@ -39,7 +39,9 @@ export const useLogin = () => {
     mutationFn: login,
     formControl: form.control,
     onSuccess: () => {
-      if (isLoginModalOpen) return;
+      if (isLoginModalOpen) {
+        return closeLoginModal();
+      }
 
       if (redirect) {
         return router.history.push(redirect);

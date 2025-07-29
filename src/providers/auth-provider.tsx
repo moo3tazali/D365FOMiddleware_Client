@@ -11,6 +11,7 @@ export type TAuth = {
   user: TUser | null;
   login: (data: LoginPayload) => Promise<void>;
   logout: () => Promise<void>;
+  closeLoginModal: () => void;
 };
 
 const AuthContext = createContext<StoreApi<TAuth> | null>(null);
@@ -29,22 +30,18 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       user: authService.getCurrentUser(),
       login: async (data: LoginPayload) => {
         const user = await authService.login(data);
-        setState((state) => {
-          if (state.isLoginModalOpen) {
-            return {
-              isLoginModalOpen: false,
-              isAuthenticated: true,
-              user,
-            };
-          }
-          return { isAuthenticated: true, user };
-        });
+        setState({ isAuthenticated: true, user });
       },
       logout: async () => {
         await authService.logout();
         setState({
           isAuthenticated: false,
           user: null,
+        });
+      },
+      closeLoginModal: () => {
+        setState({
+          isLoginModalOpen: false,
         });
       },
     }))
