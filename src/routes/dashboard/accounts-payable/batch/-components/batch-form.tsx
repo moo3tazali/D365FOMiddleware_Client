@@ -24,9 +24,10 @@ import {
 } from '@/components/ui/file-upload';
 import { useBatchForm } from '../-hooks/use-batch-form';
 import { Progress } from '@/components/ui/progress';
+import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/daya-batch';
 
 export const BatchForm = () => {
-  const { form, UPLOAD_TYPES } = useBatchForm();
+  const { form } = useBatchForm();
 
   return (
     <Form {...form}>
@@ -50,16 +51,7 @@ export const BatchForm = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem
-                      value={String(UPLOAD_TYPES.FREIGHT_VENDOR_ACCRUAL_DOC)}
-                    >
-                      Freight Vendor Accrual
-                    </SelectItem>
-                    <SelectItem
-                      value={String(UPLOAD_TYPES.TRUCKING_VENDOR_ACCRUAL_DOC)}
-                    >
-                      Trucking Vendor Accrual
-                    </SelectItem>
+                    <TargetServiceSelectItem />
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -142,3 +134,10 @@ export const BatchForm = () => {
     </Form>
   );
 };
+
+const TargetServiceSelectItem = () =>
+  ENTRY_PROCESSOR_OPTIONS.ACCOUNT_PAYABLE.map(({ label, value }) => (
+    <SelectItem key={value} value={String(value)}>
+      {label}
+    </SelectItem>
+  ));

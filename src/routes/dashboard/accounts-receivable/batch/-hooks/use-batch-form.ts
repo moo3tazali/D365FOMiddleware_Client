@@ -100,10 +100,13 @@ export const useBatchForm = () => {
     [type, accountReceivable]
   );
 
-  const isDisabled = useMemo(
-    () => (batch && !batch.errorCount) || isPending,
-    [batch, isPending]
-  );
+  const isDisabled = useMemo(() => {
+    const isSuccess =
+      batch &&
+      batch.totalFormattedCount > 0 &&
+      batch.totalFormattedCount === batch.successCount;
+    return isSuccess || isPending;
+  }, [batch, isPending]);
 
   const onSubmit = useCallback(
     (values: FormData) => {
@@ -145,6 +148,5 @@ export const useBatchForm = () => {
       isDisabled,
       onSubmit: form.handleSubmit(onSubmit),
     },
-    UPLOAD_TYPES: accountReceivable.UPLOAD_TYPES,
   };
 };

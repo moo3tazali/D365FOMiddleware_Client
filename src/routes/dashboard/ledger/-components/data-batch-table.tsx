@@ -2,11 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useServices } from '@/hooks/use-services';
 import { DataTable, type ColumnDef } from '@/components/data-table';
-import {
-  TDataBatchStatus,
-  TEntryProcessorTypes,
-  type TDataBatch,
-} from '@/interfaces/data-batch';
+import { TDataBatchStatus, type TDataBatch } from '@/interfaces/data-batch';
 import { DataBatchFilters } from './data-batch-filters';
 import { enumToOptions } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +11,7 @@ import { TableActionCol } from '@/components/table-action-col';
 import { useDataBatchAction } from '../-hooks/use-data-batch-action';
 import { ROUTES } from '@/router';
 import { Button } from '@/components/ui/button';
+import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/daya-batch';
 
 export const DataBatchTable = () => {
   const { dataBatch } = useServices();
@@ -106,7 +103,7 @@ const CellCreatedAt = ({ value }: { value: string }) => {
   });
 };
 
-const entryProcessorOptions = enumToOptions(TEntryProcessorTypes);
+const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.LEDGER;
 
 const CellEntryProcessorType = ({ value }: { value: number }) => {
   return (

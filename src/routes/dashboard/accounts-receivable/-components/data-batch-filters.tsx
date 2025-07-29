@@ -9,9 +9,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { TEntryProcessorTypes } from '@/interfaces/data-batch';
-import { enumToOptions } from '@/lib/utils';
 import { useSearchQuery } from '@/hooks/use-search-query';
+
+import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/daya-batch';
 
 export const DataBatchFilters = () => {
   return (
@@ -47,9 +47,7 @@ const TargetBatchNumberFilter = () => {
   );
 };
 
-const entryProcessorOptions = enumToOptions(TEntryProcessorTypes).filter(
-  (item) => item.label.startsWith('Account Receivable')
-);
+const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.ACCOUNT_RECEIVABLE;
 
 const EntryProcessorTypeFilter = () => {
   const [{ entryProcessorTypes }, set, remove] = useSearchQuery<{

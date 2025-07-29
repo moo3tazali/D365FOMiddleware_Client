@@ -1,6 +1,6 @@
 import { Sync } from './core/sync';
 import { API_ROUTES } from './core/api-routes';
-import type { TDataBatch } from '@/interfaces/data-batch';
+import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
 
 interface UploadData {
   companyId: string;
@@ -17,10 +17,12 @@ export class AccountReceivable {
 
   public readonly mutationKey = 'account-receivable-upload';
   public readonly UPLOAD_TYPES = {
-    FREIGHT_DOC: 1,
-    TRUCKING_DOC: 2,
-    FREIGHT_CREDIT_NOTE_DOC: 3,
-    TRUCKING_CREDIT_NOTE_DOC: 4,
+    FREIGHT_DOC: TEntryProcessorTypes.AccountReceivableFreight,
+    TRUCKING_DOC: TEntryProcessorTypes.AccountReceivableTrucking,
+    FREIGHT_CREDIT_NOTE_DOC:
+      TEntryProcessorTypes.AccountReceivableFreightCreditNote,
+    TRUCKING_CREDIT_NOTE_DOC:
+      TEntryProcessorTypes.AccountReceivableTruckingCreditNote,
   };
 
   private constructor() {}

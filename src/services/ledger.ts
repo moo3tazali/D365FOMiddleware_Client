@@ -1,6 +1,6 @@
 import { Sync } from './core/sync';
 import { API_ROUTES } from './core/api-routes';
-import type { TDataBatch } from '@/interfaces/data-batch';
+import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
 
 interface UploadData {
   companyId: string;
@@ -16,14 +16,12 @@ export class Ledger {
 
   public readonly mutationKey = 'ledger-upload';
   public readonly UPLOAD_TYPES = {
-    FREIGHT_CLOSING_DOC: 5,
-    TRUCKING_CLOSING_DOC: 6,
-    FREIGHT_VENDOR_ACCRUAL_DOC: 7,
-    TRUCKING_VENDOR_ACCRUAL_DOC: 8,
-    FREIGHT_CLOSING: 2,
-    TRUCKING_CLOSING: 4,
-    FREIGHT_VENDOR_ACCRUAL: 6,
-    TRUCKING_VENDOR_ACCRUAL: 9,
+    FREIGHT_CLOSING_DOC: TEntryProcessorTypes.LedgerFreightClosingEntry,
+    TRUCKING_CLOSING_DOC: TEntryProcessorTypes.LedgerTruckingClosingEntry,
+    FREIGHT_VENDOR_ACCRUAL_DOC:
+      TEntryProcessorTypes.AccountPayableFreightVendorEntry,
+    TRUCKING_VENDOR_ACCRUAL_DOC:
+      TEntryProcessorTypes.AccountPayableTruckingVendorEntry,
   };
 
   private constructor() {}
@@ -64,18 +62,10 @@ export class Ledger {
 
   private async _getUploadApiRoute(type: number | string) {
     switch (Number(type)) {
-      case this.UPLOAD_TYPES.FREIGHT_CLOSING:
-        return API_ROUTES.DATA_MIGRATION.LEDGER.FREIGHT_CLOSING;
-      case this.UPLOAD_TYPES.TRUCKING_CLOSING:
-        return API_ROUTES.DATA_MIGRATION.LEDGER.TRUCKING_CLOSING;
       case this.UPLOAD_TYPES.FREIGHT_CLOSING_DOC:
         return API_ROUTES.DATA_MIGRATION.LEDGER.FREIGHT_CLOSING_DOCUMENT;
       case this.UPLOAD_TYPES.TRUCKING_CLOSING_DOC:
         return API_ROUTES.DATA_MIGRATION.LEDGER.TRUCKING_CLOSING_DOCUMENT;
-      case this.UPLOAD_TYPES.FREIGHT_VENDOR_ACCRUAL:
-        return API_ROUTES.DATA_MIGRATION.LEDGER.FREIGHT_VENDOR_ACCRUAL;
-      case this.UPLOAD_TYPES.TRUCKING_VENDOR_ACCRUAL:
-        return API_ROUTES.DATA_MIGRATION.LEDGER.TRUCKING_VENDOR_ACCRUAL;
       case this.UPLOAD_TYPES.FREIGHT_VENDOR_ACCRUAL_DOC:
         return API_ROUTES.DATA_MIGRATION.LEDGER.FREIGHT_VENDOR_ACCRUAL_DOCUMENT;
       case this.UPLOAD_TYPES.TRUCKING_VENDOR_ACCRUAL_DOC:
