@@ -21,7 +21,7 @@ export const DataBatchTable = () => {
     withPagination: true,
   });
 
-  const { data, isPending, error } = useQuery(
+  const { data, isPending, error, isPlaceholderData } = useQuery(
     dataBatch.batchQueryOptions('accountReceivable', searchQueries)
   );
 
@@ -32,6 +32,7 @@ export const DataBatchTable = () => {
       columns={columns}
       error={error?.message}
       isPending={isPending}
+      isPlaceholderData={isPlaceholderData}
     />
   );
 };
@@ -87,7 +88,12 @@ const columns: ColumnDef<TDataBatch>[] = [
 
 const CellId = ({ value }: { value: string }) => {
   return (
-    <Button asChild variant='link' className='!p-0 items-start break-words'>
+    <Button
+      asChild
+      variant='link'
+      className='!p-0 items-start leading-tight'
+      style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+    >
       <Link
         to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.VIEW}
         params={{ batchId: value }}
