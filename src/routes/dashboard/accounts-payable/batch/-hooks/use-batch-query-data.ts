@@ -18,9 +18,7 @@ export const useBatchQueryData = (): [
 
   const { dataBatch } = useServices();
 
-  const { data } = useSuspenseQuery(
-    dataBatch.freightDocumentByIdQueryOptions(batchId)
-  );
+  const { data } = useSuspenseQuery(dataBatch.batchByIdQueryOptions(batchId));
 
   const value = useMemo(
     () => data.items.find((item) => item.id === batchId),

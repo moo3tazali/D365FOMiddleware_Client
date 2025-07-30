@@ -8,11 +8,11 @@ export const Route = createFileRoute(
   '/dashboard/accounts-receivable/batch/$batchId/(view)/'
 )({
   component: ViewBatchPage,
-  beforeLoad: async ({ params, context }) => {
+  loader: ({ params, context }) => {
     const batchNumber = params.batchId;
     const { queryClient, services } = context;
-    await queryClient.prefetchQuery(
-      services.dataBatch.freightDocumentByIdQueryOptions(batchNumber)
+    queryClient.ensureQueryData(
+      services.dataBatch.batchByIdQueryOptions(batchNumber)
     );
   },
 });

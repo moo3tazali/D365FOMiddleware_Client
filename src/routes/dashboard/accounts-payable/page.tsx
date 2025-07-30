@@ -5,11 +5,10 @@ import { ErrorFallback, LoadingFallback } from '@/components/fallback';
 
 export const Route = createFileRoute('/dashboard/accounts-payable/')({
   component: AccountsPayablePage,
-  beforeLoad: async ({ context, search }) => {
+  loader: ({ context }) => {
     const { services, queryClient } = context;
-
-    await queryClient.prefetchQuery(
-      services.dataBatch.freightDocumentQueryOptions('accountPayable', search)
+    queryClient.ensureQueryData(
+      services.dataBatch.batchQueryOptions('accountPayable')
     );
   },
   pendingComponent: LoadingFallback,

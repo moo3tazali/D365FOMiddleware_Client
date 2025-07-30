@@ -22,7 +22,7 @@ export const DataBatchTable = () => {
   });
 
   const { data, isPending, error } = useQuery(
-    dataBatch.freightDocumentQueryOptions('ledger', searchQueries)
+    dataBatch.batchQueryOptions('ledger', searchQueries)
   );
 
   return (

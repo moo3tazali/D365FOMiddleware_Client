@@ -77,7 +77,7 @@ export class DataBatch {
     });
   };
 
-  public freightDocumentQueryOptions = (module: TModule, searchQuery?: {}) => {
+  public batchQueryOptions = (module: TModule, searchQuery?: {}) => {
     const entryProcessorTypes = this.getDefaultEntryProcessorType(module);
 
     const query = this.searchQuery.getParsedSearch(DataBatchQuerySchema, {
@@ -95,7 +95,7 @@ export class DataBatch {
     });
   };
 
-  public freightDocumentByIdQueryOptions = (batchNumber?: string) => {
+  public batchByIdQueryOptions = (batchNumber?: string) => {
     const query = this.searchQuery.getParsedSearch(DataBatchQuerySchema, {
       maxCount: 1,
       skipCount: 0,

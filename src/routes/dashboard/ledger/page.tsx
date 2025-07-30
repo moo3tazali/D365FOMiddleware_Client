@@ -5,12 +5,9 @@ import { ErrorFallback, LoadingFallback } from '@/components/fallback';
 
 export const Route = createFileRoute('/dashboard/ledger/')({
   component: LedgerPage,
-  beforeLoad: async ({ context, search }) => {
+  loader: ({ context }) => {
     const { services, queryClient } = context;
-
-    await queryClient.prefetchQuery(
-      services.dataBatch.freightDocumentQueryOptions('ledger', search)
-    );
+    queryClient.ensureQueryData(services.dataBatch.batchQueryOptions('ledger'));
   },
   pendingComponent: LoadingFallback,
   errorComponent: ErrorFallback,
