@@ -2,7 +2,7 @@ import type { PaginationRes } from '@/interfaces/api-res';
 import { API_ROUTES } from '../core/api-routes';
 import { Sync } from '../core/sync';
 import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
-import { queryOptions } from '@tanstack/react-query';
+import { keepPreviousData, queryOptions } from '@tanstack/react-query';
 import type { TPagination } from '@/interfaces/pagination';
 
 interface DataBatchQuery extends TPagination {
@@ -83,6 +83,7 @@ export class DataBatch {
     return queryOptions({
       queryKey: [...this.queryKey, query],
       queryFn: () => this.list(query),
+      placeholderData: keepPreviousData,
     });
   };
 

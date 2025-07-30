@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query';
+import { keepPreviousData, queryOptions } from '@tanstack/react-query';
 
 import type { PaginationRes } from '@/interfaces/api-res';
 import { API_ROUTES } from '../core/api-routes';
@@ -42,6 +42,7 @@ export class DataBatchError {
     return queryOptions({
       queryKey: [...this.queryKey, searchQuery],
       queryFn: () => this.errorList(searchQuery),
+      placeholderData: keepPreviousData,
     });
   };
 }
