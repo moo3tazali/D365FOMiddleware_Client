@@ -19,7 +19,7 @@ export class DataBatchError {
   private readonly syncService = Sync.getInstance();
   private readonly searchQuery = SearchQuery.getInstance();
 
-  public readonly queryKey = 'data-batch-error';
+  public readonly queryKey = ['data-batch-error'];
 
   private constructor() {}
 
@@ -48,7 +48,7 @@ export class DataBatchError {
       searchQuery
     );
 
-    const queryKey: (string | TDataBatchErrorQuery)[] = [this.queryKey];
+    const queryKey: (string | TDataBatchErrorQuery)[] = this.queryKey;
 
     if (query) queryKey.push(query);
 

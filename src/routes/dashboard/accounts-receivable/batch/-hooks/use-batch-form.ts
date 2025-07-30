@@ -90,7 +90,7 @@ export const useBatchForm = () => {
     isPending,
     dismissLoading,
   } = useMutation({
-    mutationKey: [accountReceivable.mutationKey],
+    mutationKey: accountReceivable.mutationKey,
     operationName: 'upload',
     mutationFn: accountReceivable.upload,
     formControl: form.control,

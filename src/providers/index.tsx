@@ -37,7 +37,7 @@ export const AppProviders = ({ children }: Props) => {
               {children}
               <Toaster
                 toastOptions={{
-                  className: '!text-foreground !bg-background',
+                  className: '!text-foreground !bg-background capitalize',
                 }}
               />
               <ReactQueryDevtools />

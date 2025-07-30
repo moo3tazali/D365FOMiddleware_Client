@@ -1,11 +1,6 @@
 import toast from 'react-hot-toast';
-import { useCallback, useMemo, useRef } from 'react';
-import type {
-  Control,
-  FieldValues,
-  Path,
-  // Path,
-} from 'react-hook-form';
+import { useCallback, useRef } from 'react';
+import type { Control, FieldValues, Path } from 'react-hook-form';
 import {
   useQueryClient,
   useMutation as useTanstackMutation,
@@ -57,17 +52,17 @@ export const useMutation = <
 
   const loadingRef = useRef<string | null>(null);
 
-  // capitalize operation name
-  const operation = useMemo(
-    () => operationName.charAt(0).toUpperCase() + operationName.slice(1),
-    [operationName]
-  );
+  const operation = useRef(operationName);
 
   const dismissLoading = useCallback((newLoadingId: string) => {
     if (loadingRef.current) {
       toast.dismiss(loadingRef.current);
     }
     loadingRef.current = newLoadingId;
+  }, []);
+
+  const setOperationName = useCallback((operationName: string) => {
+    operation.current = operationName;
   }, []);
 
   return {
@@ -78,7 +73,7 @@ export const useMutation = <
         if (!disableToast) {
           // show loading toast
           const loading = toast.loading(
-            toastMsgs?.loading ?? `${operation} in progress...`
+            toastMsgs?.loading ?? `${operation.current} in progress...`
           );
 
           // set loading ref
@@ -98,7 +93,7 @@ export const useMutation = <
           }
 
           // show success toast
-          toast.success(toastMsgs?.success ?? `${operation} success!`);
+          toast.success(toastMsgs?.success ?? `${operation.current} success!`);
         }
 
         // refetch queries
@@ -122,7 +117,7 @@ export const useMutation = <
 
           // show error toast
           toast.error(
-            toastMsgs?.error ?? error?.message ?? `${operation} failed!`
+            toastMsgs?.error ?? error?.message ?? `${operation.current} failed!`
           );
         }
 
@@ -169,5 +164,6 @@ export const useMutation = <
       },
     }),
     dismissLoading,
+    setOperationName,
   };
 };

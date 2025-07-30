@@ -14,7 +14,7 @@ export class AppSetting {
   private static _instance: AppSetting;
   private readonly syncService = Sync.getInstance();
 
-  public readonly queryKey = 'admin.app-setting';
+  public readonly queryKey = ['admin.app-setting'];
 
   private constructor() {}
 
@@ -28,17 +28,19 @@ export class AppSetting {
 
   public list = async (): Promise<D365FOSetting[]> => {
     return this.syncService.fetch<D365FOSetting[]>(
-      API_ROUTES.ADMIN.APP_SETTING
+      API_ROUTES.ADMIN.APP_SETTING.LIST
     );
   };
 
   public update = async (payload: AppSettingUpdatePayload): Promise<void> => {
-    await this.syncService.save(API_ROUTES.ADMIN.APP_SETTING, payload);
+    await this.syncService.save(API_ROUTES.ADMIN.APP_SETTING.Update, payload, {
+      saveMethod: 'put',
+    });
   };
 
   public queryOptions = () => {
     return queryOptions({
-      queryKey: [this.queryKey],
+      queryKey: this.queryKey,
       queryFn: this.list,
     });
   };

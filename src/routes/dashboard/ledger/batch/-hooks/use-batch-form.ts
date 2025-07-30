@@ -69,7 +69,7 @@ export const useBatchForm = () => {
     isPending,
     dismissLoading,
   } = useMutation({
-    mutationKey: [ledger.mutationKey],
+    mutationKey: ledger.mutationKey,
     operationName: 'upload',
     mutationFn: ledger.upload,
     formControl: form.control,

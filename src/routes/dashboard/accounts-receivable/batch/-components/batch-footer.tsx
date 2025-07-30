@@ -27,7 +27,7 @@ const UploadBtn = () => {
   const { accountReceivable } = useServices();
 
   const isUploading = useIsMutating({
-    mutationKey: [accountReceivable.mutationKey],
+    mutationKey: accountReceivable.mutationKey,
   });
 
   return (

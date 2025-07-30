@@ -26,7 +26,7 @@ export class DataBatch {
   private readonly syncService = Sync.getInstance();
   private readonly searchQuery = SearchQuery.getInstance();
 
-  public readonly queryKey = 'data-batch';
+  public readonly queryKey = ['data-batch'];
 
   private constructor() {}
 
@@ -85,7 +85,7 @@ export class DataBatch {
       ...searchQuery,
     });
 
-    const queryKey: (string | DataBatchQuery)[] = [this.queryKey];
+    const queryKey: (string | DataBatchQuery)[] = this.queryKey;
 
     if (query) queryKey.push(query);
 
@@ -102,7 +102,7 @@ export class DataBatch {
       batchNumber,
     });
 
-    const queryKey: (string | DataBatchQuery)[] = [this.queryKey];
+    const queryKey: (string | DataBatchQuery)[] = this.queryKey;
 
     if (query) queryKey.push(query);
 

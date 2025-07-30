@@ -27,7 +27,7 @@ export const useDataBatchAction = (data: TDataBatch) => {
   const { mutateAsync: onDelete } = useMutation({
     operationName: 'delete record',
     mutationFn: () => dataBatch.deleteBatch({ batchId }),
-    refetchQueries: [[dataBatch.queryKey]],
+    refetchQueries: [dataBatch.queryKey],
   });
 
   const onView = useCallback(() => {

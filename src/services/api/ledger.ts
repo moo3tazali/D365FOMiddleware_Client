@@ -14,7 +14,7 @@ const syncService = Sync.getInstance();
 export class Ledger {
   private static _instance: Ledger;
 
-  public readonly mutationKey = 'ledger-upload';
+  public readonly mutationKey = ['ledger-upload'];
   public readonly UPLOAD_TYPES = {
     FREIGHT_CLOSING_DOC: TEntryProcessorTypes.LedgerFreightClosingEntry,
     TRUCKING_CLOSING_DOC: TEntryProcessorTypes.LedgerTruckingClosingEntry,

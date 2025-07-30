@@ -15,7 +15,7 @@ const syncService = Sync.getInstance();
 export class AccountReceivable {
   private static _instance: AccountReceivable;
 
-  public readonly mutationKey = 'account-receivable-upload';
+  public readonly mutationKey = ['account-receivable-upload'];
   public readonly UPLOAD_TYPES = {
     FREIGHT_DOC: TEntryProcessorTypes.AccountReceivableFreight,
     TRUCKING_DOC: TEntryProcessorTypes.AccountReceivableTrucking,
