@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { useParams, useSearch } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 
 import { useServices } from '@/hooks/use-services';
 import { DataTable, type ColumnDef } from '@/components/data-table';
 import type { TDataBatchError } from '@/interfaces/data-batch-error';
 import { Badge } from '@/components/ui/badge';
+import { useParsedPagination } from '@/hooks/use-parsed-pagination';
 
 export const BatchErrorTable = () => {
   const { dataBatchError } = useServices();
@@ -13,13 +14,10 @@ export const BatchErrorTable = () => {
     from: '/dashboard/accounts-receivable/batch/$batchId/errors/',
   });
 
-  const search = useSearch({
-    strict: false,
-    structuralSharing: true,
-  });
+  const { maxCount, skipCount } = useParsedPagination();
 
   const { data, isPending, error } = useQuery(
-    dataBatchError.errorListQueryOptions({ ...search, batchId })
+    dataBatchError.errorListQueryOptions({ maxCount, skipCount, batchId })
   );
 
   return (

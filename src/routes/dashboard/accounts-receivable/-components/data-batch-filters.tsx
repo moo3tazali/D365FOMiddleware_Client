@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { useMemo, useRef, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
@@ -13,6 +14,25 @@ import { useSearchQuery } from '@/hooks/use-search-query';
 
 import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/daya-batch';
 
+const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.ACCOUNT_RECEIVABLE;
+const entryProcessorValues = entryProcessorOptions.map(({ value }) => value);
+
+export const DataBatchQuerySchema = z.object({
+  batchNumber: z.string().ulid('Batch number is invalid').optional(),
+  entryProcessorTypes: z
+    .array(z.number())
+    .optional()
+    .refine(
+      (values) =>
+        !values ||
+        values.length === 0 ||
+        values.every((v) => entryProcessorValues.includes(v)),
+      {
+        message: 'Invalid entryProcessorTypes value(s)',
+      }
+    ),
+});
+
 export const DataBatchFilters = () => {
   return (
     <div className='flex items-center gap-2.5 max-w-2xl'>
@@ -25,12 +45,28 @@ export const DataBatchFilters = () => {
   );
 };
 
+const TargetBatchNumberQuerySchema = DataBatchQuerySchema.pick({
+  batchNumber: true,
+});
+
 const TargetBatchNumberFilter = () => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [{ batchNumber }, set, remove] = useSearchQuery(['batchNumber']);
+  const [{ batchNumber }, set, remove] = useSearchQuery(
+    TargetBatchNumberQuerySchema
+  );
 
   useInputDebounce(inputRef, (value) => {
+    inputRef.current?.setAttribute('aria-invalid', 'false');
+
     if (value) {
+      const result = TargetBatchNumberQuerySchema.safeParse({
+        batchNumber: value,
+      });
+
+      if (!result.success) {
+        inputRef.current?.setAttribute('aria-invalid', 'true');
+        return;
+      }
       set('batchNumber', value);
     } else {
       remove('batchNumber');
@@ -47,15 +83,22 @@ const TargetBatchNumberFilter = () => {
   );
 };
 
-const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.ACCOUNT_RECEIVABLE;
+const EntryProcessorTypeQuerySchema = DataBatchQuerySchema.pick({
+  entryProcessorTypes: true,
+});
 
 const EntryProcessorTypeFilter = () => {
-  const [{ entryProcessorTypes }, set, remove] = useSearchQuery<{
-    entryProcessorTypes: number[];
-  }>(['entryProcessorTypes']);
+  const [{ entryProcessorTypes }, set, remove] = useSearchQuery(
+    EntryProcessorTypeQuerySchema
+  );
+
+  const isValid = useMemo(() => {
+    return EntryProcessorTypeQuerySchema.safeParse({ entryProcessorTypes })
+      .success;
+  }, [entryProcessorTypes]);
 
   const [value, setValue] = useState<string>(
-    entryProcessorTypes ? String(entryProcessorTypes[0] ?? '') : ''
+    entryProcessorTypes ? String(isValid ? entryProcessorTypes[0] : '') : ''
   );
 
   const SelectItems = useMemo(
@@ -72,7 +115,9 @@ const EntryProcessorTypeFilter = () => {
     <Select
       onValueChange={(value) => {
         setValue(value);
-        set('entryProcessorTypes', [+value]);
+        if (isValid) {
+          set('entryProcessorTypes', [+value]);
+        }
       }}
       value={value}
       disabled={false}

@@ -1,23 +1,19 @@
-import { z } from 'zod';
 import { queryOptions } from '@tanstack/react-query';
 
 import type { PaginationRes } from '@/interfaces/api-res';
 import { API_ROUTES } from '../core/api-routes';
 import { Sync } from '../core/sync';
 import type { TDataBatchError } from '@/interfaces/data-batch-error';
-import { SearchQuery } from '../core/search-query';
-import { PaginationSchema } from '@/schemas/pagination-schema';
 
-const DataBatchErrorQuerySchema = PaginationSchema.extend({
-  batchId: z.string().min(1, 'Batch ID is required').ulid(),
-});
-
-type TDataBatchErrorQuery = z.infer<typeof DataBatchErrorQuerySchema>;
+interface TDataBatchErrorQuery {
+  batchId: string;
+  maxCount?: number;
+  skipCount?: number;
+}
 
 export class DataBatchError {
   private static _instance: DataBatchError;
   private readonly syncService = Sync.getInstance();
-  private readonly searchQuery = SearchQuery.getInstance();
 
   public readonly queryKey = ['data-batch-error'];
 
@@ -42,19 +38,10 @@ export class DataBatchError {
     );
   }
 
-  public errorListQueryOptions = (searchQuery?: {}) => {
-    const query = this.searchQuery.getParsedSearch<TDataBatchErrorQuery>(
-      DataBatchErrorQuerySchema,
-      searchQuery
-    );
-
-    const queryKey: (string | TDataBatchErrorQuery)[] = [...this.queryKey];
-
-    if (query) queryKey.push(query);
-
+  public errorListQueryOptions = (searchQuery?: TDataBatchErrorQuery) => {
     return queryOptions({
-      queryKey,
-      queryFn: () => this.errorList(query),
+      queryKey: [...this.queryKey, searchQuery],
+      queryFn: () => this.errorList(searchQuery),
     });
   };
 }

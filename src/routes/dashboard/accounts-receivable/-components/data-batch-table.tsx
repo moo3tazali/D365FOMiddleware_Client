@@ -3,22 +3,22 @@ import { useQuery } from '@tanstack/react-query';
 import { useServices } from '@/hooks/use-services';
 import { DataTable, type ColumnDef } from '@/components/data-table';
 import { TDataBatchStatus, type TDataBatch } from '@/interfaces/data-batch';
-import { DataBatchFilters } from './data-batch-filters';
+import { DataBatchFilters, DataBatchQuerySchema } from './data-batch-filters';
 import { enumToOptions } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { Link, useSearch } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { TableActionCol } from '@/components/table-action-col';
 import { useDataBatchAction } from '../-hooks/use-data-batch-action';
 import { ROUTES } from '@/router';
 import { Button } from '@/components/ui/button';
 import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/daya-batch';
+import { useSearchQuery } from '@/hooks/use-search-query';
 
 export const DataBatchTable = () => {
   const { dataBatch } = useServices();
 
-  const searchQueries = useSearch({
-    strict: false,
-    structuralSharing: true,
+  const [searchQueries] = useSearchQuery(DataBatchQuerySchema, {
+    withPagination: true,
   });
 
   const { data, isPending, error } = useQuery(

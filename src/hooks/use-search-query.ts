@@ -1,46 +1,83 @@
 import { useCallback, useMemo } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-
+import type { z, ZodObject, ZodRawShape } from 'zod';
 import { tryParse } from '@/lib/utils';
+import { useParsedPagination } from './use-parsed-pagination';
 import type { QueryValue } from '@/interfaces/search-query';
 
-export const useSearchQuery = <T extends object>(
-  keys: (keyof T)[]
+// 🔁 Function overloads
+export function useSearchQuery<T extends ZodObject<ZodRawShape>>(
+  schema: T,
+  options: { withPagination: true }
 ): [
-  values: Record<keyof T, T[keyof T] | undefined>,
-  setSearchParam: (key: keyof T, value: QueryValue) => void,
-  removeSearchParam: (key: keyof T) => void,
+  values: z.infer<T> & { maxCount: number; skipCount: number },
+  setSearchParam: (
+    key: keyof (z.infer<T> & { maxCount?: number; skipCount?: number }),
+    value: QueryValue
+  ) => void,
+  removeSearchParam: (key: keyof z.infer<T>) => void,
   resetSearch: () => void
-] => {
+];
+
+export function useSearchQuery<T extends ZodObject<ZodRawShape>>(
+  schema: T,
+  options?: { withPagination?: false }
+): [
+  values: z.infer<T>,
+  setSearchParam: (key: keyof z.infer<T>, value: QueryValue) => void,
+  removeSearchParam: (key: keyof z.infer<T>) => void,
+  resetSearch: () => void
+];
+
+// ✅ Implementation
+export function useSearchQuery<T extends ZodObject<ZodRawShape>>(
+  schema: T,
+  options?: { withPagination?: boolean }
+) {
   const navigate = useNavigate();
+  const search = useSearch({ strict: false, structuralSharing: true });
+  const { maxCount, skipCount } = useParsedPagination();
 
-  const search = useSearch({
-    strict: false,
-    structuralSharing: true,
-  });
+  type TValue = z.infer<T>;
+  const shape = schema.shape as ZodRawShape;
+  const schemaKeys = Object.keys(shape) as (keyof TValue)[];
+  const withPagination = options?.withPagination ?? false;
 
-  // Convert current search params into a Map for easier access
   const currentSearchMap = useMemo(() => {
     const map = new Map<string, QueryValue>();
 
-    for (const [key, value] of Object.entries(search)) {
-      const parsedValue = tryParse<QueryValue>(value as string);
-      if (parsedValue !== null) {
-        map.set(key, parsedValue);
+    // ✅ Add pagination if enabled
+    if (withPagination) {
+      map.set('maxCount', maxCount);
+      map.set('skipCount', skipCount);
+    }
+
+    for (const key of schemaKeys) {
+      const raw = (search as Record<string, unknown>)[key as string];
+      if ((key === 'skipCount' || key === 'maxCount') && withPagination)
+        continue;
+      if (raw !== undefined) {
+        const parsed = tryParse<QueryValue>(raw as string);
+        if (parsed !== undefined) {
+          const result = shape[key as string].safeParse(parsed);
+          if (result.success) {
+            map.set(key as string, result.data);
+          }
+        }
       }
     }
 
     return map;
-  }, [search]);
+  }, [search, shape, schemaKeys, withPagination, maxCount, skipCount]);
 
   const setSearchParam = useCallback(
-    (key: keyof T, value: QueryValue) => {
+    (key: string, value: QueryValue) => {
       navigate({
         search: (prev) =>
           ({
             ...prev,
-            ...('skipCount' in prev ? { skipCount: 0 } : {}), // Reset to first page
-            [key]: value,
+            ...('skipCount' in prev ? { skipCount: 0 } : {}),
+            [key]: JSON.stringify(value),
           } as never),
       });
     },
@@ -48,11 +85,11 @@ export const useSearchQuery = <T extends object>(
   );
 
   const removeSearchParam = useCallback(
-    (key: keyof T) => {
+    (key: string) => {
       const updated = new URLSearchParams();
 
       for (const [k, v] of currentSearchMap.entries()) {
-        if (k === 'skipCount') continue;
+        if (k === 'skipCount' && withPagination) continue;
         if (k !== key) updated.set(k, String(v));
       }
 
@@ -61,31 +98,30 @@ export const useSearchQuery = <T extends object>(
         updatedSearch[k] = v;
       }
 
-      navigate({
-        search: updatedSearch as never,
-      });
+      navigate({ search: updatedSearch as never });
     },
-    [navigate, currentSearchMap]
+    [navigate, currentSearchMap, withPagination]
   );
 
   const resetSearch = useCallback(() => {
-    navigate({
-      search: {
-        skipCount: 0,
-      } as never,
-    });
+    navigate({ search: { skipCount: 0 } as never });
   }, [navigate]);
 
   const values = useMemo(() => {
-    const result = {} as Record<keyof T, T[keyof T] | undefined>;
+    const result: Record<string, unknown> = {};
 
-    for (const key of keys) {
+    for (const key of schemaKeys) {
       const value = currentSearchMap.get(key as string);
-      result[key] = value as T[keyof T] | undefined;
+      result[key as string] = value;
+    }
+
+    if (withPagination) {
+      result['maxCount'] = currentSearchMap.get('maxCount');
+      result['skipCount'] = currentSearchMap.get('skipCount');
     }
 
     return result;
-  }, [currentSearchMap, keys]);
+  }, [currentSearchMap, schemaKeys, withPagination]);
 
-  return [values, setSearchParam, removeSearchParam, resetSearch];
-};
+  return [values, setSearchParam, removeSearchParam, resetSearch] as const;
+}

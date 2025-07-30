@@ -1,30 +1,20 @@
-import { z } from 'zod';
-
 import type { PaginationRes } from '@/interfaces/api-res';
 import { API_ROUTES } from '../core/api-routes';
 import { Sync } from '../core/sync';
 import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
 import { queryOptions } from '@tanstack/react-query';
-import { SearchQuery } from '../core/search-query';
-import { PaginationSchema } from '@/schemas/pagination-schema';
+import type { TPagination } from '@/interfaces/pagination';
 
-const DataBatchQuerySchema = PaginationSchema.extend({
-  batchNumber: z.string().ulid('Invalid batch number').optional(),
-  entryProcessorTypes: z
-    .array(z.number(), {
-      invalid_type_error: 'Entry processor type must be an array of numbers',
-    })
-    .optional(),
-});
-
-export type DataBatchQuery = z.infer<typeof DataBatchQuerySchema>;
+interface DataBatchQuery extends TPagination {
+  batchNumber?: string;
+  entryProcessorTypes?: number[];
+}
 
 type TModule = 'accountReceivable' | 'accountPayable' | 'ledger';
 
 export class DataBatch {
   private static _instance: DataBatch;
   private readonly syncService = Sync.getInstance();
-  private readonly searchQuery = SearchQuery.getInstance();
 
   public readonly queryKey = ['data-batch'];
 
@@ -77,38 +67,34 @@ export class DataBatch {
     });
   };
 
-  public batchQueryOptions = (module: TModule, searchQuery?: {}) => {
-    const entryProcessorTypes = this.getDefaultEntryProcessorType(module);
+  public batchQueryOptions = (
+    module: TModule,
+    searchQuery?: DataBatchQuery
+  ) => {
+    const entryProcessorTypes =
+      searchQuery?.entryProcessorTypes ||
+      this.getDefaultEntryProcessorType(module);
 
-    const query = this.searchQuery.getParsedSearch(DataBatchQuerySchema, {
+    const query = {
+      ...(searchQuery || {}),
       entryProcessorTypes,
-      ...searchQuery,
-    });
-
-    const queryKey: (string | DataBatchQuery)[] = [...this.queryKey];
-
-    if (query) queryKey.push(query);
+    };
 
     return queryOptions({
-      queryKey,
+      queryKey: [...this.queryKey, query],
       queryFn: () => this.list(query),
     });
   };
 
   public batchByIdQueryOptions = (batchNumber?: string) => {
-    const query = this.searchQuery.getParsedSearch(DataBatchQuerySchema, {
-      maxCount: 1,
-      skipCount: 0,
-      batchNumber,
-    });
-
-    const queryKey: (string | DataBatchQuery)[] = [...this.queryKey];
-
-    if (query) queryKey.push(query);
-
     return queryOptions({
-      queryKey,
-      queryFn: () => this.list(query),
+      queryKey: [...this.queryKey, batchNumber],
+      queryFn: () =>
+        this.list({
+          maxCount: 1,
+          skipCount: 0,
+          batchNumber,
+        }),
     });
   };
 

@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { usePagination } from '@/hooks/use-pagination';
+import { ROWS_PER_PAGE } from '@/constants/pagination';
 
 interface PaginationProps {
   pageSize: number;
@@ -65,12 +66,11 @@ export const RowsPagination = memo(
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='5'>5</SelectItem>
-              <SelectItem value='10'>10</SelectItem>
-              <SelectItem value='20'>20</SelectItem>
-              <SelectItem value='50'>50</SelectItem>
-              <SelectItem value='100'>100</SelectItem>
-              <SelectItem value='150'>150</SelectItem>
+              {ROWS_PER_PAGE.map((row) => (
+                <SelectItem key={row} value={row.toString()}>
+                  {row}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

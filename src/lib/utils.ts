@@ -11,12 +11,12 @@ export type FlattenObj<T> = T extends object
     }[keyof T]
   : never;
 
-export const tryParse = <T>(value?: string): T | null => {
-  if (!value) return null;
+export const tryParse = <T>(value?: string): T | undefined => {
+  if (!value) return;
   try {
     return JSON.parse(value) as T;
   } catch {
-    return null;
+    return;
   }
 };
 

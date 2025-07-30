@@ -1,4 +1,4 @@
-import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { useCallback, useMemo } from 'react';
 import { useCookies } from 'react-cookie';
 
@@ -6,24 +6,14 @@ import {
   PAGE_SIZE_COOKIE_MAX_AGE,
   PAGE_SIZE_COOKIE_NAME,
 } from '@/constants/cookies';
-import { DEFAULT_PAGE_SIZE } from '@/constants/pagination';
-import { tryParse } from '@/lib/utils';
+import { useParsedPagination } from './use-parsed-pagination';
 
 export const usePagination = () => {
-  const [{ rows_per_page }, setCookie] = useCookies([PAGE_SIZE_COOKIE_NAME]);
-  const cookiesMaxSize = rows_per_page as number | undefined;
+  const [, setCookie] = useCookies([PAGE_SIZE_COOKIE_NAME]);
 
   const navigate = useNavigate();
 
-  const { maxCount, skipCount } = useSearch({
-    strict: false,
-    structuralSharing: true,
-    select: (s: { maxCount?: string; skipCount?: string }) => ({
-      maxCount:
-        tryParse<number>(s.maxCount) || cookiesMaxSize || DEFAULT_PAGE_SIZE,
-      skipCount: tryParse<number>(s.skipCount) || 0,
-    }),
-  });
+  const { maxCount, skipCount } = useParsedPagination();
 
   // Get current values from URL params with defaults
   const currentPage = useMemo(
