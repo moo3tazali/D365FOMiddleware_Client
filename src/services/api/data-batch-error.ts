@@ -48,7 +48,7 @@ export class DataBatchError {
       searchQuery
     );
 
-    const queryKey: (string | TDataBatchErrorQuery)[] = this.queryKey;
+    const queryKey: (string | TDataBatchErrorQuery)[] = [...this.queryKey];
 
     if (query) queryKey.push(query);
 
