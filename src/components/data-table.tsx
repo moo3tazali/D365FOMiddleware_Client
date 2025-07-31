@@ -9,7 +9,6 @@ import {
 import { Card } from '@/components/ui/card';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
-  ClampText,
   Table,
   TableBody,
   TableCell,
@@ -150,12 +149,7 @@ const DesktopTableView = React.memo(() => {
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
-                    <ClampText>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </ClampText>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
               </TableRow>

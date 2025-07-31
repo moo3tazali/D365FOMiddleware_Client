@@ -73,9 +73,10 @@ export class DataBatch {
   };
 
   public insertBatch = async (payload: InsertBatchPayload): Promise<void> => {
-    await this.syncService.save(API_ROUTES.DATA_MIGRATION.DATA_BATCH.INSERT, {
-      body: payload,
-    });
+    await this.syncService.save<void, InsertBatchPayload>(
+      API_ROUTES.DATA_MIGRATION.DATA_BATCH.INSERT,
+      payload
+    );
   };
 
   public batchQueryOptions = (

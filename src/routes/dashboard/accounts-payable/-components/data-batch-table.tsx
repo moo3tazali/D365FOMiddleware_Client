@@ -13,6 +13,7 @@ import { ROUTES } from '@/router';
 import { Button } from '@/components/ui/button';
 import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/daya-batch';
 import { useSearchQuery } from '@/hooks/use-search-query';
+import { ClampText } from '@/components/ui/clamp-text';
 
 export const DataBatchTable = () => {
   const { dataBatch } = useServices();
@@ -46,6 +47,7 @@ const columns: ColumnDef<TDataBatch>[] = [
   {
     accessorKey: 'description',
     header: 'Description',
+    cell: ({ getValue }) => <CellDescription value={getValue<string>()} />,
   },
   {
     accessorKey: 'entryProcessorType',
@@ -102,6 +104,10 @@ const CellId = ({ value }: { value: string }) => {
       </Link>
     </Button>
   );
+};
+
+const CellDescription = ({ value }: { value: string }) => {
+  return <ClampText>{value}</ClampText>;
 };
 
 const CellCreatedAt = ({ value }: { value: string }) => {

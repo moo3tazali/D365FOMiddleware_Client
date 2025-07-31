@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipTrigger } from './tooltip';
 
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
   return (
@@ -106,41 +105,6 @@ function TableCaption({
   );
 }
 
-function ClampText({ className, ...props }: React.ComponentProps<'div'>) {
-  const textRef = React.useRef<HTMLDivElement>(null);
-  const [isClamped, setIsClamped] = React.useState(false);
-
-  React.useEffect(() => {
-    const el = textRef.current;
-    if (!el) return;
-
-    const range = document.createRange();
-    range.selectNodeContents(el);
-    const rects = range.getClientRects();
-
-    if (rects.length > 2) {
-      setIsClamped(true);
-    }
-  }, []);
-
-  return isClamped ? (
-    <Tooltip delayDuration={300}>
-      <TooltipTrigger className='lg:line-clamp-2 cursor-text text-start'>
-        {props.children}
-      </TooltipTrigger>
-      <TooltipContent className='hidden lg:block'>
-        {props.children}
-      </TooltipContent>
-    </Tooltip>
-  ) : (
-    <div
-      ref={textRef}
-      className={cn('lg:line-clamp-2', className)}
-      {...props}
-    />
-  );
-}
-
 export {
   Table,
   TableHeader,
@@ -150,5 +114,4 @@ export {
   TableRow,
   TableCell,
   TableCaption,
-  ClampText,
 };
