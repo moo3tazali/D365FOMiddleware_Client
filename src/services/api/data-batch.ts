@@ -101,7 +101,7 @@ export class DataBatch {
 
   public batchByIdQueryOptions = (batchNumber?: string) => {
     return queryOptions({
-      queryKey: [...this.queryKey, batchNumber],
+      queryKey: [...this.queryKey, { batchNumber }],
       queryFn: () =>
         this.list({
           maxCount: 1,

@@ -2,7 +2,7 @@ import Upload from 'lucide-react/dist/esm/icons/upload';
 import Rocket from 'lucide-react/dist/esm/icons/rocket';
 import { useIsMutating } from '@tanstack/react-query';
 
-import type { TDataBatch } from '@/interfaces/data-batch';
+import { TDataBatchStatus, type TDataBatch } from '@/interfaces/data-batch';
 import { Button } from '@/components/ui/button';
 import { useServices } from '@/hooks/use-services';
 import { useBatchQueryData } from '../-hooks/use-batch-query-data';
@@ -46,6 +46,23 @@ const UploadBtn = () => {
 
 const SubmitBtn = ({ data }: { data: TDataBatch }) => {
   const { onSubmit, isPending } = useSubmitBatch();
+
+  const showSubmit = data.status === TDataBatchStatus.Pending;
+
+  if (!showSubmit)
+    return (
+      <Button
+        asChild
+        size='lg'
+        disabled={isPending}
+        className='sm:max-w-xs ms-auto w-full'
+      >
+        <Link to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.NEW}>
+          <Upload className='size-5' />
+          New Entry
+        </Link>
+      </Button>
+    );
   return (
     <div className='flex  sm:flex-row gap-2.5 w-full ms-auto sm:max-w-xl *:flex-1'>
       <Button asChild size='lg' disabled={isPending}>
