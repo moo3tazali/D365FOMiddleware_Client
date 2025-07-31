@@ -8,7 +8,7 @@ import { useServices } from '@/hooks/use-services';
 export const useAppSettings = () => {
   const { appSetting } = useServices();
 
-  const { mutate, setOperationName } = useMutation({
+  const { mutate, setOperationName, isPending } = useMutation({
     operationName: 'update settings',
     mutationFn: appSetting.update,
     refetchQueries: [appSetting.queryKey],
@@ -35,5 +35,5 @@ export const useAppSettings = () => {
     [mutate, setOperationName]
   );
 
-  return { onSubmit };
+  return { onSubmit, isPending };
 };
