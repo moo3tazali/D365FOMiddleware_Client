@@ -10,6 +10,7 @@ import { useMutation } from '@/hooks/use-mutation';
 import { useBatchQueryData } from './use-batch-query-data';
 import { ROUTES } from '@/router';
 import { AccountReceivable } from '@/services/api/account-receivable';
+import { useParsedPagination } from '@/hooks/use-parsed-pagination';
 
 const acceptedTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -83,7 +84,9 @@ export const useBatchForm = () => {
 
   const [billingCodeKey, setBillingCodeKey] = useState(crypto.randomUUID());
 
-  const { accountReceivable } = useServices();
+  const { accountReceivable, dataBatch } = useServices();
+
+  const defaultPagination = useParsedPagination();
 
   const {
     mutateAsync: startUpload,
@@ -94,6 +97,9 @@ export const useBatchForm = () => {
     operationName: 'upload',
     mutationFn: accountReceivable.upload,
     formControl: form.control,
+    refetchQueries: [
+      [...dataBatch.getQueryKey('accountReceivable', defaultPagination)],
+    ],
   });
 
   const navigate = useNavigate();

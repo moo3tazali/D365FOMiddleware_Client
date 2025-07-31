@@ -1,6 +1,6 @@
 import { useParams } from '@tanstack/react-router';
 import { useCallback, useMemo } from 'react';
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useServices } from '@/hooks/use-services';
 import type { PaginationRes } from '@/interfaces/api-res';
@@ -18,11 +18,11 @@ export const useBatchQueryData = (): [
 
   const { dataBatch } = useServices();
 
-  const { data } = useSuspenseQuery(dataBatch.batchByIdQueryOptions(batchId));
+  const { data } = useQuery(dataBatch.batchByIdQueryOptions(batchId));
 
   const value = useMemo(
-    () => data.items.find((item) => item.id === batchId),
-    [data.items, batchId]
+    () => data?.items.find((item) => item.id === batchId),
+    [data?.items, batchId]
   );
 
   const setValue = useCallback(

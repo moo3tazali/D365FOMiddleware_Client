@@ -83,18 +83,11 @@ export class DataBatch {
     module: TModule,
     searchQuery?: DataBatchQuery
   ) => {
-    const entryProcessorTypes =
-      searchQuery?.entryProcessorTypes ||
-      this.getDefaultEntryProcessorType(module);
-
-    const query = {
-      ...(searchQuery || {}),
-      entryProcessorTypes,
-    };
+    const queryKey = this.getQueryKey(module, searchQuery);
 
     return queryOptions({
-      queryKey: [...this.queryKey, query],
-      queryFn: () => this.list(query),
+      queryKey,
+      queryFn: () => this.list(queryKey[1]),
       placeholderData: keepPreviousData,
     });
   };
@@ -102,6 +95,7 @@ export class DataBatch {
   public batchByIdQueryOptions = (batchNumber?: string) => {
     return queryOptions({
       queryKey: [...this.queryKey, { batchNumber }],
+      enabled: !!batchNumber,
       queryFn: () =>
         this.list({
           maxCount: 1,
@@ -133,5 +127,21 @@ export class DataBatch {
       default:
         return [];
     }
+  }
+
+  public getQueryKey(
+    module: TModule,
+    searchQuery?: DataBatchQuery
+  ): [string, DataBatchQuery] {
+    const entryProcessorTypes =
+      searchQuery?.entryProcessorTypes ||
+      this.getDefaultEntryProcessorType(module);
+
+    const query: DataBatchQuery = {
+      ...(searchQuery || {}),
+      entryProcessorTypes,
+    };
+
+    return [this.queryKey[0], query];
   }
 }

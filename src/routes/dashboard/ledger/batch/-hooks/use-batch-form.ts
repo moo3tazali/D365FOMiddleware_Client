@@ -9,6 +9,7 @@ import { useServices } from '@/hooks/use-services';
 import { useMutation } from '@/hooks/use-mutation';
 import { useBatchQueryData } from './use-batch-query-data';
 import { ROUTES } from '@/router';
+import { useParsedPagination } from '@/hooks/use-parsed-pagination';
 
 const acceptedTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -62,7 +63,9 @@ export const useBatchForm = () => {
 
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const { ledger } = useServices();
+  const { ledger, dataBatch } = useServices();
+
+  const defaultPagination = useParsedPagination();
 
   const {
     mutateAsync: startUpload,
@@ -73,6 +76,7 @@ export const useBatchForm = () => {
     operationName: 'upload',
     mutationFn: ledger.upload,
     formControl: form.control,
+    refetchQueries: [[...dataBatch.getQueryKey('ledger', defaultPagination)]],
   });
 
   const navigate = useNavigate();
