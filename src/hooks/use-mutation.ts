@@ -115,9 +115,15 @@ export const useMutation = <
             toast.dismiss(loadingRef.current);
           }
 
+          const responseError =
+            error.message +
+            (typeof error.validationErrors === 'string'
+              ? `, ${error.validationErrors}`
+              : '');
+
           // show error toast
           toast.error(
-            toastMsgs?.error ?? error?.message ?? `${operation.current} failed!`
+            toastMsgs?.error ?? responseError ?? `${operation.current} failed!`
           );
         }
 
