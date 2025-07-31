@@ -1,7 +1,11 @@
 import { z } from 'zod';
 import { createFileRoute, notFound, Outlet } from '@tanstack/react-router';
 
-import { LoadingFallback, NotFoundFallback } from '@/components/fallback';
+import {
+  ErrorFallback,
+  LoadingFallback,
+  NotFoundFallback,
+} from '@/components/fallback';
 
 const batchIdSchema = z.string().ulid();
 
@@ -18,6 +22,7 @@ export const Route = createFileRoute(
   },
   pendingComponent: LoadingFallback,
   notFoundComponent: NotFoundFallback,
+  errorComponent: ErrorFallback,
 });
 
 function ViewBatchLayout() {

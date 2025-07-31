@@ -30,3 +30,7 @@ export const enumToOptions = <T extends Record<string, string | number>>(
       value: value as number,
     }));
 };
+
+export const wait = async (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};

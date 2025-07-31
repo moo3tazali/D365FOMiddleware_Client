@@ -20,11 +20,23 @@ export function ErrorFallback({ error, reset, info }: ErrorFallbackProps) {
   return (
     <div
       role='alert'
-      className='w-full pt-20 flex flex-col justify-center items-center gap-7'
+      className='flex flex-col gap-2 h-full w-full items-center justify-center'
     >
-      <TriangleAlert className='text-red-500 size-28 sm:size-40' />
-      <p className='text-red-600 text-sm md:text-xl'>{message}</p>
-      <Button size='lg' onClick={reset} className='w-full max-w-sm font-bold'>
+      <TriangleAlert
+        className='size-28 sm:size-40 text-destructive'
+        strokeWidth={1}
+      />
+      <h1 className='text-center'>{message}</h1>
+      <p className='text-center text-base md:text-lg'>
+        Something went wrong. Please try again or contact support if the issue
+        persists.
+      </p>
+      <Button
+        size='lg'
+        onClick={reset}
+        className='w-full max-w-xs sm:max-w-sm font-bold !mt-5'
+        variant='secondary'
+      >
         Try again
       </Button>
     </div>
