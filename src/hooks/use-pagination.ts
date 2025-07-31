@@ -65,11 +65,27 @@ export const usePagination = () => {
     [currentPage, maxCount, updateUrlAndTriggerChange]
   );
 
+  const getNextPage = useCallback(
+    (totalCount: number): { maxCount: number; skipCount: number } | null => {
+      const maxPage = Math.ceil(totalCount / maxCount);
+      if (currentPage < maxPage) {
+        const newSkipCount = currentPage * maxCount;
+        return {
+          maxCount,
+          skipCount: newSkipCount,
+        };
+      }
+      return null;
+    },
+    [currentPage, maxCount]
+  );
+
   return {
     currentPage,
     currentSize: maxCount,
     handlePageSizeChange,
     handlePreviousPage,
     handleNextPage,
+    getNextPage,
   };
 };

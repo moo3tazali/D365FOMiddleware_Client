@@ -29,16 +29,18 @@ interface PaginationProps {
 
 interface RowsPaginationProps {
   paginationData?: PaginationProps;
+  onNextPageHover?: (nextPage: { maxCount: number; skipCount: number }) => void;
 }
 
 export const RowsPagination = memo(
-  ({ paginationData }: RowsPaginationProps) => {
+  ({ paginationData, onNextPageHover }: RowsPaginationProps) => {
     const {
       currentPage,
       currentSize,
       handlePageSizeChange,
       handlePreviousPage,
       handleNextPage,
+      getNextPage,
     } = usePagination();
 
     const disabled = !paginationData;
@@ -101,6 +103,14 @@ export const RowsPagination = memo(
                   onClick={() =>
                     handleNextPage(paginationData?.totalCount || 0)
                   }
+                  onMouseEnter={() => {
+                    if (!onNextPageHover) return;
+                    const nextPage = getNextPage(
+                      paginationData?.totalCount || 0
+                    );
+                    if (!nextPage) return;
+                    onNextPageHover(nextPage);
+                  }}
                 >
                   <ChevronRightIcon className='h-4 w-4' />
                 </Button>

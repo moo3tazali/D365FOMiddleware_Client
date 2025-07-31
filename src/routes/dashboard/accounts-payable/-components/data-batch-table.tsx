@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useServices } from '@/hooks/use-services';
 import { DataTable, type ColumnDef } from '@/components/data-table';
@@ -26,6 +26,8 @@ export const DataBatchTable = () => {
     dataBatch.batchQueryOptions('accountPayable', searchQueries)
   );
 
+  const queryClient = useQueryClient();
+
   return (
     <DataTable
       header={DataBatchFilters}
@@ -34,6 +36,14 @@ export const DataBatchTable = () => {
       error={error?.message}
       isPending={isPending}
       isPlaceholderData={isPlaceholderData}
+      onNextPageHover={(nextPage) => {
+        queryClient.prefetchQuery(
+          dataBatch.batchQueryOptions('accountPayable', {
+            ...searchQueries,
+            ...nextPage,
+          })
+        );
+      }}
     />
   );
 };

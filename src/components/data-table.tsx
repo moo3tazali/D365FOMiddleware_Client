@@ -29,6 +29,7 @@ interface DataTableProps<TData, TValue> {
   header?: React.ReactNode | React.ElementType;
   footer?: React.ReactNode | React.ElementType;
   cardsBreakpoint?: number;
+  onNextPageHover?: (nextPage: { maxCount: number; skipCount: number }) => void;
 }
 
 interface TableContextValue<TData, TValue> {
@@ -60,6 +61,7 @@ function DataTable<TData, TValue>({
   header,
   footer,
   cardsBreakpoint = 1024,
+  onNextPageHover,
 }: DataTableProps<TData, TValue>) {
   const isMobile = useIsMobile(cardsBreakpoint);
 
@@ -101,7 +103,10 @@ function DataTable<TData, TValue>({
 
         {isMobile ? <MobileTableView /> : <DesktopTableView />}
 
-        <RowsPagination paginationData={paginationData} />
+        <RowsPagination
+          paginationData={paginationData}
+          onNextPageHover={onNextPageHover}
+        />
 
         {footer && typeof footer === 'function'
           ? React.createElement(footer)
