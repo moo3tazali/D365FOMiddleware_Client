@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 
 import { useServices } from '@/hooks/use-services';
@@ -16,9 +16,11 @@ export const BatchErrorTable = () => {
 
   const { maxCount, skipCount } = useParsedPagination();
 
-  const { data, isPending, error } = useQuery(
+  const { data, isPending, error, isPlaceholderData } = useQuery(
     dataBatchError.errorListQueryOptions({ maxCount, skipCount, batchId })
   );
+
+  const queryClient = useQueryClient();
 
   return (
     <DataTable
@@ -26,6 +28,15 @@ export const BatchErrorTable = () => {
       columns={columns}
       error={error?.message}
       isPending={isPending}
+      isPlaceholderData={isPlaceholderData}
+      onNextPageHover={(nextPage) => {
+        queryClient.prefetchQuery(
+          dataBatchError.errorListQueryOptions({
+            ...nextPage,
+            batchId,
+          })
+        );
+      }}
     />
   );
 };
