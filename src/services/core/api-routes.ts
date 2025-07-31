@@ -27,6 +27,7 @@ export const API_ROUTES = {
         '/DataMigration/DataBatch/download-batch-error-list',
       ERROR_LIST: '/DataMigration/DataBatch/error-list',
       DELETE: '/DataMigration/DataBatch',
+      INSERT: '/DataMigration/DataBatch/insert',
     },
     ACCOUNT_RECEIVABLE: {
       FREIGHT_DOCUMENT: '/DataMigration/AccountReceivable/Freight-Document',

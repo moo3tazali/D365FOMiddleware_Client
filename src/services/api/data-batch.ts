@@ -10,6 +10,11 @@ interface DataBatchQuery extends TPagination {
   entryProcessorTypes?: number[];
 }
 
+interface InsertBatchPayload {
+  batchId: string;
+  skipErrors: boolean;
+}
+
 type TModule = 'accountReceivable' | 'accountPayable' | 'ledger';
 
 export class DataBatch {
@@ -64,6 +69,12 @@ export class DataBatch {
   public deleteBatch = async (query: { batchId: string }): Promise<void> => {
     await this.syncService.del(API_ROUTES.DATA_MIGRATION.DATA_BATCH.DELETE, {
       query: { id: query.batchId },
+    });
+  };
+
+  public insertBatch = async (payload: InsertBatchPayload): Promise<void> => {
+    await this.syncService.save(API_ROUTES.DATA_MIGRATION.DATA_BATCH.INSERT, {
+      body: payload,
     });
   };
 
