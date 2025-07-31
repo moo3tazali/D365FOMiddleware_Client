@@ -12,7 +12,10 @@ export const Route = createFileRoute(
     const { batchId } = params;
 
     queryClient.ensureQueryData(
-      services.dataBatchError.errorListQueryOptions({ batchId })
+      services.dataBatchError.errorListQueryOptions({
+        ...services.pagination.defaultValues,
+        batchId,
+      })
     );
   },
 });

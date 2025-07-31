@@ -7,7 +7,12 @@ export const Route = createFileRoute('/dashboard/ledger/')({
   component: LedgerPage,
   loader: ({ context }) => {
     const { services, queryClient } = context;
-    queryClient.ensureQueryData(services.dataBatch.batchQueryOptions('ledger'));
+    queryClient.ensureQueryData(
+      services.dataBatch.batchQueryOptions(
+        'ledger',
+        services.pagination.defaultValues
+      )
+    );
   },
   pendingComponent: LoadingFallback,
   errorComponent: ErrorFallback,

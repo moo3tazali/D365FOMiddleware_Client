@@ -4,6 +4,7 @@ import { DataBatch } from './api/data-batch';
 import { DataBatchError } from './api/data-batch-error';
 import { Ledger } from './api/ledger';
 import { AppSetting } from './api/app-setting';
+import { Pagination } from './core/pagination';
 
 export const services = {
   authService: Auth.getInstance(),
@@ -12,6 +13,7 @@ export const services = {
   dataBatchError: DataBatchError.getInstance(),
   ledger: Ledger.getInstance(),
   appSetting: AppSetting.getInstance(),
+  pagination: Pagination.getInstance(),
 } as const;
 
 export type TServices = typeof services;
