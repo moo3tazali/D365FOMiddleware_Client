@@ -42,9 +42,9 @@ export class ErrorHandler {
       const status = error.response.status;
 
       // fallback to generic message based on status
-      const result = this._getDefaultErrorForStatus(status);
+      const override = this._getDefaultErrorForStatus(status);
 
-      if (result) return result;
+      if (override) return override;
 
       // check for ErrorResOne / Two
       if (this._isErrorResOne(err)) {
@@ -95,6 +95,16 @@ export class ErrorHandler {
         return this._defaultError(
           'Something went wrong on our side. Please try again later.',
           500
+        );
+      case 429:
+        return this._defaultError(
+          'Too many requests. Please try again later.',
+          429
+        );
+      case 503:
+        return this._defaultError(
+          'Service is temporarily unavailable. Please try again later.',
+          503
         );
       default:
         return null;
