@@ -8,14 +8,13 @@ import { useServices } from '@/hooks/use-services';
 import { useBatchQueryData } from '../-hooks/use-batch-query-data';
 import { Link } from '@tanstack/react-router';
 import { ROUTES } from '@/router';
+import { useSubmitBatch } from '../-hooks/use-submit-batch';
 
 export const BatchFooter = () => {
   const [batch] = useBatchQueryData();
 
   const ActionBtn = (() => {
-    if (!batch || !batch?.totalUploadedCount) return <UploadBtn />;
-
-    if (batch && batch.errorCount) return <UploadBtn />;
+    if (!batch || batch.totalFormattedCount === 0) return <UploadBtn />;
 
     return <SubmitBtn data={batch} />;
   })();
@@ -46,9 +45,10 @@ const UploadBtn = () => {
 };
 
 const SubmitBtn = ({ data }: { data: TDataBatch }) => {
+  const { onSubmit, isPending } = useSubmitBatch();
   return (
     <div className='flex  sm:flex-row gap-2.5 w-full ms-auto sm:max-w-xl *:flex-1'>
-      <Button asChild size='lg'>
+      <Button asChild size='lg' disabled={isPending}>
         <Link to={ROUTES.DASHBOARD.LEDGER.BATCH.NEW}>
           <Upload className='size-5' />
           New Entry
@@ -58,10 +58,8 @@ const SubmitBtn = ({ data }: { data: TDataBatch }) => {
       <Button
         size='lg'
         variant='success'
-        disabled={false}
-        onClick={() => {
-          console.log(data);
-        }}
+        disabled={isPending}
+        onClick={() => onSubmit(data)}
       >
         <Rocket className='size-5' />
         Submit

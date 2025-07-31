@@ -106,10 +106,7 @@ export const useBatchForm = () => {
   );
 
   const isDisabled = useMemo(() => {
-    const isSuccess =
-      batch &&
-      batch.totalFormattedCount > 0 &&
-      batch.totalFormattedCount === batch.successCount;
+    const isSuccess = batch && batch.totalFormattedCount > 0;
     return isSuccess || isPending;
   }, [batch, isPending]);
 

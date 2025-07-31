@@ -32,4 +32,5 @@ export interface TDataBatch {
   totalFormattedCount: number;
   totalUploadedCount: number;
   status: TDataBatchStatus;
+  skipErrors?: boolean;
 }
