@@ -1,5 +1,4 @@
 import { AxiosError } from 'axios';
-
 import type { ErrorRes } from '@/interfaces/api-res';
 
 export class ErrorHandler {
@@ -34,21 +33,20 @@ export class ErrorHandler {
       return this._handleAxiosError(error);
     }
 
-    return this._handleGenericError(error);
+    return this._handleThrownError(error);
   }
 
   private _handleAxiosError(error: AxiosError): ErrorRes {
     if (error.response) {
-      const err = error.response?.data;
+      const err = error.response.data;
+      const status = error.response.status;
 
-      if (this._isServerError(err)) {
-        return {
-          code: 500,
-          message: `Unknown Server Error: ${JSON.stringify(err.title)}`,
-          validationErrors: {},
-        };
-      }
+      // fallback to generic message based on status
+      const result = this._getDefaultErrorForStatus(status);
 
+      if (result) return result;
+
+      // check for ErrorResOne / Two
       if (this._isErrorResOne(err)) {
         return {
           code: err.code,
@@ -65,9 +63,10 @@ export class ErrorHandler {
         };
       }
 
+      // ✅ 3. fallback to generic message based on status
       return this._defaultError(
-        `Unexpected response structure: ${error.message}`,
-        error.response.status
+        `Unexpected Response Error: ${error.message}.`,
+        status
       );
     }
 
@@ -75,19 +74,43 @@ export class ErrorHandler {
       return this._defaultError('Network Error: Unable to connect to server.');
     }
 
-    return this._defaultError(`Request Error: ${error.message}`);
+    return this._defaultError(`Unknown Request Error: ${error.message}`);
   }
 
-  private _handleGenericError(error: unknown): ErrorRes {
+  private _getDefaultErrorForStatus(status: number): ErrorRes | null {
+    switch (status) {
+      case 401:
+        return this._defaultError('Unauthorized: Please log in again.', 401);
+      case 403:
+        return this._defaultError(
+          'Forbidden: You do not have permission to access this resource.',
+          403
+        );
+      case 404:
+        return this._defaultError(
+          'Not Found: The requested resource could not be found.',
+          404
+        );
+      case 500:
+        return this._defaultError(
+          'Something went wrong on our side. Please try again later.',
+          500
+        );
+      default:
+        return null;
+    }
+  }
+
+  private _handleThrownError(error: unknown): ErrorRes {
     if (error instanceof Error) {
       return {
         code: 0,
-        message: `Expected Error: ${JSON.stringify(error.message)}`,
+        message: `Expected Error: ${error.message}`,
         validationErrors: {},
       };
     }
 
-    return this._defaultError('Unknown Error');
+    return this._defaultError(`Unknown Error ${JSON.stringify(error)}`);
   }
 
   private _defaultError(message: string, code = 0): ErrorRes {
@@ -124,18 +147,6 @@ export class ErrorHandler {
       'status' in data &&
       'title' in data &&
       'errors' in data
-    );
-  }
-
-  private _isServerError(
-    data: unknown
-  ): data is { status: 500; title: string } {
-    return (
-      !!data &&
-      typeof data === 'object' &&
-      'status' in data &&
-      data.status === 500 &&
-      'title' in data
     );
   }
 }
