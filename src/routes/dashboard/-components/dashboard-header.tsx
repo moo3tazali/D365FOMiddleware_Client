@@ -71,7 +71,7 @@ const CrumbItem = memo(
 CrumbItem.displayName = 'CrumbItem';
 
 // Batch ID schema validation
-const batchIdSchema = z.string().ulid();
+const batchIdSchema = z.ulid();
 
 const useGenerateBreadCrumbs = (excludedSegments: string[] = []) => {
   const { pathname } = useLocation();

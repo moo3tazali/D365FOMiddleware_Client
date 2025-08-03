@@ -3,7 +3,7 @@ import { createFileRoute, notFound, Outlet } from '@tanstack/react-router';
 
 import { LoadingFallback, NotFoundFallback } from '@/components/fallback';
 
-const batchIdSchema = z.string().ulid();
+const batchIdSchema = z.ulid();
 
 export const Route = createFileRoute('/dashboard/ledger/batch/$batchId')({
   component: ViewBatchLayout,

@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { ROUTES } from '@/router';
 
 const FormSchema = z.object({
-  email: z.string().min(1, 'Email is required').email('Invalid email address'),
+  email: z.email('Invalid email address').min(1, 'Email is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -18,8 +18,8 @@ export const useLogin = () => {
   const form = useForm<FormData>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      email: 'm@test.com',
-      password: 'Mm@159159',
+      email: '',
+      password: '',
     },
   });
 

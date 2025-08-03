@@ -18,7 +18,7 @@ const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.ACCOUNT_PAYABLE;
 const entryProcessorValues = entryProcessorOptions.map(({ value }) => value);
 
 export const DataBatchQuerySchema = z.object({
-  batchNumber: z.string().ulid('Batch number is invalid').optional(),
+  batchNumber: z.ulid('Batch number is invalid').optional(),
   entryProcessorTypes: z
     .array(z.number())
     .optional()

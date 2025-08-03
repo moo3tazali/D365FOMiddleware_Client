@@ -7,7 +7,7 @@ import {
   NotFoundFallback,
 } from '@/components/fallback';
 
-const batchIdSchema = z.string().ulid();
+const batchIdSchema = z.ulid();
 
 export const Route = createFileRoute(
   '/dashboard/accounts-receivable/batch/$batchId'

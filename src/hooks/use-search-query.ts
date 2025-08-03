@@ -44,31 +44,37 @@ export function useSearchQuery<T extends ZodObject<ZodRawShape>>(
   const withPagination = options?.withPagination ?? false;
 
   const currentSearchMap = useMemo(() => {
-    const map = new Map<string, QueryValue>();
-
-    // ✅ Add pagination if enabled
-    if (withPagination) {
-      map.set('maxCount', maxCount);
-      map.set('skipCount', skipCount);
-    }
+    const rawObj: Record<string, unknown> = {};
 
     for (const key of schemaKeys) {
       const raw = (search as Record<string, unknown>)[key as string];
       if ((key === 'skipCount' || key === 'maxCount') && withPagination)
         continue;
-      if (raw !== undefined) {
-        const parsed = tryParse<QueryValue>(raw as string);
-        if (parsed !== undefined) {
-          const result = shape[key as string].safeParse(parsed);
-          if (result.success) {
-            map.set(key as string, result.data);
-          }
+      const parsed = tryParse<QueryValue>(raw as string);
+      if (parsed !== undefined) {
+        rawObj[key as string] = parsed;
+      }
+    }
+
+    const result = schema.safeParse(rawObj);
+    const map = new Map<string, QueryValue>();
+
+    if (result.success) {
+      for (const key of schemaKeys) {
+        if (result.data[key] !== undefined) {
+          map.set(key as string, result.data[key] as QueryValue);
         }
       }
     }
 
+    // pagination
+    if (withPagination) {
+      map.set('maxCount', maxCount);
+      map.set('skipCount', skipCount);
+    }
+
     return map;
-  }, [search, shape, schemaKeys, withPagination, maxCount, skipCount]);
+  }, [search, schemaKeys, withPagination, maxCount, skipCount, schema]);
 
   const setSearchParam = useCallback(
     (key: string, value: QueryValue) => {
