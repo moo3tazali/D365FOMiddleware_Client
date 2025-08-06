@@ -11,7 +11,7 @@ export const BatchErrorTable = () => {
   const { dataBatchError } = useServices();
 
   const { batchId } = useParams({
-    from: '/dashboard/ledger/batch/$batchId/errors/',
+    from: '/dashboard/accounts-payable/batch/$batchId/errors/',
   });
 
   const { maxCount, skipCount } = useParsedPagination();

@@ -78,7 +78,7 @@ const BatchResultAlert = ({
       <AlertDescription>
         <Link
           className='underline text-sm text-destructive hover:opacity-80'
-          to={ROUTES.DASHBOARD.LEDGER.BATCH.ERRORS}
+          to={ROUTES.DASHBOARD.ACCOUNTS_PAYABLE.BATCH.ERRORS}
           params={{ batchId }}
         >
           Click here to review error details
