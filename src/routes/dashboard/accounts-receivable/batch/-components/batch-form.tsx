@@ -63,30 +63,44 @@ export const BatchForm = () => {
           <FormField
             control={form.control}
             name='billingCodeId'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Billing Classification</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={form.isBillingCodeDisabled || form.isDisabled}
-                  name='billingCodeId'
-                  key={form.billingCodeKey}
-                >
-                  <FormControl>
-                    <SelectTrigger className='w-full'>
-                      <SelectValue placeholder='Select the target service billing classification in dynamics' />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value='INV-FW'>Invoices</SelectItem>
-                    <SelectItem value='OR-FW'>Official Receipts</SelectItem>
-                    <SelectItem value='OF-FW'>Ocean Freight</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              // Get the selected type value from the form
+              const selectedType = form.watch('type');
+
+              return (
+                <FormItem>
+                  <FormLabel>Billing Classification</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    disabled={form.isBillingCodeDisabled || form.isDisabled}
+                    name='billingCodeId'
+                    key={form.billingCodeKey}
+                  >
+                    <FormControl>
+                      <SelectTrigger className='w-full'>
+                        <SelectValue placeholder='Select the target service billing classification in dynamics' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {selectedType === ENTRY_PROCESSOR_OPTIONS.ACCOUNT_RECEIVABLE[0].label ? ( // freight
+                        <>
+                          <SelectItem value='INV-FW'>Invoices</SelectItem>
+                          <SelectItem value='OR-FW'>Official Receipts</SelectItem>
+                          <SelectItem value='OF-FW'>Ocean Freight</SelectItem>
+                        </>
+                      ) : selectedType === ENTRY_PROCESSOR_OPTIONS.ACCOUNT_RECEIVABLE[1].label  ? ( // trucking
+                        <>
+                          <SelectItem value='INV-TR'>Invoices</SelectItem>
+                          <SelectItem value='OR-TR'>Official Receipts</SelectItem>
+                        </>
+                      ) : null}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
         </div>
 
