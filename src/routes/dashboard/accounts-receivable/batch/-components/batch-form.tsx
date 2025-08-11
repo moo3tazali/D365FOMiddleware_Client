@@ -65,8 +65,8 @@ export const BatchForm = () => {
             name='billingCodeId'
             render={({ field }) => {
               // Get the selected type value from the form
-              const selectedType = form.watch('type');
-
+              const selectedType = +form.watch('type');
+              console.log('Selected Type:', selectedType);
               return (
                 <FormItem>
                   <FormLabel>Billing Classification</FormLabel>
@@ -83,13 +83,13 @@ export const BatchForm = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {selectedType === ENTRY_PROCESSOR_OPTIONS.ACCOUNT_RECEIVABLE[0].label ? ( // freight
+                      {selectedType === 1 ? ( // freight
                         <>
                           <SelectItem value='INV-FW'>Invoices</SelectItem>
                           <SelectItem value='OR-FW'>Official Receipts</SelectItem>
                           <SelectItem value='OF-FW'>Ocean Freight</SelectItem>
                         </>
-                      ) : selectedType === ENTRY_PROCESSOR_OPTIONS.ACCOUNT_RECEIVABLE[1].label  ? ( // trucking
+                      ) : selectedType === 2 ? ( // trucking
                         <>
                           <SelectItem value='INV-TR'>Invoices</SelectItem>
                           <SelectItem value='OR-TR'>Official Receipts</SelectItem>
