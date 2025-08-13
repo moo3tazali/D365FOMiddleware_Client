@@ -18,7 +18,7 @@ const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.ACCOUNT_RECEIVABLE;
 const entryProcessorValues = entryProcessorOptions.map(({ value }) => value);
 
 export const DataBatchQuerySchema = z.object({
-  batchNumber: z.ulid('Batch number is invalid').optional(),
+  batchNumberIds: z.array(z.ulid('Batch number is invalid')).optional(),
   entryProcessorTypes: z
     .array(z.number())
     .optional()
@@ -46,12 +46,12 @@ export const DataBatchFilters = () => {
 };
 
 const TargetBatchNumberQuerySchema = DataBatchQuerySchema.pick({
-  batchNumber: true,
+  batchNumberIds: true,
 });
 
 const TargetBatchNumberFilter = () => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [{ batchNumber }, set, remove] = useSearchQuery(
+  const [{ batchNumberIds }, set, remove] = useSearchQuery(
     TargetBatchNumberQuerySchema
   );
 
@@ -59,26 +59,29 @@ const TargetBatchNumberFilter = () => {
     inputRef.current?.setAttribute('aria-invalid', 'false');
 
     if (value) {
+      const batchNumberIds = value.split(',').map((v) => v?.trim());
+
       const result = TargetBatchNumberQuerySchema.safeParse({
-        batchNumber: value,
+        batchNumberIds,
       });
 
       if (!result.success) {
         inputRef.current?.setAttribute('aria-invalid', 'true');
         return;
       }
-      set('batchNumber', value);
+
+      set('batchNumberIds', batchNumberIds);
     } else {
-      remove('batchNumber');
+      remove('batchNumberIds');
     }
   });
 
   return (
     <Input
       ref={inputRef}
-      defaultValue={batchNumber ?? ''}
-      placeholder='Enter batch number...'
-      name='batchNumber'
+      defaultValue={batchNumberIds?.join(',') ?? ''}
+      placeholder='Search by batch numbers joined by ,'
+      name='batchNumberIds'
     />
   );
 };

@@ -11,10 +11,10 @@ export const Route = createFileRoute(
 )({
   component: ViewBatchPage,
   loader: ({ params, context }) => {
-    const batchNumber = params.batchId;
+    const batchId = params.batchId;
     const { queryClient, services } = context;
     queryClient.ensureQueryData(
-      services.dataBatch.batchByIdQueryOptions(batchNumber)
+      services.dataBatch.batchByIdQueryOptions(batchId)
     );
   },
 });

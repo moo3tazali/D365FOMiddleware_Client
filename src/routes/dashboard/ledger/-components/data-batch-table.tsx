@@ -156,9 +156,9 @@ const CellAction = ({ row }: { row: TDataBatch }) => {
     useDataBatchAction(row);
   return (
     <TableActionCol>
-      {/* <TableActionCol.Copy textToCopy={row.id}>
+      <TableActionCol.Copy textToCopy={row.id}>
         Copy Batch Number
-      </TableActionCol.Copy> */}
+      </TableActionCol.Copy>
       <TableActionCol.View onClick={onView} />
       <TableActionCol.Download variant='primary' onClick={onDownload}>
         Download Batch

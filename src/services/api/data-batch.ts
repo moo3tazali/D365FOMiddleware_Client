@@ -6,7 +6,7 @@ import { keepPreviousData, queryOptions } from '@tanstack/react-query';
 import type { TPagination } from '@/interfaces/pagination';
 
 interface DataBatchQuery extends TPagination {
-  batchNumber?: string;
+  batchNumberIds?: string[];
   entryProcessorTypes?: number[];
 }
 
@@ -92,16 +92,22 @@ export class DataBatch {
     });
   };
 
-  public batchByIdQueryOptions = (batchNumber?: string) => {
+  public batchByIdQueryOptions = (batchId?: string) => {
     return queryOptions({
-      queryKey: [...this.queryKey, { batchNumber }],
-      enabled: !!batchNumber,
+      queryKey: [...this.queryKey, { batchId }],
       queryFn: () =>
-        this.list({
-          maxCount: 1,
-          skipCount: 0,
-          batchNumber,
-        }),
+        batchId
+          ? this.list({
+              maxCount: 1,
+              skipCount: 0,
+              batchNumberIds: [batchId],
+            })
+          : {
+              pageNumber: 1,
+              totalCount: 1,
+              pageSize: 1,
+              items: [],
+            },
     });
   };
 
