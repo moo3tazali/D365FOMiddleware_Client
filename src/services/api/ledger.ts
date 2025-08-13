@@ -22,6 +22,7 @@ export class Ledger {
       TEntryProcessorTypes.AccountPayableFreightVendorEntry,
     TRUCKING_VENDOR_ACCRUAL_DOC:
       TEntryProcessorTypes.AccountPayableTruckingVendorEntry,
+    CASH_OUT_DOC: TEntryProcessorTypes.LedgerCashOutEntry_1,
   };
 
   private constructor() {}
@@ -71,6 +72,9 @@ export class Ledger {
       case this.UPLOAD_TYPES.TRUCKING_VENDOR_ACCRUAL_DOC:
         return API_ROUTES.DATA_MIGRATION.LEDGER
           .TRUCKING_VENDOR_ACCRUAL_DOCUMENT;
+      case this.UPLOAD_TYPES.CASH_OUT_DOC:
+        return API_ROUTES.DATA_MIGRATION.LEDGER.CASH_OUT_DOCUMENT;
+
       default:
         throw new Error(
           `Invalid upload type, Upload type must satisfies ${Object.entries(

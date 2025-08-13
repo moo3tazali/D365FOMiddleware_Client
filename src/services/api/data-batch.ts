@@ -15,7 +15,11 @@ interface InsertBatchPayload {
   skipErrors: boolean;
 }
 
-type TModule = 'accountReceivable' | 'accountPayable' | 'ledger';
+type TModule =
+  | 'accountReceivable'
+  | 'accountPayable'
+  | 'ledger'
+  | 'cashManagement';
 
 export class DataBatch {
   private static _instance: DataBatch;
@@ -129,6 +133,12 @@ export class DataBatch {
         return [
           TEntryProcessorTypes.AccountPayableFreightVendorEntry,
           TEntryProcessorTypes.AccountPayableTruckingVendorEntry,
+        ];
+      case 'cashManagement':
+        return [
+          TEntryProcessorTypes.LedgerCashOutEntry_1,
+          TEntryProcessorTypes.LedgerCashOutEntry_2,
+          TEntryProcessorTypes.LedgerCashOutEntry_3,
         ];
       default:
         return [];

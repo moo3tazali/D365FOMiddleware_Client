@@ -57,7 +57,7 @@ const SubmitBtn = ({ data }: { data: TDataBatch }) => {
         disabled={isPending}
         className='sm:max-w-xs ms-auto w-full'
       >
-        <Link to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.NEW}>
+        <Link to={ROUTES.DASHBOARD.CASH_MANAGEMENT.BATCH.NEW}>
           <Upload className='size-5' />
           New Entry
         </Link>
@@ -66,7 +66,7 @@ const SubmitBtn = ({ data }: { data: TDataBatch }) => {
   return (
     <div className='flex  sm:flex-row gap-2.5 w-full ms-auto sm:max-w-xl *:flex-1'>
       <Button asChild size='lg' disabled={isPending}>
-        <Link to={ROUTES.DASHBOARD.ACCOUNTS_PAYABLE.BATCH.NEW}>
+        <Link to={ROUTES.DASHBOARD.CASH_MANAGEMENT.BATCH.NEW}>
           <Upload className='size-5' />
           New Entry
         </Link>

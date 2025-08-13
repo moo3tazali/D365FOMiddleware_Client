@@ -48,6 +48,11 @@ export const ROUTES = {
     },
     CASH_MANAGEMENT: {
       HOME: '/dashboard/cash-management',
+      BATCH: {
+        NEW: '/dashboard/cash-management/batch/new',
+        VIEW: '/dashboard/cash-management/batch/$batchId',
+        ERRORS: '/dashboard/cash-management/batch/$batchId/errors',
+      },
     },
     LEDGER: {
       HOME: '/dashboard/ledger',

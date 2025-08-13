@@ -56,6 +56,8 @@ export const API_ROUTES = {
       TRUCKING_VENDOR_ACCRUAL_DOCUMENT:
         '/DataMigration/Ledger/Trucking-Vendor-Accrual-Document',
       TRUCKING_VENDOR_ACCRUAL: '/DataMigration/Ledger/Trucking-Vendor-Accrual',
+      CASH_OUT_DOCUMENT: '/DataMigration/Ledger/Cash-Out-Document',
+      CASH_IN_DOCUMENT: '/DataMigration/Ledger/Cash-In-Document',
     },
   },
 } as const;

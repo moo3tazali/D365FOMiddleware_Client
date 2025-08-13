@@ -23,10 +23,10 @@ export const BatchFooter = () => {
 };
 
 const UploadBtn = () => {
-  const { accountReceivable } = useServices();
+  const { ledger } = useServices();
 
   const isUploading = useIsMutating({
-    mutationKey: accountReceivable.mutationKey,
+    mutationKey: ledger.mutationKey,
   });
 
   return (

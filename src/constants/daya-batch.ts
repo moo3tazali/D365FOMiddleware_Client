@@ -39,4 +39,18 @@ export const ENTRY_PROCESSOR_OPTIONS = {
       value: TEntryProcessorTypes.LedgerTruckingClosingEntry,
     },
   ],
+  CASH_MANAGEMENT: [
+    {
+      label: 'Cash Out',
+      value: [
+        TEntryProcessorTypes.LedgerCashOutEntry_1,
+        TEntryProcessorTypes.LedgerCashOutEntry_2,
+        TEntryProcessorTypes.LedgerCashOutEntry_3,
+      ],
+    },
+    // {
+    //   label: 'Cash In',
+    //   value: TEntryProcessorTypes.LedgerTruckingClosingEntry,
+    // },
+  ],
 } as const;
