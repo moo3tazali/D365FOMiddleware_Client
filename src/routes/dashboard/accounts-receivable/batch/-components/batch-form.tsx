@@ -63,44 +63,31 @@ export const BatchForm = () => {
           <FormField
             control={form.control}
             name='billingCodeId'
-            render={({ field }) => {
-              // Get the selected type value from the form
-              const selectedType = +form.watch('type');
-              console.log('Selected Type:', selectedType);
-              return (
-                <FormItem>
-                  <FormLabel>Billing Classification</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    disabled={form.isBillingCodeDisabled || form.isDisabled}
-                    name='billingCodeId'
-                    key={form.billingCodeKey}
-                  >
-                    <FormControl>
-                      <SelectTrigger className='w-full'>
-                        <SelectValue placeholder='Select the target service billing classification in dynamics' />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {selectedType === 1 ? ( // freight
-                        <>
-                          <SelectItem value='INV-FW'>Invoices</SelectItem>
-                          <SelectItem value='OR-FW'>Official Receipts</SelectItem>
-                          <SelectItem value='OF-FW'>Ocean Freight</SelectItem>
-                        </>
-                      ) : selectedType === 2 ? ( // trucking
-                        <>
-                          <SelectItem value='INV-TR'>Invoices</SelectItem>
-                          <SelectItem value='OR-TR'>Official Receipts</SelectItem>
-                        </>
-                      ) : null}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Billing Classification</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={form.isBillingCodeDisabled || form.isDisabled}
+                  name='billingCodeId'
+                  key={form.billingCodeKey}
+                >
+                  <FormControl>
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder='Select the target service billing classification in dynamics' />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <BillingCodeSelectItem
+                      isFreight={form.isFreight}
+                      isTrucking={form.isTrucking}
+                    />
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
           />
         </div>
 
@@ -176,6 +163,41 @@ export const BatchForm = () => {
         />
       </form>
     </Form>
+  );
+};
+
+const BillingCodeSelectItem = ({
+  isTrucking,
+  isFreight,
+}: {
+  isTrucking: boolean;
+  isFreight: boolean;
+}) => {
+  if (isFreight)
+    return (
+      <>
+        <SelectItem value='INV-FW'>Invoices</SelectItem>
+        <SelectItem value='OR-FW'>Official Receipts</SelectItem>
+        <SelectItem value='OF-FW'>Ocean Freight</SelectItem>
+      </>
+    );
+
+  if (isTrucking)
+    return (
+      <>
+        <SelectItem value='INV-TR'>Invoices</SelectItem>
+        <SelectItem value='OR-TR'>Official Receipts</SelectItem>
+      </>
+    );
+
+  return (
+    <SelectItem
+      disabled
+      value='null'
+      className='h-16 items-center justify-center'
+    >
+      Select target service first
+    </SelectItem>
   );
 };
 

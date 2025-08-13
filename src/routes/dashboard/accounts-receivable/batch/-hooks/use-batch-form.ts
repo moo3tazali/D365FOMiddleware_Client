@@ -11,6 +11,7 @@ import { useBatchQueryData } from './use-batch-query-data';
 import { ROUTES } from '@/router';
 import { AccountReceivable } from '@/services/api/account-receivable';
 import { useParsedPagination } from '@/hooks/use-parsed-pagination';
+import { TEntryProcessorTypes } from '@/interfaces/data-batch';
 
 const acceptedTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -106,6 +107,13 @@ export const useBatchForm = () => {
 
   const type = form.watch('type');
 
+  const { isFreight, isTrucking } = useMemo(() => {
+    return {
+      isFreight: +type === TEntryProcessorTypes.AccountReceivableFreight,
+      isTrucking: +type === TEntryProcessorTypes.AccountReceivableTrucking,
+    };
+  }, [type]);
+
   const isBillingCodeDisabled = useMemo(
     () => accountReceivable.isCreditNote(type),
     [type, accountReceivable]
@@ -160,6 +168,8 @@ export const useBatchForm = () => {
       billingCodeKey,
       isBillingCodeDisabled,
       isDisabled,
+      isFreight,
+      isTrucking,
       onSubmit: form.handleSubmit(onSubmit),
     },
   };
