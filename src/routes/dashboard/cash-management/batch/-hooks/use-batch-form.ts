@@ -10,6 +10,7 @@ import { useMutation } from '@/hooks/use-mutation';
 import { useBatchQueryData } from './use-batch-query-data';
 import { ROUTES } from '@/router';
 import { useParsedPagination } from '@/hooks/use-parsed-pagination';
+import { TEntryProcessorTypes } from '@/interfaces/data-batch';
 
 const acceptedTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -41,7 +42,7 @@ const FormSchema = z.object({
 type FormData = z.infer<typeof FormSchema>;
 
 export const useBatchForm = () => {
-  const [batch, setBatch] = useBatchQueryData();
+  const [batch] = useBatchQueryData();
 
   let defaultValues: FormData = {
     type: '',
@@ -52,7 +53,15 @@ export const useBatchForm = () => {
   if (batch) {
     defaultValues = {
       ...defaultValues,
-      type: String(batch?.entryProcessorType ?? ''),
+      type: String(
+        [
+          TEntryProcessorTypes.LedgerCashOutEntry_1,
+          TEntryProcessorTypes.LedgerCashOutEntry_2,
+          TEntryProcessorTypes.LedgerCashOutEntry_3,
+        ].includes(batch?.entryProcessorType ?? '')
+          ? String(TEntryProcessorTypes.LedgerCashOutEntry_1)
+          : ''
+      ),
     };
   }
 
@@ -108,15 +117,15 @@ export const useBatchForm = () => {
       };
 
       startUpload(options).then((data) => {
-        return console.log(data);
-        setBatch(data);
         navigate({
           to: ROUTES.DASHBOARD.CASH_MANAGEMENT.HOME,
-          search: { batchNumberIds: data.id },
+          ...(Array.isArray(data) && {
+            search: { batchNumberIds: JSON.stringify(data) },
+          }),
         });
       });
     },
-    [startUpload, navigate, setBatch, dismissLoading]
+    [startUpload, navigate, dismissLoading]
   );
 
   return {

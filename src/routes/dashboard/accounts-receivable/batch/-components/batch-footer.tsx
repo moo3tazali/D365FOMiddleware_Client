@@ -64,8 +64,13 @@ const SubmitBtn = ({ data }: { data: TDataBatch }) => {
       </Button>
     );
   return (
-    <div className='flex  sm:flex-row gap-2.5 w-full ms-auto sm:max-w-xl *:flex-1'>
-      <Button asChild size='lg' disabled={isPending}>
+    <div className='flex sm:flex-row gap-2.5 w-full ms-auto sm:max-w-xl *:flex-1'>
+      <Button
+        asChild
+        size='lg'
+        disabled={isPending}
+        className={isPending ? 'opacity-50 pointer-events-none' : ''}
+      >
         <Link to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.NEW}>
           <Upload className='size-5' />
           New Entry
