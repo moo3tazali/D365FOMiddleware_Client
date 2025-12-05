@@ -23,7 +23,10 @@ type TModule =
 
 export class DataBatch {
   private static _instance: DataBatch;
-  private readonly syncService = Sync.getInstance();
+  private readonly syncService = Sync.getInstance({
+    backend: 'NEST',
+    public: true,
+  });
 
   public readonly queryKey = ['data-batch'];
 
