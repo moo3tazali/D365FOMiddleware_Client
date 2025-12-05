@@ -1,5 +1,6 @@
 export enum ENV {
   SERVER_BASE_URL = 'serverBaseUrl',
+  NEST_SERVER_BASE_URL = 'nestServerBaseUrl',
   Client_BASE_URL = 'clientBaseUrl',
 }
 
@@ -8,6 +9,7 @@ export class Env {
 
   private readonly _env = {
     [ENV.SERVER_BASE_URL]: 'VITE_SERVER_BASE_URL',
+    [ENV.NEST_SERVER_BASE_URL]: 'VITE_NEST_SERVER_BASE_URL',
     [ENV.Client_BASE_URL]: 'VITE_CLIENT_BASE_URL',
   } as const;
 
@@ -21,9 +23,7 @@ export class Env {
     return Env._instance;
   }
 
-  public get<K extends keyof typeof this._env>(
-    key: K
-  ): string;
+  public get<K extends keyof typeof this._env>(key: K): string;
 
   public get<K extends keyof typeof this._env>(
     ...keys: K[]
@@ -44,14 +44,10 @@ export class Env {
   }
 
   private _getEnvValue(key: string): string {
-    const value = import.meta.env?.[key] as
-      | string
-      | undefined;
+    const value = import.meta.env?.[key] as string | undefined;
 
     if (!value) {
-      throw new Error(
-        `Missing environment variable: ${key}`
-      );
+      throw new Error(`Missing environment variable: ${key}`);
     }
 
     return value;

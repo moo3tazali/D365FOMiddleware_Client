@@ -29,29 +29,14 @@ export const SettingsTable = () => {
   }, [data]);
 
   return (
-    <div className='space-y-10'>
-      {/* Refresh Section */}
-      <section className='space-y-3'>
-        <h2>Refresh Settings</h2>
-        <div className='space-y-3'>
-          {formattedData.refresh.map((setting) => (
-            <SettingsRow key={setting.id} setting={setting} />
-          ))}
-        </div>
-      </section>
-
-      <hr />
-
-      {/* Update Section */}
-      <section className='space-y-3'>
-        <h2>Update Settings</h2>
-        <div className='space-y-3'>
-          {formattedData.update.map((setting) => (
-            <SettingsRow key={setting.id} setting={setting} />
-          ))}
-        </div>
-      </section>
-    </div>
+    <section className='space-y-3'>
+      <h2>Update Settings</h2>
+      <div className='space-y-3'>
+        {formattedData.update.map((setting) => (
+          <SettingsRow key={setting.id} setting={setting} />
+        ))}
+      </div>
+    </section>
   );
 };
 

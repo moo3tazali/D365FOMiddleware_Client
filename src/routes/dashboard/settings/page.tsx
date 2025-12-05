@@ -4,6 +4,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { SettingsHeader } from './-components/settings-header';
 import { SettingsTable } from './-components/settings-table';
 import { ErrorFallback, LoadingFallback } from '@/components/fallback';
+import { RefreshSettings } from './-components/refresh-settings';
 
 export const Route = createFileRoute('/dashboard/settings/')({
   component: DashboardSettingsPage,
@@ -19,6 +20,8 @@ function DashboardSettingsPage() {
   return (
     <div className='h-full space-y-10'>
       <SettingsHeader />
+      <RefreshSettings />
+      <hr />
       <Suspense fallback={<LoadingFallback />}>
         <SettingsTable />
       </Suspense>

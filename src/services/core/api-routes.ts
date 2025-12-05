@@ -7,6 +7,52 @@ export const API_ROUTES = {
       Update: '/Admin/AppSetting',
     },
   },
+  FINANCE: {
+    MASTER_DATA: {
+      CUSTOMERS: {
+        GET: '/Finance/MasterData/customers',
+        SYNC: '/Finance/MasterData/customers/sync',
+      },
+
+      FINANCIAL_DIMENSIONS: {
+        GET: '/Finance/MasterData/financial-dimensions',
+        SYNC: '/Finance/MasterData/financial-dimensions/sync',
+      },
+
+      BILLING_CLASSIFICATIONS: {
+        GET: '/Finance/MasterData/billing-classifications',
+      },
+
+      BILLING_CODES: {
+        GET: '/Finance/MasterData/billing-codes',
+      },
+
+      BILLING_DATA: {
+        GET: '/Finance/MasterData/billing-data',
+        SYNC: '/Finance/MasterData/billing-data/sync',
+      },
+
+      MAIN_ACCOUNTS: {
+        GET: '/Finance/MasterData/main-accounts',
+        SYNC: '/Finance/MasterData/main-accounts/sync',
+      },
+
+      ACCOUNT_MAPPINGS: {
+        GET: '/Finance/MasterData/account-mappings',
+        SAVE: '/Finance/MasterData/account-mappings',
+      },
+
+      VENDORS: {
+        GET: '/Finance/MasterData/vendors',
+        SYNC: '/Finance/MasterData/vendors/sync',
+      },
+
+      EXCHANGE_RATES: {
+        GET: '/Finance/MasterData/exchange-rates',
+        SYNC: '/Finance/MasterData/exchange-rates/sync',
+      },
+    },
+  },
   PUBLIC: {
     IDENTITY: {
       REGISTER: '/public/Identity/register',
