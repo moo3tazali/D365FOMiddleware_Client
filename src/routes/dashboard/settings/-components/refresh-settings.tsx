@@ -14,7 +14,7 @@ export const RefreshSettings = () => {
       <h2>Refresh Settings</h2>
       <div className='space-y-3'>
         {masterData.displayNames.map((name, idx) => (
-          <SettingsRow key={idx} name={name} onRefresh={masterData.sync} />
+          <SettingsRow key={idx} name={name} mutationFn={masterData.sync} />
         ))}
       </div>
     </section>
@@ -23,25 +23,28 @@ export const RefreshSettings = () => {
 
 interface RefreshSettingsRowProps {
   name: MasterDataDisplayName;
-  onRefresh: (
-    name: MasterDataDisplayName,
-    payload: MasterDataPayload
-  ) => Promise<void>;
+  mutationFn: (data: {
+    name: MasterDataDisplayName;
+    payload: MasterDataPayload;
+  }) => Promise<void>;
 }
 
-const SettingsRow = ({ name, onRefresh }: RefreshSettingsRowProps) => {
-  const mutationFn = async () => {
-    onRefresh(name, {
-      company: 'm-p',
-      chartOfAccounts: '',
-      rateType: '',
-    });
-  };
-
+const SettingsRow = ({ name, mutationFn }: RefreshSettingsRowProps) => {
   const { mutate, isPending } = useMutation({
     operationName: `Refresh ${name}`,
     mutationFn,
   });
+
+  const onRefresh = () => {
+    mutate({
+      name,
+      payload: {
+        company: 'm-p',
+        chartOfAccounts: '',
+        rateType: '',
+      },
+    });
+  };
 
   return (
     <div className='flex items-center gap-3'>
@@ -50,7 +53,8 @@ const SettingsRow = ({ name, onRefresh }: RefreshSettingsRowProps) => {
         <Button
           className='block ms-auto'
           variant='outline'
-          onClick={mutate}
+          type='button'
+          onClick={onRefresh}
           disabled={isPending}
         >
           Refresh

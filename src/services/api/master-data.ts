@@ -39,10 +39,11 @@ export class MasterData {
     return MasterData._instance;
   }
 
-  public sync = async (
-    name: MasterDataDisplayName,
-    payload: MasterDataPayload
-  ): Promise<void> => {
+  public sync = async (data: {
+    name: MasterDataDisplayName;
+    payload: MasterDataPayload;
+  }): Promise<void> => {
+    const { name, payload } = data;
     switch (name) {
       case 'Customers':
         return this.syncCustomers(payload);
