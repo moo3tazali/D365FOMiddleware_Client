@@ -17,4 +17,5 @@ export interface PaginationRes<T> {
   pageSize: number;
   pageNumber: number;
   totalCount: number;
+  totalPages: number;
 }
