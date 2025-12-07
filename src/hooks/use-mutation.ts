@@ -69,7 +69,7 @@ export const useMutation = <
     ...useTanstackMutation({
       mutationFn,
       ...options,
-      onMutate: (variables) => {
+      onMutate: (variables, ctx) => {
         if (!disableToast) {
           // show loading toast
           const loading = toast.loading(
@@ -82,10 +82,10 @@ export const useMutation = <
 
         // call onMutate
         if (onMutate) {
-          onMutate(variables);
+          onMutate(variables, ctx);
         }
       },
-      onSuccess: (data, variables, context) => {
+      onSuccess: (data, variables, onMutateResult: void, context) => {
         if (!disableToast) {
           // remove loading toast
           if (loadingRef.current) {
@@ -105,7 +105,7 @@ export const useMutation = <
 
         // call onSuccess
         if (onSuccess) {
-          onSuccess(data, variables, context);
+          onSuccess(data, variables, onMutateResult, context);
         }
       },
       onError: (error: ErrorRes, variables, context) => {

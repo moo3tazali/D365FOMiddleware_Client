@@ -1,16 +1,14 @@
-import { Suspense } from 'react';
-
 import { createFileRoute } from '@tanstack/react-router';
 import { SettingsHeader } from './-components/settings-header';
-import { SettingsTable } from './-components/settings-table';
 import { ErrorFallback, LoadingFallback } from '@/components/fallback';
-import { RefreshSettings } from './-components/refresh-settings';
+import { RefreshMasterData } from './-components/refresh-master-data';
+import { SettingsForm } from './-components/settings-form';
 
 export const Route = createFileRoute('/dashboard/settings/')({
   component: DashboardSettingsPage,
   loader: ({ context }) => {
     const { services, queryClient } = context;
-    queryClient.ensureQueryData(services.appSetting.queryOptions());
+    queryClient.ensureQueryData(services.appSetting.listQueryOptions());
   },
   pendingComponent: LoadingFallback,
   errorComponent: ErrorFallback,
@@ -20,11 +18,9 @@ function DashboardSettingsPage() {
   return (
     <div className='h-full space-y-10'>
       <SettingsHeader />
-      <RefreshSettings />
+      <RefreshMasterData />
       <hr />
-      <Suspense fallback={<LoadingFallback />}>
-        <SettingsTable />
-      </Suspense>
+      <SettingsForm />
     </div>
   );
 }

@@ -6,7 +6,7 @@ import type {
   MasterDataPayload,
 } from '@/services/api/master-data';
 
-export const RefreshSettings = () => {
+export const RefreshMasterData = () => {
   const { masterData } = useServices();
 
   return (

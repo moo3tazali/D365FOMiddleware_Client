@@ -20,16 +20,11 @@ export const useAppSettings = () => {
         return;
       }
 
-      const isUpdate = data.value !== null;
-
-      setOperationName(
-        isUpdate ? `update ${data.displayName}` : `refresh ${data.displayName}`
-      );
+      setOperationName(`update ${data.displayName}`);
 
       mutate({
-        id: data.id,
         logicalName: data.logicalName,
-        newValue: isUpdate ? data.newValue : undefined,
+        value: data.newValue,
       });
     },
     [mutate, setOperationName]
