@@ -68,6 +68,7 @@ export const API_ROUTES = {
   DATA_MIGRATION: {
     DATA_BATCH: {
       LIST: '/DataMigration/DataBatch/list',
+      ONE: '/DataMigration/DataBatch/:batchId',
       DOWNLOAD_ENHANCED_RECORD_LIST:
         '/DataMigration/DataBatch/download-enhanced-record-list',
       DOWNLOAD_BATCH_ERROR_LIST:

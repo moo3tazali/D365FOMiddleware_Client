@@ -10,7 +10,10 @@ interface UploadData {
 
 interface UploadResponse extends TDataBatch {}
 
-const syncService = Sync.getInstance();
+const syncService = Sync.getInstance({
+  public: true,
+  backend: 'NEST',
+});
 
 export class AccountReceivable {
   private static _instance: AccountReceivable;

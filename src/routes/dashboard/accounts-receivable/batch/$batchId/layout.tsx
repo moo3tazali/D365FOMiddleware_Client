@@ -7,7 +7,9 @@ import {
   NotFoundFallback,
 } from '@/components/fallback';
 
-const batchIdSchema = z.ulid();
+const batchIdSchema = z.string().regex(/^[a-fA-F0-9]{24}$/, {
+  message: 'Invalid MongoDB ObjectId',
+});
 
 export const Route = createFileRoute(
   '/dashboard/accounts-receivable/batch/$batchId'

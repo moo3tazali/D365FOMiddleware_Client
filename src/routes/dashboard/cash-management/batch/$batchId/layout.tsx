@@ -3,9 +3,13 @@ import { createFileRoute, notFound, Outlet } from '@tanstack/react-router';
 
 import { LoadingFallback, NotFoundFallback } from '@/components/fallback';
 
-const batchIdSchema = z.ulid();
+const batchIdSchema = z.string().regex(/^[a-fA-F0-9]{24}$/, {
+  message: 'Invalid MongoDB ObjectId',
+});
 
-export const Route = createFileRoute('/dashboard/cash-management/batch/$batchId')({
+export const Route = createFileRoute(
+  '/dashboard/cash-management/batch/$batchId'
+)({
   component: ViewBatchLayout,
   loader: ({ params }) => {
     const isValidId = batchIdSchema.safeParse(params.batchId).success;

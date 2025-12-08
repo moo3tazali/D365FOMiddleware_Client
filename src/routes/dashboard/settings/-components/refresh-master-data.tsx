@@ -40,8 +40,8 @@ const SettingsRow = ({ name, mutationFn }: RefreshSettingsRowProps) => {
       name,
       payload: {
         company: 'm-p',
-        chartOfAccounts: '',
-        rateType: '',
+        chartOfAccounts: 'coa',
+        rateType: 'default',
       },
     });
   };

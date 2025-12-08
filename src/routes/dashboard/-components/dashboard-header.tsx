@@ -71,7 +71,9 @@ const CrumbItem = memo(
 CrumbItem.displayName = 'CrumbItem';
 
 // Batch ID schema validation
-const batchIdSchema = z.ulid();
+const batchIdSchema = z.string().regex(/^[a-fA-F0-9]{24}$/, {
+  message: 'Invalid MongoDB ObjectId',
+});
 
 const useGenerateBreadCrumbs = (excludedSegments: string[] = []) => {
   const { pathname } = useLocation();

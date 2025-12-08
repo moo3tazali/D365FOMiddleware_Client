@@ -18,7 +18,13 @@ const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.ACCOUNT_RECEIVABLE;
 const entryProcessorValues = entryProcessorOptions.map(({ value }) => value);
 
 export const DataBatchQuerySchema = z.object({
-  batchNumberIds: z.array(z.ulid('Batch number is invalid')).optional(),
+  batchNumberIds: z
+    .array(
+      z.string().regex(/^[a-fA-F0-9]{24}$/, {
+        message: 'Invalid MongoDB ObjectId',
+      })
+    )
+    .optional(),
   entryProcessorTypes: z
     .array(z.number())
     .optional()

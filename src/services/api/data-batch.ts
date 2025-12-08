@@ -51,6 +51,20 @@ export class DataBatch {
     );
   };
 
+  public one = async (batchId: string): Promise<PaginationRes<TDataBatch>> => {
+    return this.syncService
+      .fetch<TDataBatch>(API_ROUTES.DATA_MIGRATION.DATA_BATCH.ONE, {
+        params: { batchId },
+      })
+      .then((res) => ({
+        pageNumber: 1,
+        totalCount: 1,
+        pageSize: 1,
+        totalPages: 1,
+        items: [res],
+      }));
+  };
+
   public downloadEnhancedRecordList = async (query: {
     batchId: string;
   }): Promise<void> => {
@@ -104,11 +118,7 @@ export class DataBatch {
       queryKey: [...this.queryKey, { batchId }],
       queryFn: () =>
         batchId
-          ? this.list({
-              maxCount: 1,
-              skipCount: 0,
-              batchNumberIds: [batchId],
-            })
+          ? this.one(batchId)
           : {
               pageNumber: 1,
               totalCount: 1,
