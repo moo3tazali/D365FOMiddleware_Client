@@ -10,7 +10,6 @@ import { useMutation } from '@/hooks/use-mutation';
 import { useBatchQueryData } from './use-batch-query-data';
 import { ROUTES } from '@/router';
 import { useParsedPagination } from '@/hooks/use-parsed-pagination';
-import { TEntryProcessorTypes } from '@/interfaces/data-batch';
 
 const acceptedTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -42,7 +41,7 @@ const FormSchema = z.object({
 type FormData = z.infer<typeof FormSchema>;
 
 export const useBatchForm = () => {
-  const [batch] = useBatchQueryData();
+  const [batch, setBatch] = useBatchQueryData();
 
   let defaultValues: FormData = {
     type: '',
@@ -53,15 +52,7 @@ export const useBatchForm = () => {
   if (batch) {
     defaultValues = {
       ...defaultValues,
-      type: String(
-        [
-          TEntryProcessorTypes.LedgerCashOut,
-          TEntryProcessorTypes.LedgerBankOut,
-          TEntryProcessorTypes.LedgerVisaOut,
-        ].includes(batch?.entryProcessorType ?? '')
-          ? String(TEntryProcessorTypes.LedgerCashOut)
-          : ''
-      ),
+      type: String(batch?.entryProcessorType ?? ''),
     };
   }
 
@@ -72,7 +63,7 @@ export const useBatchForm = () => {
 
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const { ledger, dataBatch } = useServices();
+  const { vendor, dataBatch } = useServices();
 
   const defaultPagination = useParsedPagination();
 
@@ -81,13 +72,11 @@ export const useBatchForm = () => {
     isPending,
     dismissLoading,
   } = useMutation({
-    mutationKey: ledger.mutationKey,
+    mutationKey: vendor.mutationKey,
     operationName: 'upload',
-    mutationFn: ledger.upload,
+    mutationFn: vendor.upload,
     formControl: form.control,
-    refetchQueries: [
-      [...dataBatch.getQueryKey('cashManagement', defaultPagination)],
-    ],
+    refetchQueries: [[...dataBatch.getQueryKey('vendor', defaultPagination)]],
   });
 
   const navigate = useNavigate();
@@ -117,15 +106,14 @@ export const useBatchForm = () => {
       };
 
       startUpload(options).then((data) => {
+        setBatch(data);
         navigate({
-          to: ROUTES.DASHBOARD.CASH_MANAGEMENT.HOME,
-          ...(Array.isArray(data) && {
-            search: { batchNumberIds: JSON.stringify(data) },
-          }),
+          to: ROUTES.DASHBOARD.VENDOR.BATCH.VIEW,
+          params: { batchId: data.id },
         });
       });
     },
-    [startUpload, navigate, dismissLoading]
+    [startUpload, navigate, setBatch, dismissLoading]
   );
 
   return {

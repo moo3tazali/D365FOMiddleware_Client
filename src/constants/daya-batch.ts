@@ -22,11 +22,11 @@ export const ENTRY_PROCESSOR_OPTIONS = {
   ACCOUNT_PAYABLE: [
     {
       label: 'Freight Vendor',
-      value: TEntryProcessorTypes.AccountPayableFreightVendorEntry,
+      value: TEntryProcessorTypes.AccountPayableFreight,
     },
     {
       label: 'Trucking Vendor',
-      value: TEntryProcessorTypes.AccountPayableTruckingVendorEntry,
+      value: TEntryProcessorTypes.AccountPayableTrucking,
     },
   ],
   LEDGER: [
@@ -43,14 +43,28 @@ export const ENTRY_PROCESSOR_OPTIONS = {
     {
       label: 'Cash Out',
       value: [
-        TEntryProcessorTypes.LedgerCashOutEntry_1,
-        TEntryProcessorTypes.LedgerCashOutEntry_2,
-        TEntryProcessorTypes.LedgerCashOutEntry_3,
+        TEntryProcessorTypes.LedgerCashOut,
+        TEntryProcessorTypes.LedgerBankOut,
+        TEntryProcessorTypes.LedgerVisaOut,
       ],
     },
-    // {
-    //   label: 'Cash In',
-    //   value: TEntryProcessorTypes.LedgerTruckingClosingEntry,
-    // },
+  ],
+  VENDOR: [
+    {
+      label: 'Freight Vendor',
+      value: TEntryProcessorTypes.VendorFreight,
+    },
+    {
+      label: 'Trucking Vendor',
+      value: TEntryProcessorTypes.VendorTrucking,
+    },
+    {
+      label: 'Freight Vendor Adjustment',
+      value: TEntryProcessorTypes.VendorFreightAdjustment,
+    },
+    {
+      label: 'Trucking Vendor Adjustment',
+      value: TEntryProcessorTypes.VendorTruckingAdjustment,
+    },
   ],
 } as const;

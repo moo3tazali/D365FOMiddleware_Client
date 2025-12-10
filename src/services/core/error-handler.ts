@@ -63,7 +63,15 @@ export class ErrorHandler {
         };
       }
 
-      // ✅ 3. fallback to generic message based on status
+      if (this._isErrorResThree(err)) {
+        return {
+          code: err.status.code,
+          message: err.status.developerMessage,
+          validationErrors: err.status?.validationErrors ?? {},
+        };
+      }
+
+      // ✅ 4. fallback to generic message based on status
       return this._defaultError(
         `Unexpected Response Error: ${error.message}.`,
         status
@@ -157,6 +165,34 @@ export class ErrorHandler {
       'status' in data &&
       'title' in data &&
       'errors' in data
+    );
+  }
+
+  private _isErrorResThree(data: unknown): data is {
+    status: {
+      code: number;
+      userMessage: string;
+      developerMessage: string;
+      errorCode: string;
+      validationErrors?: Record<string, string[]>;
+    };
+    meta: {
+      requestId: string;
+      timestamp: string;
+      path: string;
+      method: string;
+    };
+  } {
+    return (
+      !!data &&
+      typeof data === 'object' &&
+      'status' in data &&
+      'meta' in data &&
+      typeof (data as { status: unknown }).status === 'object' &&
+      (data as { status: { code?: unknown; userMessage?: unknown } }).status !==
+        null &&
+      'code' in (data as { status: { code: unknown } }).status &&
+      'userMessage' in (data as { status: { userMessage: unknown } }).status
     );
   }
 }

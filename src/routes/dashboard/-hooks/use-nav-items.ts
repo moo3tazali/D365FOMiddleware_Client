@@ -6,6 +6,7 @@ import HandCoins from 'lucide-react/dist/esm/icons/hand-coins';
 import Wallet from 'lucide-react/dist/esm/icons/wallet';
 import Settings from 'lucide-react/dist/esm/icons/settings';
 import BookOpen from 'lucide-react/dist/esm/icons/book-open';
+import Users from 'lucide-react/dist/esm/icons/users';
 
 import { ROUTES } from '@/router';
 
@@ -45,6 +46,12 @@ export const useNavItems = () => {
         url: ROUTES.DASHBOARD.LEDGER.HOME,
         icon: BookOpen,
         isActive: pathname.startsWith(ROUTES.DASHBOARD.LEDGER.HOME),
+      },
+      {
+        title: 'Vendor',
+        url: ROUTES.DASHBOARD.VENDOR.HOME,
+        icon: Users,
+        isActive: pathname.startsWith(ROUTES.DASHBOARD.VENDOR.HOME),
       },
       {
         title: 'Settings',

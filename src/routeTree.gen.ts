@@ -13,6 +13,7 @@ import { Route as DashboardLayoutRouteImport } from './routes/dashboard/layout'
 import { Route as PublicLayoutRouteImport } from './routes/_public/layout'
 import { Route as AuthLayoutRouteImport } from './routes/_auth/layout'
 import { Route as AuthForgetPasswordRouteImport } from './routes/_auth/forget-password'
+import { Route as DashboardVendorPageRouteImport } from './routes/dashboard/vendor/page'
 import { Route as DashboardSettingsPageRouteImport } from './routes/dashboard/settings/page'
 import { Route as DashboardLedgerPageRouteImport } from './routes/dashboard/ledger/page'
 import { Route as DashboardCashManagementPageRouteImport } from './routes/dashboard/cash-management/page'
@@ -21,6 +22,7 @@ import { Route as DashboardAccountsPayablePageRouteImport } from './routes/dashb
 import { Route as DashboardhomePageRouteImport } from './routes/dashboard/(home)/page'
 import { Route as PublichomePageRouteImport } from './routes/_public/(home)/page'
 import { Route as AuthLoginPageRouteImport } from './routes/_auth/login/page'
+import { Route as DashboardVendorBatchLayoutRouteImport } from './routes/dashboard/vendor/batch/layout'
 import { Route as DashboardLedgerBatchLayoutRouteImport } from './routes/dashboard/ledger/batch/layout'
 import { Route as DashboardCashManagementBatchLayoutRouteImport } from './routes/dashboard/cash-management/batch/layout'
 import { Route as DashboardAccountsReceivableBatchLayoutRouteImport } from './routes/dashboard/accounts-receivable/batch/layout'
@@ -29,14 +31,18 @@ import { Route as DashboardLedgerBatchPageRouteImport } from './routes/dashboard
 import { Route as DashboardCashManagementBatchPageRouteImport } from './routes/dashboard/cash-management/batch/page'
 import { Route as DashboardAccountsReceivableBatchPageRouteImport } from './routes/dashboard/accounts-receivable/batch/page'
 import { Route as DashboardAccountsPayableBatchPageRouteImport } from './routes/dashboard/accounts-payable/batch/page'
+import { Route as DashboardVendorBatchBatchIdLayoutRouteImport } from './routes/dashboard/vendor/batch/$batchId/layout'
 import { Route as DashboardLedgerBatchBatchIdLayoutRouteImport } from './routes/dashboard/ledger/batch/$batchId/layout'
 import { Route as DashboardCashManagementBatchBatchIdLayoutRouteImport } from './routes/dashboard/cash-management/batch/$batchId/layout'
 import { Route as DashboardAccountsReceivableBatchBatchIdLayoutRouteImport } from './routes/dashboard/accounts-receivable/batch/$batchId/layout'
 import { Route as DashboardAccountsPayableBatchBatchIdLayoutRouteImport } from './routes/dashboard/accounts-payable/batch/$batchId/layout'
+import { Route as DashboardVendorBatchNewPageRouteImport } from './routes/dashboard/vendor/batch/new/page'
 import { Route as DashboardLedgerBatchNewPageRouteImport } from './routes/dashboard/ledger/batch/new/page'
 import { Route as DashboardCashManagementBatchNewPageRouteImport } from './routes/dashboard/cash-management/batch/new/page'
 import { Route as DashboardAccountsReceivableBatchNewPageRouteImport } from './routes/dashboard/accounts-receivable/batch/new/page'
 import { Route as DashboardAccountsPayableBatchNewPageRouteImport } from './routes/dashboard/accounts-payable/batch/new/page'
+import { Route as DashboardVendorBatchBatchIdErrorsPageRouteImport } from './routes/dashboard/vendor/batch/$batchId/errors/page'
+import { Route as DashboardVendorBatchBatchIdviewPageRouteImport } from './routes/dashboard/vendor/batch/$batchId/(view)/page'
 import { Route as DashboardLedgerBatchBatchIdErrorsPageRouteImport } from './routes/dashboard/ledger/batch/$batchId/errors/page'
 import { Route as DashboardLedgerBatchBatchIdviewPageRouteImport } from './routes/dashboard/ledger/batch/$batchId/(view)/page'
 import { Route as DashboardCashManagementBatchBatchIdErrorsPageRouteImport } from './routes/dashboard/cash-management/batch/$batchId/errors/page'
@@ -63,6 +69,11 @@ const AuthForgetPasswordRoute = AuthForgetPasswordRouteImport.update({
   id: '/forget-password',
   path: '/forget-password',
   getParentRoute: () => AuthLayoutRoute,
+} as any)
+const DashboardVendorPageRoute = DashboardVendorPageRouteImport.update({
+  id: '/vendor/',
+  path: '/vendor/',
+  getParentRoute: () => DashboardLayoutRoute,
 } as any)
 const DashboardSettingsPageRoute = DashboardSettingsPageRouteImport.update({
   id: '/settings/',
@@ -107,6 +118,12 @@ const AuthLoginPageRoute = AuthLoginPageRouteImport.update({
   path: '/login/',
   getParentRoute: () => AuthLayoutRoute,
 } as any)
+const DashboardVendorBatchLayoutRoute =
+  DashboardVendorBatchLayoutRouteImport.update({
+    id: '/vendor/batch',
+    path: '/vendor/batch',
+    getParentRoute: () => DashboardLayoutRoute,
+  } as any)
 const DashboardLedgerBatchLayoutRoute =
   DashboardLedgerBatchLayoutRouteImport.update({
     id: '/ledger/batch',
@@ -155,6 +172,12 @@ const DashboardAccountsPayableBatchPageRoute =
     path: '/',
     getParentRoute: () => DashboardAccountsPayableBatchLayoutRoute,
   } as any)
+const DashboardVendorBatchBatchIdLayoutRoute =
+  DashboardVendorBatchBatchIdLayoutRouteImport.update({
+    id: '/$batchId',
+    path: '/$batchId',
+    getParentRoute: () => DashboardVendorBatchLayoutRoute,
+  } as any)
 const DashboardLedgerBatchBatchIdLayoutRoute =
   DashboardLedgerBatchBatchIdLayoutRouteImport.update({
     id: '/$batchId',
@@ -179,6 +202,12 @@ const DashboardAccountsPayableBatchBatchIdLayoutRoute =
     path: '/$batchId',
     getParentRoute: () => DashboardAccountsPayableBatchLayoutRoute,
   } as any)
+const DashboardVendorBatchNewPageRoute =
+  DashboardVendorBatchNewPageRouteImport.update({
+    id: '/new/',
+    path: '/new/',
+    getParentRoute: () => DashboardVendorBatchLayoutRoute,
+  } as any)
 const DashboardLedgerBatchNewPageRoute =
   DashboardLedgerBatchNewPageRouteImport.update({
     id: '/new/',
@@ -202,6 +231,18 @@ const DashboardAccountsPayableBatchNewPageRoute =
     id: '/new/',
     path: '/new/',
     getParentRoute: () => DashboardAccountsPayableBatchLayoutRoute,
+  } as any)
+const DashboardVendorBatchBatchIdErrorsPageRoute =
+  DashboardVendorBatchBatchIdErrorsPageRouteImport.update({
+    id: '/errors/',
+    path: '/errors/',
+    getParentRoute: () => DashboardVendorBatchBatchIdLayoutRoute,
+  } as any)
+const DashboardVendorBatchBatchIdviewPageRoute =
+  DashboardVendorBatchBatchIdviewPageRouteImport.update({
+    id: '/(view)/',
+    path: '/',
+    getParentRoute: () => DashboardVendorBatchBatchIdLayoutRoute,
   } as any)
 const DashboardLedgerBatchBatchIdErrorsPageRoute =
   DashboardLedgerBatchBatchIdErrorsPageRouteImport.update({
@@ -259,6 +300,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/accounts-receivable/batch': typeof DashboardAccountsReceivableBatchLayoutRouteWithChildren
   '/dashboard/cash-management/batch': typeof DashboardCashManagementBatchLayoutRouteWithChildren
   '/dashboard/ledger/batch': typeof DashboardLedgerBatchLayoutRouteWithChildren
+  '/dashboard/vendor/batch': typeof DashboardVendorBatchLayoutRouteWithChildren
   '/login': typeof AuthLoginPageRoute
   '/': typeof PublichomePageRoute
   '/dashboard/': typeof DashboardhomePageRoute
@@ -267,10 +309,12 @@ export interface FileRoutesByFullPath {
   '/dashboard/cash-management': typeof DashboardCashManagementPageRoute
   '/dashboard/ledger': typeof DashboardLedgerPageRoute
   '/dashboard/settings': typeof DashboardSettingsPageRoute
+  '/dashboard/vendor': typeof DashboardVendorPageRoute
   '/dashboard/accounts-payable/batch/$batchId': typeof DashboardAccountsPayableBatchBatchIdLayoutRouteWithChildren
   '/dashboard/accounts-receivable/batch/$batchId': typeof DashboardAccountsReceivableBatchBatchIdLayoutRouteWithChildren
   '/dashboard/cash-management/batch/$batchId': typeof DashboardCashManagementBatchBatchIdLayoutRouteWithChildren
   '/dashboard/ledger/batch/$batchId': typeof DashboardLedgerBatchBatchIdLayoutRouteWithChildren
+  '/dashboard/vendor/batch/$batchId': typeof DashboardVendorBatchBatchIdLayoutRouteWithChildren
   '/dashboard/accounts-payable/batch/': typeof DashboardAccountsPayableBatchPageRoute
   '/dashboard/accounts-receivable/batch/': typeof DashboardAccountsReceivableBatchPageRoute
   '/dashboard/cash-management/batch/': typeof DashboardCashManagementBatchPageRoute
@@ -279,6 +323,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/accounts-receivable/batch/new': typeof DashboardAccountsReceivableBatchNewPageRoute
   '/dashboard/cash-management/batch/new': typeof DashboardCashManagementBatchNewPageRoute
   '/dashboard/ledger/batch/new': typeof DashboardLedgerBatchNewPageRoute
+  '/dashboard/vendor/batch/new': typeof DashboardVendorBatchNewPageRoute
   '/dashboard/accounts-payable/batch/$batchId/': typeof DashboardAccountsPayableBatchBatchIdviewPageRoute
   '/dashboard/accounts-payable/batch/$batchId/errors': typeof DashboardAccountsPayableBatchBatchIdErrorsPageRoute
   '/dashboard/accounts-receivable/batch/$batchId/': typeof DashboardAccountsReceivableBatchBatchIdviewPageRoute
@@ -287,9 +332,12 @@ export interface FileRoutesByFullPath {
   '/dashboard/cash-management/batch/$batchId/errors': typeof DashboardCashManagementBatchBatchIdErrorsPageRoute
   '/dashboard/ledger/batch/$batchId/': typeof DashboardLedgerBatchBatchIdviewPageRoute
   '/dashboard/ledger/batch/$batchId/errors': typeof DashboardLedgerBatchBatchIdErrorsPageRoute
+  '/dashboard/vendor/batch/$batchId/': typeof DashboardVendorBatchBatchIdviewPageRoute
+  '/dashboard/vendor/batch/$batchId/errors': typeof DashboardVendorBatchBatchIdErrorsPageRoute
 }
 export interface FileRoutesByTo {
   '/forget-password': typeof AuthForgetPasswordRoute
+  '/dashboard/vendor/batch': typeof DashboardVendorBatchLayoutRouteWithChildren
   '/login': typeof AuthLoginPageRoute
   '/': typeof PublichomePageRoute
   '/dashboard': typeof DashboardhomePageRoute
@@ -298,6 +346,7 @@ export interface FileRoutesByTo {
   '/dashboard/cash-management': typeof DashboardCashManagementPageRoute
   '/dashboard/ledger': typeof DashboardLedgerPageRoute
   '/dashboard/settings': typeof DashboardSettingsPageRoute
+  '/dashboard/vendor': typeof DashboardVendorPageRoute
   '/dashboard/accounts-payable/batch': typeof DashboardAccountsPayableBatchPageRoute
   '/dashboard/accounts-receivable/batch': typeof DashboardAccountsReceivableBatchPageRoute
   '/dashboard/cash-management/batch': typeof DashboardCashManagementBatchPageRoute
@@ -306,6 +355,7 @@ export interface FileRoutesByTo {
   '/dashboard/accounts-receivable/batch/new': typeof DashboardAccountsReceivableBatchNewPageRoute
   '/dashboard/cash-management/batch/new': typeof DashboardCashManagementBatchNewPageRoute
   '/dashboard/ledger/batch/new': typeof DashboardLedgerBatchNewPageRoute
+  '/dashboard/vendor/batch/new': typeof DashboardVendorBatchNewPageRoute
   '/dashboard/accounts-payable/batch/$batchId': typeof DashboardAccountsPayableBatchBatchIdviewPageRoute
   '/dashboard/accounts-payable/batch/$batchId/errors': typeof DashboardAccountsPayableBatchBatchIdErrorsPageRoute
   '/dashboard/accounts-receivable/batch/$batchId': typeof DashboardAccountsReceivableBatchBatchIdviewPageRoute
@@ -314,6 +364,8 @@ export interface FileRoutesByTo {
   '/dashboard/cash-management/batch/$batchId/errors': typeof DashboardCashManagementBatchBatchIdErrorsPageRoute
   '/dashboard/ledger/batch/$batchId': typeof DashboardLedgerBatchBatchIdviewPageRoute
   '/dashboard/ledger/batch/$batchId/errors': typeof DashboardLedgerBatchBatchIdErrorsPageRoute
+  '/dashboard/vendor/batch/$batchId': typeof DashboardVendorBatchBatchIdviewPageRoute
+  '/dashboard/vendor/batch/$batchId/errors': typeof DashboardVendorBatchBatchIdErrorsPageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -325,6 +377,7 @@ export interface FileRoutesById {
   '/dashboard/accounts-receivable/batch': typeof DashboardAccountsReceivableBatchLayoutRouteWithChildren
   '/dashboard/cash-management/batch': typeof DashboardCashManagementBatchLayoutRouteWithChildren
   '/dashboard/ledger/batch': typeof DashboardLedgerBatchLayoutRouteWithChildren
+  '/dashboard/vendor/batch': typeof DashboardVendorBatchLayoutRouteWithChildren
   '/_auth/login/': typeof AuthLoginPageRoute
   '/_public/(home)/': typeof PublichomePageRoute
   '/dashboard/(home)/': typeof DashboardhomePageRoute
@@ -333,10 +386,12 @@ export interface FileRoutesById {
   '/dashboard/cash-management/': typeof DashboardCashManagementPageRoute
   '/dashboard/ledger/': typeof DashboardLedgerPageRoute
   '/dashboard/settings/': typeof DashboardSettingsPageRoute
+  '/dashboard/vendor/': typeof DashboardVendorPageRoute
   '/dashboard/accounts-payable/batch/$batchId': typeof DashboardAccountsPayableBatchBatchIdLayoutRouteWithChildren
   '/dashboard/accounts-receivable/batch/$batchId': typeof DashboardAccountsReceivableBatchBatchIdLayoutRouteWithChildren
   '/dashboard/cash-management/batch/$batchId': typeof DashboardCashManagementBatchBatchIdLayoutRouteWithChildren
   '/dashboard/ledger/batch/$batchId': typeof DashboardLedgerBatchBatchIdLayoutRouteWithChildren
+  '/dashboard/vendor/batch/$batchId': typeof DashboardVendorBatchBatchIdLayoutRouteWithChildren
   '/dashboard/accounts-payable/batch/': typeof DashboardAccountsPayableBatchPageRoute
   '/dashboard/accounts-receivable/batch/': typeof DashboardAccountsReceivableBatchPageRoute
   '/dashboard/cash-management/batch/': typeof DashboardCashManagementBatchPageRoute
@@ -345,6 +400,7 @@ export interface FileRoutesById {
   '/dashboard/accounts-receivable/batch/new/': typeof DashboardAccountsReceivableBatchNewPageRoute
   '/dashboard/cash-management/batch/new/': typeof DashboardCashManagementBatchNewPageRoute
   '/dashboard/ledger/batch/new/': typeof DashboardLedgerBatchNewPageRoute
+  '/dashboard/vendor/batch/new/': typeof DashboardVendorBatchNewPageRoute
   '/dashboard/accounts-payable/batch/$batchId/(view)/': typeof DashboardAccountsPayableBatchBatchIdviewPageRoute
   '/dashboard/accounts-payable/batch/$batchId/errors/': typeof DashboardAccountsPayableBatchBatchIdErrorsPageRoute
   '/dashboard/accounts-receivable/batch/$batchId/(view)/': typeof DashboardAccountsReceivableBatchBatchIdviewPageRoute
@@ -353,6 +409,8 @@ export interface FileRoutesById {
   '/dashboard/cash-management/batch/$batchId/errors/': typeof DashboardCashManagementBatchBatchIdErrorsPageRoute
   '/dashboard/ledger/batch/$batchId/(view)/': typeof DashboardLedgerBatchBatchIdviewPageRoute
   '/dashboard/ledger/batch/$batchId/errors/': typeof DashboardLedgerBatchBatchIdErrorsPageRoute
+  '/dashboard/vendor/batch/$batchId/(view)/': typeof DashboardVendorBatchBatchIdviewPageRoute
+  '/dashboard/vendor/batch/$batchId/errors/': typeof DashboardVendorBatchBatchIdErrorsPageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -363,6 +421,7 @@ export interface FileRouteTypes {
     | '/dashboard/accounts-receivable/batch'
     | '/dashboard/cash-management/batch'
     | '/dashboard/ledger/batch'
+    | '/dashboard/vendor/batch'
     | '/login'
     | '/'
     | '/dashboard/'
@@ -371,10 +430,12 @@ export interface FileRouteTypes {
     | '/dashboard/cash-management'
     | '/dashboard/ledger'
     | '/dashboard/settings'
+    | '/dashboard/vendor'
     | '/dashboard/accounts-payable/batch/$batchId'
     | '/dashboard/accounts-receivable/batch/$batchId'
     | '/dashboard/cash-management/batch/$batchId'
     | '/dashboard/ledger/batch/$batchId'
+    | '/dashboard/vendor/batch/$batchId'
     | '/dashboard/accounts-payable/batch/'
     | '/dashboard/accounts-receivable/batch/'
     | '/dashboard/cash-management/batch/'
@@ -383,6 +444,7 @@ export interface FileRouteTypes {
     | '/dashboard/accounts-receivable/batch/new'
     | '/dashboard/cash-management/batch/new'
     | '/dashboard/ledger/batch/new'
+    | '/dashboard/vendor/batch/new'
     | '/dashboard/accounts-payable/batch/$batchId/'
     | '/dashboard/accounts-payable/batch/$batchId/errors'
     | '/dashboard/accounts-receivable/batch/$batchId/'
@@ -391,9 +453,12 @@ export interface FileRouteTypes {
     | '/dashboard/cash-management/batch/$batchId/errors'
     | '/dashboard/ledger/batch/$batchId/'
     | '/dashboard/ledger/batch/$batchId/errors'
+    | '/dashboard/vendor/batch/$batchId/'
+    | '/dashboard/vendor/batch/$batchId/errors'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forget-password'
+    | '/dashboard/vendor/batch'
     | '/login'
     | '/'
     | '/dashboard'
@@ -402,6 +467,7 @@ export interface FileRouteTypes {
     | '/dashboard/cash-management'
     | '/dashboard/ledger'
     | '/dashboard/settings'
+    | '/dashboard/vendor'
     | '/dashboard/accounts-payable/batch'
     | '/dashboard/accounts-receivable/batch'
     | '/dashboard/cash-management/batch'
@@ -410,6 +476,7 @@ export interface FileRouteTypes {
     | '/dashboard/accounts-receivable/batch/new'
     | '/dashboard/cash-management/batch/new'
     | '/dashboard/ledger/batch/new'
+    | '/dashboard/vendor/batch/new'
     | '/dashboard/accounts-payable/batch/$batchId'
     | '/dashboard/accounts-payable/batch/$batchId/errors'
     | '/dashboard/accounts-receivable/batch/$batchId'
@@ -418,6 +485,8 @@ export interface FileRouteTypes {
     | '/dashboard/cash-management/batch/$batchId/errors'
     | '/dashboard/ledger/batch/$batchId'
     | '/dashboard/ledger/batch/$batchId/errors'
+    | '/dashboard/vendor/batch/$batchId'
+    | '/dashboard/vendor/batch/$batchId/errors'
   id:
     | '__root__'
     | '/_auth'
@@ -428,6 +497,7 @@ export interface FileRouteTypes {
     | '/dashboard/accounts-receivable/batch'
     | '/dashboard/cash-management/batch'
     | '/dashboard/ledger/batch'
+    | '/dashboard/vendor/batch'
     | '/_auth/login/'
     | '/_public/(home)/'
     | '/dashboard/(home)/'
@@ -436,10 +506,12 @@ export interface FileRouteTypes {
     | '/dashboard/cash-management/'
     | '/dashboard/ledger/'
     | '/dashboard/settings/'
+    | '/dashboard/vendor/'
     | '/dashboard/accounts-payable/batch/$batchId'
     | '/dashboard/accounts-receivable/batch/$batchId'
     | '/dashboard/cash-management/batch/$batchId'
     | '/dashboard/ledger/batch/$batchId'
+    | '/dashboard/vendor/batch/$batchId'
     | '/dashboard/accounts-payable/batch/'
     | '/dashboard/accounts-receivable/batch/'
     | '/dashboard/cash-management/batch/'
@@ -448,6 +520,7 @@ export interface FileRouteTypes {
     | '/dashboard/accounts-receivable/batch/new/'
     | '/dashboard/cash-management/batch/new/'
     | '/dashboard/ledger/batch/new/'
+    | '/dashboard/vendor/batch/new/'
     | '/dashboard/accounts-payable/batch/$batchId/(view)/'
     | '/dashboard/accounts-payable/batch/$batchId/errors/'
     | '/dashboard/accounts-receivable/batch/$batchId/(view)/'
@@ -456,6 +529,8 @@ export interface FileRouteTypes {
     | '/dashboard/cash-management/batch/$batchId/errors/'
     | '/dashboard/ledger/batch/$batchId/(view)/'
     | '/dashboard/ledger/batch/$batchId/errors/'
+    | '/dashboard/vendor/batch/$batchId/(view)/'
+    | '/dashboard/vendor/batch/$batchId/errors/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -493,6 +568,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/forget-password'
       preLoaderRoute: typeof AuthForgetPasswordRouteImport
       parentRoute: typeof AuthLayoutRoute
+    }
+    '/dashboard/vendor/': {
+      id: '/dashboard/vendor/'
+      path: '/vendor'
+      fullPath: '/dashboard/vendor'
+      preLoaderRoute: typeof DashboardVendorPageRouteImport
+      parentRoute: typeof DashboardLayoutRoute
     }
     '/dashboard/settings/': {
       id: '/dashboard/settings/'
@@ -550,6 +632,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginPageRouteImport
       parentRoute: typeof AuthLayoutRoute
     }
+    '/dashboard/vendor/batch': {
+      id: '/dashboard/vendor/batch'
+      path: '/vendor/batch'
+      fullPath: '/dashboard/vendor/batch'
+      preLoaderRoute: typeof DashboardVendorBatchLayoutRouteImport
+      parentRoute: typeof DashboardLayoutRoute
+    }
     '/dashboard/ledger/batch': {
       id: '/dashboard/ledger/batch'
       path: '/ledger/batch'
@@ -606,6 +695,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAccountsPayableBatchPageRouteImport
       parentRoute: typeof DashboardAccountsPayableBatchLayoutRoute
     }
+    '/dashboard/vendor/batch/$batchId': {
+      id: '/dashboard/vendor/batch/$batchId'
+      path: '/$batchId'
+      fullPath: '/dashboard/vendor/batch/$batchId'
+      preLoaderRoute: typeof DashboardVendorBatchBatchIdLayoutRouteImport
+      parentRoute: typeof DashboardVendorBatchLayoutRoute
+    }
     '/dashboard/ledger/batch/$batchId': {
       id: '/dashboard/ledger/batch/$batchId'
       path: '/$batchId'
@@ -634,6 +730,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAccountsPayableBatchBatchIdLayoutRouteImport
       parentRoute: typeof DashboardAccountsPayableBatchLayoutRoute
     }
+    '/dashboard/vendor/batch/new/': {
+      id: '/dashboard/vendor/batch/new/'
+      path: '/new'
+      fullPath: '/dashboard/vendor/batch/new'
+      preLoaderRoute: typeof DashboardVendorBatchNewPageRouteImport
+      parentRoute: typeof DashboardVendorBatchLayoutRoute
+    }
     '/dashboard/ledger/batch/new/': {
       id: '/dashboard/ledger/batch/new/'
       path: '/new'
@@ -661,6 +764,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/accounts-payable/batch/new'
       preLoaderRoute: typeof DashboardAccountsPayableBatchNewPageRouteImport
       parentRoute: typeof DashboardAccountsPayableBatchLayoutRoute
+    }
+    '/dashboard/vendor/batch/$batchId/errors/': {
+      id: '/dashboard/vendor/batch/$batchId/errors/'
+      path: '/errors'
+      fullPath: '/dashboard/vendor/batch/$batchId/errors'
+      preLoaderRoute: typeof DashboardVendorBatchBatchIdErrorsPageRouteImport
+      parentRoute: typeof DashboardVendorBatchBatchIdLayoutRoute
+    }
+    '/dashboard/vendor/batch/$batchId/(view)/': {
+      id: '/dashboard/vendor/batch/$batchId/(view)/'
+      path: '/'
+      fullPath: '/dashboard/vendor/batch/$batchId/'
+      preLoaderRoute: typeof DashboardVendorBatchBatchIdviewPageRouteImport
+      parentRoute: typeof DashboardVendorBatchBatchIdLayoutRoute
     }
     '/dashboard/ledger/batch/$batchId/errors/': {
       id: '/dashboard/ledger/batch/$batchId/errors/'
@@ -901,17 +1018,54 @@ const DashboardLedgerBatchLayoutRouteWithChildren =
     DashboardLedgerBatchLayoutRouteChildren,
   )
 
+interface DashboardVendorBatchBatchIdLayoutRouteChildren {
+  DashboardVendorBatchBatchIdviewPageRoute: typeof DashboardVendorBatchBatchIdviewPageRoute
+  DashboardVendorBatchBatchIdErrorsPageRoute: typeof DashboardVendorBatchBatchIdErrorsPageRoute
+}
+
+const DashboardVendorBatchBatchIdLayoutRouteChildren: DashboardVendorBatchBatchIdLayoutRouteChildren =
+  {
+    DashboardVendorBatchBatchIdviewPageRoute:
+      DashboardVendorBatchBatchIdviewPageRoute,
+    DashboardVendorBatchBatchIdErrorsPageRoute:
+      DashboardVendorBatchBatchIdErrorsPageRoute,
+  }
+
+const DashboardVendorBatchBatchIdLayoutRouteWithChildren =
+  DashboardVendorBatchBatchIdLayoutRoute._addFileChildren(
+    DashboardVendorBatchBatchIdLayoutRouteChildren,
+  )
+
+interface DashboardVendorBatchLayoutRouteChildren {
+  DashboardVendorBatchBatchIdLayoutRoute: typeof DashboardVendorBatchBatchIdLayoutRouteWithChildren
+  DashboardVendorBatchNewPageRoute: typeof DashboardVendorBatchNewPageRoute
+}
+
+const DashboardVendorBatchLayoutRouteChildren: DashboardVendorBatchLayoutRouteChildren =
+  {
+    DashboardVendorBatchBatchIdLayoutRoute:
+      DashboardVendorBatchBatchIdLayoutRouteWithChildren,
+    DashboardVendorBatchNewPageRoute: DashboardVendorBatchNewPageRoute,
+  }
+
+const DashboardVendorBatchLayoutRouteWithChildren =
+  DashboardVendorBatchLayoutRoute._addFileChildren(
+    DashboardVendorBatchLayoutRouteChildren,
+  )
+
 interface DashboardLayoutRouteChildren {
   DashboardAccountsPayableBatchLayoutRoute: typeof DashboardAccountsPayableBatchLayoutRouteWithChildren
   DashboardAccountsReceivableBatchLayoutRoute: typeof DashboardAccountsReceivableBatchLayoutRouteWithChildren
   DashboardCashManagementBatchLayoutRoute: typeof DashboardCashManagementBatchLayoutRouteWithChildren
   DashboardLedgerBatchLayoutRoute: typeof DashboardLedgerBatchLayoutRouteWithChildren
+  DashboardVendorBatchLayoutRoute: typeof DashboardVendorBatchLayoutRouteWithChildren
   DashboardhomePageRoute: typeof DashboardhomePageRoute
   DashboardAccountsPayablePageRoute: typeof DashboardAccountsPayablePageRoute
   DashboardAccountsReceivablePageRoute: typeof DashboardAccountsReceivablePageRoute
   DashboardCashManagementPageRoute: typeof DashboardCashManagementPageRoute
   DashboardLedgerPageRoute: typeof DashboardLedgerPageRoute
   DashboardSettingsPageRoute: typeof DashboardSettingsPageRoute
+  DashboardVendorPageRoute: typeof DashboardVendorPageRoute
 }
 
 const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
@@ -922,12 +1076,14 @@ const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
   DashboardCashManagementBatchLayoutRoute:
     DashboardCashManagementBatchLayoutRouteWithChildren,
   DashboardLedgerBatchLayoutRoute: DashboardLedgerBatchLayoutRouteWithChildren,
+  DashboardVendorBatchLayoutRoute: DashboardVendorBatchLayoutRouteWithChildren,
   DashboardhomePageRoute: DashboardhomePageRoute,
   DashboardAccountsPayablePageRoute: DashboardAccountsPayablePageRoute,
   DashboardAccountsReceivablePageRoute: DashboardAccountsReceivablePageRoute,
   DashboardCashManagementPageRoute: DashboardCashManagementPageRoute,
   DashboardLedgerPageRoute: DashboardLedgerPageRoute,
   DashboardSettingsPageRoute: DashboardSettingsPageRoute,
+  DashboardVendorPageRoute: DashboardVendorPageRoute,
 }
 
 const DashboardLayoutRouteWithChildren = DashboardLayoutRoute._addFileChildren(

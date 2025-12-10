@@ -6,6 +6,7 @@ import Landmark from 'lucide-react/dist/esm/icons/landmark';
 import HandCoins from 'lucide-react/dist/esm/icons/hand-coins';
 import Wallet from 'lucide-react/dist/esm/icons/wallet';
 import BookOpen from 'lucide-react/dist/esm/icons/book-open';
+import Users from 'lucide-react/dist/esm/icons/users';
 
 export const ModuleCards = () => {
   const { modules } = useModuleItems();
@@ -62,6 +63,11 @@ const useModuleItems = () => {
         label: 'Ledger',
         to: ROUTES.DASHBOARD.LEDGER.HOME,
         Icon: BookOpen,
+      },
+      {
+        label: 'Vendor',
+        to: ROUTES.DASHBOARD.VENDOR.HOME,
+        Icon: Users,
       },
     ],
     []

@@ -18,11 +18,9 @@ export class Ledger {
   public readonly UPLOAD_TYPES = {
     FREIGHT_CLOSING_DOC: TEntryProcessorTypes.LedgerFreightClosingEntry,
     TRUCKING_CLOSING_DOC: TEntryProcessorTypes.LedgerTruckingClosingEntry,
-    FREIGHT_VENDOR_ACCRUAL_DOC:
-      TEntryProcessorTypes.AccountPayableFreightVendorEntry,
-    TRUCKING_VENDOR_ACCRUAL_DOC:
-      TEntryProcessorTypes.AccountPayableTruckingVendorEntry,
-    CASH_OUT_DOC: TEntryProcessorTypes.LedgerCashOutEntry_1,
+    FREIGHT_VENDOR_ACCRUAL_DOC: TEntryProcessorTypes.VendorFreight,
+    TRUCKING_VENDOR_ACCRUAL_DOC: TEntryProcessorTypes.VendorTrucking,
+    CASH_OUT_DOC: TEntryProcessorTypes.LedgerCashOut,
   };
 
   private constructor() {}

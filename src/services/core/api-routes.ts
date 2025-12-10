@@ -107,6 +107,14 @@ export const API_ROUTES = {
       CASH_OUT_DOCUMENT: '/DataMigration/Ledger/Cash-Out-Document',
       CASH_IN_DOCUMENT: '/DataMigration/Ledger/Cash-In-Document',
     },
+    VENDOR: {
+      FREIGHT_DOCUMENT: '/DataMigration/Vendor/Freight-Document',
+      FREIGHT_DOCUMENT_ADJUSTMENT:
+        '/DataMigration/Vendor/Freight-Document-Adjustment',
+      TRUCKING_DOCUMENT: '/DataMigration/Vendor/Trucking-Document',
+      TRUCKING_DOCUMENT_ADJUSTMENT:
+        '/DataMigration/Vendor/Trucking-Document-Adjustment',
+    },
   },
 } as const;
 

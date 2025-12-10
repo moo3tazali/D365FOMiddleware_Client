@@ -19,7 +19,8 @@ type TModule =
   | 'accountReceivable'
   | 'accountPayable'
   | 'ledger'
-  | 'cashManagement';
+  | 'cashManagement'
+  | 'vendor';
 
 export class DataBatch {
   private static _instance: DataBatch;
@@ -145,14 +146,21 @@ export class DataBatch {
         ];
       case 'accountPayable':
         return [
-          TEntryProcessorTypes.AccountPayableFreightVendorEntry,
-          TEntryProcessorTypes.AccountPayableTruckingVendorEntry,
+          TEntryProcessorTypes.AccountPayableFreight,
+          TEntryProcessorTypes.AccountPayableTrucking,
         ];
       case 'cashManagement':
         return [
-          TEntryProcessorTypes.LedgerCashOutEntry_1,
-          TEntryProcessorTypes.LedgerCashOutEntry_2,
-          TEntryProcessorTypes.LedgerCashOutEntry_3,
+          TEntryProcessorTypes.LedgerCashOut,
+          TEntryProcessorTypes.LedgerBankOut,
+          TEntryProcessorTypes.LedgerVisaOut,
+        ];
+      case 'vendor':
+        return [
+          TEntryProcessorTypes.VendorFreight,
+          TEntryProcessorTypes.VendorTrucking,
+          TEntryProcessorTypes.VendorFreightAdjustment,
+          TEntryProcessorTypes.VendorTruckingAdjustment,
         ];
       default:
         return [];

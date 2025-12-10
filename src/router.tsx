@@ -61,6 +61,14 @@ export const ROUTES = {
         ERRORS: '/dashboard/ledger/batch/$batchId/errors',
       },
     },
+    VENDOR: {
+      HOME: '/dashboard/vendor',
+      BATCH: {
+        NEW: '/dashboard/vendor/batch/new',
+        VIEW: '/dashboard/vendor/batch/$batchId',
+        ERRORS: '/dashboard/vendor/batch/$batchId/errors',
+      },
+    },
     SETTINGS: {
       HOME: '/dashboard/settings',
     },
