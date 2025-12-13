@@ -6,13 +6,13 @@ import type { D365FOSetting } from '@/interfaces/d365fo-setting';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAppSettings } from '../-hooks/use-app-settings';
-import { LoadingFallback } from '@/components/fallback';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export const SettingsForm = () => {
   return (
     <section className='space-y-3'>
       <h2>Update Settings</h2>
-      <Suspense fallback={<LoadingFallback />}>
+      <Suspense fallback={<SettingsFormSkeleton />}>
         <SettingsRows />
       </Suspense>
     </section>
@@ -81,6 +81,24 @@ const SettingsRow = ({ setting }: SettingsRowProps) => {
           </Button>
         )}
       </div>
+    </div>
+  );
+};
+
+const SettingsFormSkeleton = () => {
+  return (
+    <div className='space-y-3'>
+      {Array.from({ length: 3 }).map((_, idx) => (
+        <div
+          key={idx}
+          className='flex flex-col sm:flex-row items-start sm:items-center gap-3'
+        >
+          <Skeleton className='w-80 h-5' />
+          <div className='relative w-full sm:w-fit'>
+            <Skeleton className='w-full sm:w-60 h-10' />
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

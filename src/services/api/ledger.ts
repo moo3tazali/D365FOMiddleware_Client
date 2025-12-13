@@ -9,7 +9,10 @@ interface UploadData {
 
 interface UploadResponse extends TDataBatch {}
 
-const syncService = Sync.getInstance();
+const syncService = Sync.getInstance({
+  public: true,
+  backend: 'NEST',
+});
 
 export class Ledger {
   private static _instance: Ledger;
@@ -42,12 +45,7 @@ export class Ledger {
 
     const apiRoute = await this._getUploadApiRoute(type);
 
-    const payload = {
-      company: data.companyId,
-      dataFile: data.dataFile,
-    };
-
-    return syncService.save<UploadResponse, typeof payload>(apiRoute, payload, {
+    return syncService.save<UploadResponse, UploadData>(apiRoute, data, {
       formData: true,
       onUploadProgress: (progressEvent) => {
         const percentCompleted = Math.round(

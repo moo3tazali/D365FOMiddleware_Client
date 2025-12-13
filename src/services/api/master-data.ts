@@ -1,16 +1,23 @@
+import type {
+  IMasterDataSyncStatus,
+  IMasterDataSyncJobResponse,
+} from '@/interfaces/master-data';
 import { API_ROUTES } from '../core/api-routes';
 import { Sync } from '../core/sync';
+import { queryOptions } from '@tanstack/react-query';
 
-const displayNames = [
-  'Customers',
-  'Financial Dimensions',
-  'Billing Data',
-  'Main Accounts',
-  'Vendor',
-  'Exchange Rates',
-] as const;
+export const SYNC_TYPES = {
+  CUSTOMERS: 'customers',
+  FINANCIAL_DIMENSIONS: 'financial-dimensions',
+  BILLING_DATA: 'billing-data',
+  MAIN_ACCOUNTS: 'main-accounts',
+  VENDORS: 'vendors',
+  EXCHANGE_RATES: 'exchange-rates',
+} as const;
 
-export type MasterDataDisplayName = (typeof displayNames)[number];
+export const SYNC_TYPES_LIST = Object.values(SYNC_TYPES);
+
+export type SyncType = (typeof SYNC_TYPES_LIST)[number];
 
 export interface MasterDataPayload {
   company: string;
@@ -27,7 +34,7 @@ export class MasterData {
 
   public readonly queryKey = ['finance.master-data'];
 
-  public readonly displayNames = displayNames;
+  public readonly syncTypes = SYNC_TYPES;
 
   private constructor() {}
 
@@ -39,31 +46,46 @@ export class MasterData {
     return MasterData._instance;
   }
 
+  public getSyncList = async (): Promise<IMasterDataSyncStatus[]> => {
+    return this.syncService.fetch<IMasterDataSyncStatus[]>(
+      API_ROUTES.FINANCE.MASTER_DATA.SYNC_STATUS
+    );
+  };
+
+  public getSyncListQueryOptions = () => {
+    return queryOptions({
+      queryKey: this.queryKey,
+      queryFn: this.getSyncList,
+    });
+  };
+
   public sync = async (data: {
-    name: MasterDataDisplayName;
+    type: SyncType;
     payload: MasterDataPayload;
-  }): Promise<void> => {
-    const { name, payload } = data;
-    switch (name) {
-      case 'Customers':
+  }): Promise<IMasterDataSyncJobResponse> => {
+    const { type, payload } = data;
+    switch (type) {
+      case SYNC_TYPES.CUSTOMERS:
         return this.syncCustomers(payload);
-      case 'Financial Dimensions':
+      case SYNC_TYPES.FINANCIAL_DIMENSIONS:
         return this.syncFinancilDimensions(payload);
-      case 'Billing Data':
+      case SYNC_TYPES.BILLING_DATA:
         return this.syncBillingData(payload);
-      case 'Main Accounts':
+      case SYNC_TYPES.MAIN_ACCOUNTS:
         return this.syncMainAccountsData(payload);
-      case 'Vendor':
+      case SYNC_TYPES.VENDORS:
         return this.syncVendors(payload);
-      case 'Exchange Rates':
+      case SYNC_TYPES.EXCHANGE_RATES:
         return this.syncExchangeRates(payload);
       default:
-        throw new Error(`No Sync function for this master data '${name}'`);
+        throw new Error(`No Sync function for this master data '${type}'`);
     }
   };
 
-  public syncCustomers = async (payload: MasterDataPayload): Promise<void> => {
-    await this.syncService.save(
+  public syncCustomers = async (
+    payload: MasterDataPayload
+  ): Promise<IMasterDataSyncJobResponse> => {
+    return this.syncService.save<IMasterDataSyncJobResponse>(
       API_ROUTES.FINANCE.MASTER_DATA.CUSTOMERS.SYNC,
       undefined,
       {
@@ -74,8 +96,8 @@ export class MasterData {
 
   public syncFinancilDimensions = async (
     payload: MasterDataPayload
-  ): Promise<void> => {
-    await this.syncService.save(
+  ): Promise<IMasterDataSyncJobResponse> => {
+    return this.syncService.save<IMasterDataSyncJobResponse>(
       API_ROUTES.FINANCE.MASTER_DATA.FINANCIAL_DIMENSIONS.SYNC,
       undefined,
       {
@@ -86,8 +108,8 @@ export class MasterData {
 
   public syncBillingData = async (
     payload: MasterDataPayload
-  ): Promise<void> => {
-    await this.syncService.save(
+  ): Promise<IMasterDataSyncJobResponse> => {
+    return this.syncService.save<IMasterDataSyncJobResponse>(
       API_ROUTES.FINANCE.MASTER_DATA.BILLING_DATA.SYNC,
       undefined,
       {
@@ -98,8 +120,8 @@ export class MasterData {
 
   public syncMainAccountsData = async (
     payload: MasterDataPayload
-  ): Promise<void> => {
-    await this.syncService.save(
+  ): Promise<IMasterDataSyncJobResponse> => {
+    return this.syncService.save<IMasterDataSyncJobResponse>(
       API_ROUTES.FINANCE.MASTER_DATA.MAIN_ACCOUNTS.SYNC,
       undefined,
       {
@@ -108,8 +130,10 @@ export class MasterData {
     );
   };
 
-  public syncVendors = async (payload: MasterDataPayload): Promise<void> => {
-    await this.syncService.save(
+  public syncVendors = async (
+    payload: MasterDataPayload
+  ): Promise<IMasterDataSyncJobResponse> => {
+    return this.syncService.save<IMasterDataSyncJobResponse>(
       API_ROUTES.FINANCE.MASTER_DATA.VENDORS.SYNC,
       undefined,
       {
@@ -120,8 +144,8 @@ export class MasterData {
 
   public syncExchangeRates = async (
     payload: MasterDataPayload
-  ): Promise<void> => {
-    await this.syncService.save(
+  ): Promise<IMasterDataSyncJobResponse> => {
+    return this.syncService.save<IMasterDataSyncJobResponse>(
       API_ROUTES.FINANCE.MASTER_DATA.EXCHANGE_RATES.SYNC,
       undefined,
       {

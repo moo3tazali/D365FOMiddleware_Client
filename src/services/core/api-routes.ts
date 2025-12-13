@@ -10,6 +10,7 @@ export const API_ROUTES = {
   },
   FINANCE: {
     MASTER_DATA: {
+      SYNC_STATUS: '/FINANCE/MasterData/sync-status',
       CUSTOMERS: {
         GET: '/Finance/MasterData/customers',
         SYNC: '/Finance/MasterData/customers/sync',
@@ -92,11 +93,9 @@ export const API_ROUTES = {
         '/DataMigration/AccountReceivable/Trucking-CreditNote',
     },
     LEDGER: {
-      FREIGHT_CLOSING_DOCUMENT:
-        '/DataMigration/Ledger/Freight-Closing-Document',
+      FREIGHT_CLOSING_DOCUMENT: '/DataMigration/Ledger/Freight-Closing-Entry',
       FREIGHT_CLOSING: '/DataMigration/Ledger/Freight-Closing',
-      TRUCKING_CLOSING_DOCUMENT:
-        '/DataMigration/Ledger/Trucking-Closing-Document',
+      TRUCKING_CLOSING_DOCUMENT: '/DataMigration/Ledger/Trucking-Closing-Entry',
       TRUCKING_CLOSING: '/DataMigration/Ledger/Trucking-Closing',
       FREIGHT_VENDOR_ACCRUAL_DOCUMENT:
         '/DataMigration/Ledger/Freight-Vendor-Accrual-Document',

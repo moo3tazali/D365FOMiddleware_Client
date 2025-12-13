@@ -9,6 +9,7 @@ export const Route = createFileRoute('/dashboard/settings/')({
   loader: ({ context }) => {
     const { services, queryClient } = context;
     queryClient.ensureQueryData(services.appSetting.listQueryOptions());
+    queryClient.ensureQueryData(services.masterData.getSyncListQueryOptions());
   },
   pendingComponent: LoadingFallback,
   errorComponent: ErrorFallback,
