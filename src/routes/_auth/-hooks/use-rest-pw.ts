@@ -17,6 +17,7 @@ export const useResetPw = () => {
   });
 
   function onSubmit(values: FormData) {
+    // eslint-disable-next-line no-console
     console.log(values);
   }
 

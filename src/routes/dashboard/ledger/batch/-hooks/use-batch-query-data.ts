@@ -35,6 +35,7 @@ export const useBatchQueryData = (): [
         pageNumber: 1,
         totalCount: 1,
         pageSize: 1,
+        totalPages: 1,
         items: [newBatch],
       });
     },

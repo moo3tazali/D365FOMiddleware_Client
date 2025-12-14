@@ -24,11 +24,7 @@ function ViewBatchPage() {
 
   if (!batch)
     return (
-      <NotFoundFallback
-        data='This batch is no longer available or may not exist.'
-        isNotFound={false}
-        routeId='/dashboard/vendor/batch/$batchId/(view)/'
-      />
+      <NotFoundFallback data='This batch is no longer available or may not exist.' />
     );
 
   return (

@@ -10,7 +10,7 @@ export const Route = createFileRoute(
   loader: ({ params, context }) => {
     const { services, queryClient } = context;
     const { batchId } = params;
-    console.log(services.pagination.defaultValues);
+
     queryClient.ensureQueryData(
       services.dataBatchError.errorListQueryOptions({
         ...services.pagination.defaultValues,

@@ -1,4 +1,4 @@
-import { Link, type NotFoundRouteProps } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { ROUTES } from '@/router';
 
 import type { ComponentProps } from 'react';
@@ -7,8 +7,7 @@ import SearchIcon from 'lucide-react/dist/esm/icons/search-slash';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
-type NotFoundFallbackProps = NotFoundRouteProps &
-  ComponentProps<'div'> & {
+type NotFoundFallbackProps = { data?: unknown } & ComponentProps<'div'> & {
     to?: typeof ROUTES.PUBLIC.HOME | typeof ROUTES.DASHBOARD.HOME;
   };
 
@@ -38,7 +37,7 @@ export const NotFoundFallback = ({
       <Button
         asChild
         size='lg'
-        className='w-full max-w-xs sm:max-w-sm font-bold !mt-5'
+        className='w-full max-w-xs sm:max-w-sm font-bold mt-5!'
         variant='secondary'
       >
         <Link to={to || ROUTES.PUBLIC.HOME}>Take me home</Link>
