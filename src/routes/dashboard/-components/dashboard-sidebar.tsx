@@ -11,6 +11,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/ui/logo';
 import { NavUser } from './nav-user';
@@ -18,12 +19,6 @@ import { useNavItems } from '../-hooks/use-nav-items';
 import { createElement } from 'react';
 
 export function DashboardSidebar() {
-  const user = {
-    username: 'John Doe',
-    email: 'john.doe@example.com',
-    avatarPath: '',
-  };
-
   const { items } = useNavItems();
 
   return (
@@ -31,7 +26,7 @@ export function DashboardSidebar() {
       <SidebarHeader className='h-16 md:h-20 group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 group-has-[[data-collapsible=icon]]/sidebar-wrapper:md:h-16 flex justify-center items-center'>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Logo className='group-data-[state=collapsed]:text-xs transition-all ease-linear' />
+            <NavLogo />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -48,11 +43,22 @@ export function DashboardSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );
 }
+
+const NavLogo = () => {
+  const { open } = useSidebar();
+
+  return (
+    <Logo
+      className={open ? '' : 'w-7'}
+      orientation={open ? 'horizontal' : 'small'}
+    />
+  );
+};
 
 const NavMain = ({
   title,

@@ -1,10 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
-import { useParams, useSearch } from '@tanstack/react-router';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useParams } from '@tanstack/react-router';
 
 import { useServices } from '@/hooks/use-services';
 import { DataTable, type ColumnDef } from '@/components/data-table';
 import type { TDataBatchError } from '@/interfaces/data-batch-error';
 import { Badge } from '@/components/ui/badge';
+import { useParsedPagination } from '@/hooks/use-parsed-pagination';
 
 export const BatchErrorTable = () => {
   const { dataBatchError } = useServices();
@@ -13,14 +14,13 @@ export const BatchErrorTable = () => {
     from: '/dashboard/accounts-receivable/batch/$batchId/errors/',
   });
 
-  const search = useSearch({
-    strict: false,
-    structuralSharing: true,
-  });
+  const { maxCount, skipCount } = useParsedPagination();
 
-  const { data, isPending, error } = useQuery(
-    dataBatchError.errorListQueryOptions({ ...search, batchId })
+  const { data, isPending, error, isPlaceholderData } = useQuery(
+    dataBatchError.errorListQueryOptions({ maxCount, skipCount, batchId })
   );
+
+  const queryClient = useQueryClient();
 
   return (
     <DataTable
@@ -28,6 +28,15 @@ export const BatchErrorTable = () => {
       columns={columns}
       error={error?.message}
       isPending={isPending}
+      isPlaceholderData={isPlaceholderData}
+      onNextPageHover={(nextPage) => {
+        queryClient.prefetchQuery(
+          dataBatchError.errorListQueryOptions({
+            ...nextPage,
+            batchId,
+          })
+        );
+      }}
     />
   );
 };
@@ -37,8 +46,8 @@ const columns: ColumnDef<TDataBatchError>[] = [
     accessorKey: 'sourceRecordIds',
     header: 'Source Record IDs',
     cell: ({ getValue }) =>
-      (getValue() as string[]).map((id) => (
-        <Badge key={id} color='primary' className='mr-2'>
+      (getValue() as string[]).map((id, i) => (
+        <Badge key={id + i} color='primary' className='mr-2'>
           {id}
         </Badge>
       )),

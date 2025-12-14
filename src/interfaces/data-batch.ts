@@ -5,7 +5,20 @@ export enum TEntryProcessorTypes {
   AccountReceivableTruckingCreditNote = 4,
   LedgerFreightClosingEntry = 5,
   LedgerTruckingClosingEntry = 6,
-  LedgerFreightVendorEntry = 7,
+  AccountPayableFreight = 7,
+  AccountPayableTrucking = 8,
+  CustodyFreight = 9,
+  CustodyTrucking = 10,
+  LedgerCashOut = 11,
+  LedgerBankOut = 12,
+  LedgerVisaOut = 13,
+  LedgerCashIn = 14,
+  LedgerBankIn = 15,
+  LedgerVisaIn = 16,
+  VendorFreight = 17,
+  VendorTrucking = 18,
+  VendorFreightAdjustment = 19,
+  VendorTruckingAdjustment = 20,
 }
 
 export enum TDataBatchStatus {
@@ -17,19 +30,19 @@ export enum TDataBatchStatus {
 
 export interface TDataBatch {
   id: string;
+  billingCodeId?: string;
+  apiServiceType: number;
   creationDate: string; // ISO date string
   createdBy?: string;
   lastModifiedDate?: string;
   lastModifiedBy?: string;
   notes?: string;
-  sourceRequest?: string;
   entryProcessorType: TEntryProcessorTypes;
-  billingClassificationCode: number;
-  targetService: number;
   description?: string;
   successCount: number;
   errorCount: number;
-  totalUploadedCount: number;
   totalFormattedCount: number;
+  totalUploadedCount: number;
   status: TDataBatchStatus;
+  skipErrors?: boolean;
 }

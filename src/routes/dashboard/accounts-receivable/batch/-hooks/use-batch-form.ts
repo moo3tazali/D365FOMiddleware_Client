@@ -1,43 +1,60 @@
 import { z } from 'zod';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@tanstack/react-router';
+import toast from 'react-hot-toast';
 
 import { useServices } from '@/hooks/use-services';
 import { useMutation } from '@/hooks/use-mutation';
 import { useBatchQueryData } from './use-batch-query-data';
 import { ROUTES } from '@/router';
+import { AccountReceivable } from '@/services/api/account-receivable';
+import { useParsedPagination } from '@/hooks/use-parsed-pagination';
+import { TEntryProcessorTypes } from '@/interfaces/data-batch';
 
 const acceptedTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'application/vnd.ms-excel',
 ];
 
-const FormSchema = z.object({
-  type: z.string().min(1, 'Please select the target service.'),
-  companyId: z.string(),
-  billingCodeId: z
-    .string()
-    .min(1, 'Please select the target service billing classification.'),
-  dataFile: z.custom<File[] | null>().superRefine((value, ctx) => {
-    if (!value || value.length === 0) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Please select a file.',
-      });
+const FormSchema = z
+  .object({
+    type: z.string().min(1, 'Please select the target service.'),
+    companyId: z.string(),
+    billingCodeId: z.string().optional(),
+    dataFile: z.custom<File[] | null>().superRefine((value, ctx) => {
+      if (!value || value.length === 0) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Please select a file.',
+        });
 
-      return;
-    }
+        return;
+      }
 
-    if (!acceptedTypes.includes(value?.[0].type)) {
+      if (!acceptedTypes.includes(value?.[0].type)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Please select a valid file type (Excel).',
+        });
+      }
+    }),
+  })
+  .superRefine((data, ctx) => {
+    const type = Number(data.type);
+    const billingCode = data.billingCodeId;
+    const isBillingCodeRequired =
+      !AccountReceivable.getInstance().isCreditNote(type);
+
+    if (isBillingCodeRequired && (!billingCode || billingCode.trim() === '')) {
       ctx.addIssue({
+        path: ['billingCodeId'],
         code: 'custom',
-        message: 'Please select a valid file type (Excel).',
+        message: 'Please select the target service billing classification.',
       });
     }
-  }),
-});
+  });
 
 type FormData = z.infer<typeof FormSchema>;
 
@@ -54,8 +71,8 @@ export const useBatchForm = () => {
   if (batch) {
     defaultValues = {
       ...defaultValues,
-      type: String(batch?.targetService ?? ''),
-      billingCodeId: String(batch?.billingClassificationCode ?? ''),
+      type: String(batch?.entryProcessorType ?? ''),
+      billingCodeId: String(batch?.billingCodeId ?? ''),
     };
   }
 
@@ -66,16 +83,46 @@ export const useBatchForm = () => {
 
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const { accountReceivable } = useServices();
+  const [billingCodeKey, setBillingCodeKey] = useState(crypto.randomUUID());
 
-  const { mutateAsync: startUpload, isPending } = useMutation({
-    mutationKey: [accountReceivable.mutationKey],
+  const { accountReceivable, dataBatch } = useServices();
+
+  const defaultPagination = useParsedPagination();
+
+  const {
+    mutateAsync: startUpload,
+    isPending,
+    dismissLoading,
+  } = useMutation({
+    mutationKey: accountReceivable.mutationKey,
     operationName: 'upload',
     mutationFn: accountReceivable.upload,
     formControl: form.control,
+    refetchQueries: [
+      [...dataBatch.getQueryKey('accountReceivable', defaultPagination)],
+    ],
   });
 
   const navigate = useNavigate();
+
+  const type = form.watch('type');
+
+  const { isFreight, isTrucking } = useMemo(() => {
+    return {
+      isFreight: +type === TEntryProcessorTypes.AccountReceivableFreight,
+      isTrucking: +type === TEntryProcessorTypes.AccountReceivableTrucking,
+    };
+  }, [type]);
+
+  const isBillingCodeDisabled = useMemo(
+    () => accountReceivable.isCreditNote(type),
+    [type, accountReceivable]
+  );
+
+  const isDisabled = useMemo(() => {
+    const isSuccess = batch && batch.totalFormattedCount > 0;
+    return isSuccess || isPending;
+  }, [batch, isPending]);
 
   const onSubmit = useCallback(
     (values: FormData) => {
@@ -88,7 +135,13 @@ export const useBatchForm = () => {
           dataFile: files[0],
         },
         type: values.type,
-        uploadProgress: (prog: number) => setUploadProgress(prog),
+        uploadProgress: (prog: number) => {
+          const uploadComplete = prog === 100;
+          if (uploadComplete) {
+            dismissLoading(toast.loading('Data is being processed'));
+          }
+          setUploadProgress(prog);
+        },
       };
 
       startUpload(options).then((data) => {
@@ -99,16 +152,25 @@ export const useBatchForm = () => {
         });
       });
     },
-    [startUpload, navigate, setBatch]
+    [startUpload, navigate, setBatch, dismissLoading]
   );
+
+  useEffect(() => {
+    if (!type) return;
+    form.resetField('billingCodeId');
+    setBillingCodeKey(crypto.randomUUID());
+  }, [type, form]);
 
   return {
     form: {
       ...form,
-      isPending,
       uploadProgress,
+      billingCodeKey,
+      isBillingCodeDisabled,
+      isDisabled,
+      isFreight,
+      isTrucking,
       onSubmit: form.handleSubmit(onSubmit),
     },
-    UPLOAD_TYPES: accountReceivable.UPLOAD_TYPES,
   };
 };

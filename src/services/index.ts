@@ -1,15 +1,23 @@
-import { AccountReceivable } from './account-receivable';
-import { Auth } from './auth';
-import { DataBatch } from './data-batch';
-import { DataBatchError } from './data-batch-error';
-import { User } from './user';
+import { AccountReceivable } from './api/account-receivable';
+import { Auth } from './api/auth';
+import { DataBatch } from './api/data-batch';
+import { DataBatchError } from './api/data-batch-error';
+import { Ledger } from './api/ledger';
+import { AppSetting } from './api/app-setting';
+import { Pagination } from './core/pagination';
+import { MasterData } from './api/master-data';
+import { Vendor } from './api/vendor';
 
 export const services = {
   authService: Auth.getInstance(),
-  userService: User.getInstance(),
   accountReceivable: AccountReceivable.getInstance(),
   dataBatch: DataBatch.getInstance(),
   dataBatchError: DataBatchError.getInstance(),
+  ledger: Ledger.getInstance(),
+  appSetting: AppSetting.getInstance(),
+  pagination: Pagination.getInstance(),
+  masterData: MasterData.getInstance(),
+  vendor: Vendor.getInstance(),
 } as const;
 
 export type TServices = typeof services;

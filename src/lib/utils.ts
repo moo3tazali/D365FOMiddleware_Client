@@ -11,22 +11,28 @@ export type FlattenObj<T> = T extends object
     }[keyof T]
   : never;
 
-export const tryParse = <T>(value?: string): T | null => {
-  if (!value) return null;
+export const tryParse = <T>(value?: string): T | undefined => {
+  if (!value) return;
   try {
     return JSON.parse(value) as T;
   } catch {
-    return null;
+    return;
   }
 };
 
-export const enumToOptions = <T extends Record<string, string | number>>(
+export const enumToOptions = <
+  T extends Record<string, string | number>,
+  v = number
+>(
   enumObj: T
-): { label: string; value: number }[] => {
+): { label: string; value: v }[] => {
   return Object.entries(enumObj)
-    .filter(([, value]) => typeof value === 'number')
-    .map(([key, value]) => ({
-      label: key.replace(/([a-z])([A-Z])/g, '$1 $2'),
-      value: value as number,
-    }));
+  .map(([key, value]) => ({
+    label: key.replace(/([a-z])([A-Z])/g, '$1 $2'),
+    value: value as v,
+  }));
+};
+
+export const wait = async (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 };

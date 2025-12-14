@@ -2,23 +2,27 @@ import { Frame } from '@/components/ui/frame';
 import { ROUTES, type TRoutes } from '@/router';
 import { Link } from '@tanstack/react-router';
 import { useMemo } from 'react';
+import Landmark from 'lucide-react/dist/esm/icons/landmark';
+import HandCoins from 'lucide-react/dist/esm/icons/hand-coins';
+import Wallet from 'lucide-react/dist/esm/icons/wallet';
+import BookOpen from 'lucide-react/dist/esm/icons/book-open';
+import Users from 'lucide-react/dist/esm/icons/users';
 
 export const ModuleCards = () => {
   const { modules } = useModuleItems();
 
   return (
     <div className='flex flex-1 flex-col gap-4 p-4 pt-0'>
-      <h1 className='text-sm md:text-xl font-bold'>
-        Select Module
-      </h1>
-      <div className='grid auto-rows-min gap-4 md:grid-cols-3'>
-        {modules.map(({ label, to }) => (
+      <h1 className='text-sm md:text-xl font-bold'>Select Module</h1>
+      <div className='grid auto-rows-min gap-4 grid-cols-2 xl:grid-cols-4'>
+        {modules.map(({ label, to, Icon }) => (
           <Module key={to} to={to}>
+            <Icon className='size-8 sm:size-10' />
             {label}
           </Module>
         ))}
       </div>
-      <div className='min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min' />
+      <div className='flex-1 rounded-xl bg-muted/50' />
     </div>
   );
 };
@@ -32,7 +36,7 @@ const Module = ({
 }) => {
   return (
     <Link to={to}>
-      <Frame>{children}</Frame>
+      <Frame className='flex-col gap-4 text-sm sm:text-xl'>{children}</Frame>
     </Link>
   );
 };
@@ -43,14 +47,27 @@ const useModuleItems = () => {
       {
         label: 'Accounts Payable',
         to: ROUTES.DASHBOARD.ACCOUNTS_PAYABLE.HOME,
+        Icon: Landmark,
       },
       {
         label: 'Accounts Receivable',
         to: ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.HOME,
+        Icon: HandCoins,
       },
       {
         label: 'Cash Management',
         to: ROUTES.DASHBOARD.CASH_MANAGEMENT.HOME,
+        Icon: Wallet,
+      },
+      {
+        label: 'Ledger',
+        to: ROUTES.DASHBOARD.LEDGER.HOME,
+        Icon: BookOpen,
+      },
+      {
+        label: 'Vendor',
+        to: ROUTES.DASHBOARD.VENDOR.HOME,
+        Icon: Users,
       },
     ],
     []

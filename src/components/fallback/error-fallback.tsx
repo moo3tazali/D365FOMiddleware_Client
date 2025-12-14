@@ -1,30 +1,41 @@
-import { TriangleAlert } from 'lucide-react';
+import TriangleAlert from 'lucide-react/dist/esm/icons/triangle-alert';
 
-import type { ErrorRes } from '@/interfaces/api-res';
 import { Button } from '@/components/ui/button';
 
 interface ErrorFallbackProps {
-  error: ErrorRes | Error;
-  resetErrorBoundary: () => void;
+  error: Error;
+  reset: () => void;
+  info?: {
+    componentStack: string;
+  };
 }
 
-export function ErrorFallback({
-  error,
-  resetErrorBoundary,
-}: ErrorFallbackProps) {
+export function ErrorFallback({ error, reset, info }: ErrorFallbackProps) {
   const message = error.message;
+
+  if (info) {
+    console.error(info.componentStack);
+  }
 
   return (
     <div
       role='alert'
-      className='w-full flex flex-col justify-center items-center gap-4'
+      className='flex flex-col gap-2 h-full w-full items-center justify-center'
     >
-      <TriangleAlert className='text-red-500 size-40' />
-      <p className='text-red-600 text-sm md:text-xl'>{message}</p>
+      <TriangleAlert
+        className='size-28 sm:size-40 text-destructive'
+        strokeWidth={1}
+      />
+      <h1 className='text-center'>{message}</h1>
+      <p className='text-center text-base md:text-lg'>
+        Something went wrong. Please try again or contact support if the issue
+        persists.
+      </p>
       <Button
         size='lg'
-        onClick={resetErrorBoundary}
-        className='w-full max-w-sm font-bold'
+        onClick={reset}
+        className='w-full max-w-xs sm:max-w-sm font-bold !mt-5'
+        variant='secondary'
       >
         Try again
       </Button>

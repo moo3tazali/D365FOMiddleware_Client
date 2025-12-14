@@ -1,14 +1,14 @@
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-// import {
-//   useNavigate,
-//   useSearch,
-//   useRouter,
-// } from '@tanstack/react-router';
+import { useNavigate, useRouter, useSearch } from '@tanstack/react-router';
+
+import { useMutation } from '@/hooks/use-mutation';
+import { useAuth } from '@/hooks/use-auth';
+import { ROUTES } from '@/router';
 
 const FormSchema = z.object({
-  email: z.string().min(1, 'Email is required').email('Invalid email address'),
+  email: z.email('Invalid email address').min(1, 'Email is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -23,23 +23,45 @@ export const useLogin = () => {
     },
   });
 
-  // const navigate = useNavigate();
+  const { login, isLoginModalOpen, closeLoginModal } = useAuth();
 
-  // const router = useRouter();
+  const navigate = useNavigate();
 
-  // const redirect = useSearch({
-  //   strict: false,
-  //   select: (s: { redirect?: string }) => s?.redirect ?? '',
-  // });
+  const router = useRouter();
+
+  const redirect = useSearch({
+    strict: false,
+    select: (s: { redirect?: string }) => s?.redirect ?? '',
+  });
+
+  const { mutate: startLogin, isPending } = useMutation({
+    operationName: 'login',
+    mutationFn: login,
+    formControl: form.control,
+    onSuccess: () => {
+      if (isLoginModalOpen) {
+        return closeLoginModal();
+      }
+
+      if (redirect) {
+        return router.history.push(redirect);
+      }
+
+      navigate({
+        to: ROUTES.DASHBOARD.HOME,
+        replace: true,
+      });
+    },
+  });
 
   function onSubmit(values: FormData) {
-    console.log(values);
+    startLogin(values);
   }
 
   return {
     form: {
       ...form,
-      isPending: false,
+      isPending,
       onSubmit: form.handleSubmit(onSubmit),
     },
   };

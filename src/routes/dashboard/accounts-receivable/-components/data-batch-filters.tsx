@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { useMemo, useRef, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
@@ -9,9 +10,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { TEntryProcessorTypes } from '@/interfaces/data-batch';
-import { enumToOptions } from '@/lib/utils';
 import { useSearchQuery } from '@/hooks/use-search-query';
+
+import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/daya-batch';
+
+const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.ACCOUNT_RECEIVABLE;
+const entryProcessorValues = entryProcessorOptions.map(({ value }) => value);
+
+export const DataBatchQuerySchema = z.object({
+  batchNumberIds: z
+    .array(
+      z.string().regex(/^[a-fA-F0-9]{24}$/, {
+        message: 'Invalid MongoDB ObjectId',
+      })
+    )
+    .optional(),
+  entryProcessorTypes: z
+    .array(z.number())
+    .optional()
+    .refine(
+      (values) =>
+        !values ||
+        values.length === 0 ||
+        values.every((v) => entryProcessorValues.includes(v)),
+      {
+        message: 'Invalid entryProcessorTypes value(s)',
+      }
+    ),
+});
 
 export const DataBatchFilters = () => {
   return (
@@ -25,37 +51,63 @@ export const DataBatchFilters = () => {
   );
 };
 
+const TargetBatchNumberQuerySchema = DataBatchQuerySchema.pick({
+  batchNumberIds: true,
+});
+
 const TargetBatchNumberFilter = () => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [{ batchNumber }, set, remove] = useSearchQuery(['batchNumber']);
+  const [{ batchNumberIds }, set, remove] = useSearchQuery(
+    TargetBatchNumberQuerySchema
+  );
 
   useInputDebounce(inputRef, (value) => {
+    inputRef.current?.setAttribute('aria-invalid', 'false');
+
     if (value) {
-      set('batchNumber', value);
+      const batchNumberIds = value.split(',').map((v) => v?.trim());
+
+      const result = TargetBatchNumberQuerySchema.safeParse({
+        batchNumberIds,
+      });
+
+      if (!result.success) {
+        inputRef.current?.setAttribute('aria-invalid', 'true');
+        return;
+      }
+
+      set('batchNumberIds', batchNumberIds);
     } else {
-      remove('batchNumber');
+      remove('batchNumberIds');
     }
   });
 
   return (
     <Input
       ref={inputRef}
-      defaultValue={batchNumber ?? ''}
-      placeholder='Enter batch number...'
-      name='batchNumber'
+      defaultValue={batchNumberIds?.join(',') ?? ''}
+      placeholder='Search by batch numbers joined by ,'
+      name='batchNumberIds'
     />
   );
 };
 
-const entryProcessorOptions = enumToOptions(TEntryProcessorTypes);
+const EntryProcessorTypeQuerySchema = DataBatchQuerySchema.pick({
+  entryProcessorTypes: true,
+});
 
 const EntryProcessorTypeFilter = () => {
-  const [{ entryProcessorType }, set, remove] = useSearchQuery([
-    'entryProcessorType',
-  ]);
+  const [{ entryProcessorTypes }, set, remove] = useSearchQuery(
+    EntryProcessorTypeQuerySchema
+  );
+
+  const isValid = useMemo(() => {
+    return EntryProcessorTypeQuerySchema.safeParse({ entryProcessorTypes })
+      .success;
+  }, [entryProcessorTypes]);
 
   const [value, setValue] = useState<string>(
-    entryProcessorType ? String(entryProcessorType) : ''
+    entryProcessorTypes ? String(isValid ? entryProcessorTypes[0] : '') : ''
   );
 
   const SelectItems = useMemo(
@@ -72,18 +124,20 @@ const EntryProcessorTypeFilter = () => {
     <Select
       onValueChange={(value) => {
         setValue(value);
-        set('entryProcessorType', +value);
+        if (isValid) {
+          set('entryProcessorTypes', [+value]);
+        }
       }}
       value={value}
       disabled={false}
-      name='entryProcessorType'
+      name='entryProcessorTypes'
     >
       <SelectTrigger
         value={value}
         clearable
         onClear={() => {
           setValue('');
-          remove('entryProcessorType');
+          remove('entryProcessorTypes');
         }}
         className='w-full'
       >

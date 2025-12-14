@@ -6,13 +6,14 @@ import axios, {
 import { serialize } from 'object-to-formdata';
 
 import { Env, ENV } from './env';
-import { Token } from './token';
+import { Token, type IToken } from './token';
 import { ErrorHandler } from './error-handler';
-import { ApiRoutes, type BuildUrlOptions } from './api-routes';
+import { ApiRoutes, API_ROUTES, type BuildUrlOptions } from './api-routes';
 import type { SuccessRes } from '@/interfaces/api-res';
 
 interface SyncOptions {
   public?: boolean;
+  backend?: 'NEST' | 'DOT_NET';
 }
 
 interface GetRequestConfig extends AxiosRequestConfig {
@@ -34,37 +35,59 @@ interface DownloadConfig {
 type TUrl = BuildUrlOptions['url'];
 
 export class Sync {
-  private static _publicInstance: Sync;
-  private static _privateInstance: Sync;
+  private static _publicDotNetInstance: Sync;
+  private static _publicNestInstance: Sync;
+  private static _privateDotNetInstance: Sync;
+  private static _privateNestInstance: Sync;
   private readonly _axiosInstance: AxiosInstance;
-  private readonly _withAuth: boolean = false;
+  private readonly _withAuth: boolean;
   private readonly _env = Env.getInstance();
   private readonly _token = Token.getInstance();
   private readonly _errorHandler = ErrorHandler.getInstance();
   private readonly _apiRoutes = ApiRoutes.getInstance();
 
-  private constructor(isPublic: boolean) {
+  private constructor(isPublic: boolean, backend: 'NEST' | 'DOT_NET') {
+    this._withAuth = !isPublic;
+
     this._axiosInstance = axios.create({
-      baseURL: this._env.get(ENV.SERVER_BASE_URL),
+      baseURL: this._env.get(
+        backend === 'DOT_NET' ? ENV.SERVER_BASE_URL : ENV.NEST_SERVER_BASE_URL
+      ),
     });
 
-    if (!isPublic && this._withAuth) {
-      this._injectToken();
+    if (this._withAuth) {
+      this._setupInterceptors();
     }
   }
 
   public static getInstance(opt?: SyncOptions): Sync {
     const isPublic = opt?.public ?? false;
-    if (isPublic) {
-      if (!this._publicInstance) {
-        this._publicInstance = new Sync(true);
+    const backend = opt?.backend || 'DOT_NET';
+
+    if (backend === 'DOT_NET') {
+      if (isPublic) {
+        if (!this._publicDotNetInstance) {
+          this._publicDotNetInstance = new Sync(true, backend);
+        }
+        return this._publicDotNetInstance;
+      } else {
+        if (!this._privateDotNetInstance) {
+          this._privateDotNetInstance = new Sync(false, backend);
+        }
+        return this._privateDotNetInstance;
       }
-      return this._publicInstance;
     } else {
-      if (!this._privateInstance) {
-        this._privateInstance = new Sync(false);
+      if (isPublic) {
+        if (!this._publicNestInstance) {
+          this._publicNestInstance = new Sync(true, backend);
+        }
+        return this._publicNestInstance;
+      } else {
+        if (!this._privateNestInstance) {
+          this._privateNestInstance = new Sync(false, backend);
+        }
+        return this._privateNestInstance;
       }
-      return this._privateInstance;
     }
   }
 
@@ -114,7 +137,7 @@ export class Sync {
     }
   }
 
-  public async save<TRes, TData>(
+  public async save<TRes, TData = unknown>(
     url: TUrl,
     data?: TData,
     config?: PostRequestConfig
@@ -162,7 +185,7 @@ export class Sync {
   private async _handle<T>(fn: () => Promise<T>): Promise<T> {
     try {
       const res = (await fn()) as AxiosResponse<SuccessRes<T>>;
-      return res.data.data;
+      return res.data?.data ?? (res.data as T);
     } catch (error) {
       return this._errorHandler.throwError(error);
     }
@@ -210,15 +233,89 @@ export class Sync {
     return null;
   }
 
-  private _injectToken(): void {
-    this._axiosInstance.interceptors.request.use(async (config) => {
-      const token = await this._token.getToken();
+  private _setupInterceptors(): void {
+    // Request interceptor to inject access token
+    this._axiosInstance.interceptors.request.use(
+      (config) => {
+        const accessToken = this._token.getAccessToken();
+        const tokenType = this._token.getTokenType();
 
-      if (!token) {
-        throw new Error('Failed to inject token, Token is missing!!');
+        if (accessToken && tokenType) {
+          config.headers.Authorization = `${tokenType} ${accessToken}`;
+        }
+
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
       }
-      config.headers.Authorization = `Bearer ${token}`;
-      return config;
+    );
+
+    // Response interceptor to handle 401 errors and token refresh
+    this._axiosInstance.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const originalRequest = error.config;
+
+        // If error is 401 and we haven't already tried to refresh
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+
+          try {
+            // Try to refresh the token
+            const refreshToken = await this._token.getRefreshToken();
+
+            if (!refreshToken) {
+              // No refresh token available, redirect to login
+              this._handleAuthenticationRequired();
+              return Promise.reject(error);
+            }
+
+            // Attempt token refresh using public sync instance
+            const publicSync = Sync.getInstance({ public: true });
+            const refreshData = { refreshToken };
+
+            const refreshResponse = await publicSync.save<IToken>(
+              API_ROUTES.PUBLIC.IDENTITY.REFRESH,
+              refreshData
+            );
+
+            // Update tokens
+            await this._token.setToken(refreshResponse);
+
+            // Update the authorization header for the original request
+            const newAccessToken = this._token.getAccessToken();
+            const newTokenType = this._token.getTokenType();
+
+            if (newAccessToken && newTokenType) {
+              originalRequest.headers.Authorization = `${newTokenType} ${newAccessToken}`;
+            }
+
+            // Retry the original request
+            return this._axiosInstance(originalRequest);
+          } catch (refreshError) {
+            // Refresh failed, clear tokens and handle authentication required
+            await this._token.clearToken();
+            this._handleAuthenticationRequired();
+            return Promise.reject(refreshError);
+          }
+        }
+
+        return Promise.reject(error);
+      }
+    );
+  }
+
+  private _handleAuthenticationRequired(): void {
+    // Dispatch custom event for authentication required
+    const event = new CustomEvent('auth:required', {
+      detail: {
+        message: 'Authentication required. Please log in to continue.',
+      },
     });
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(event);
+    }
   }
 }

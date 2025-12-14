@@ -1,11 +1,83 @@
 import type { FlattenObj } from '@/lib/utils';
 
 export const API_ROUTES = {
-  AUTH: {
-    LOGIN: '/auth/login',
-    REGISTER: '/auth/register',
+  ADMIN: {
+    APP_SETTING: {
+      LIST: '/settings',
+      ONE: '/settings/:logicalName',
+      Update: '/settings/:logicalName',
+    },
+  },
+  FINANCE: {
+    MASTER_DATA: {
+      SYNC_STATUS: '/FINANCE/MasterData/sync-status',
+      CUSTOMERS: {
+        GET: '/Finance/MasterData/customers',
+        SYNC: '/Finance/MasterData/customers/sync',
+      },
+
+      FINANCIAL_DIMENSIONS: {
+        GET: '/Finance/MasterData/financial-dimensions',
+        SYNC: '/Finance/MasterData/financial-dimensions/sync',
+      },
+
+      BILLING_CLASSIFICATIONS: {
+        GET: '/Finance/MasterData/billing-classifications',
+      },
+
+      BILLING_CODES: {
+        GET: '/Finance/MasterData/billing-codes',
+      },
+
+      BILLING_DATA: {
+        GET: '/Finance/MasterData/billing-data',
+        SYNC: '/Finance/MasterData/billing-data/sync',
+      },
+
+      MAIN_ACCOUNTS: {
+        GET: '/Finance/MasterData/main-accounts',
+        SYNC: '/Finance/MasterData/main-accounts/sync',
+      },
+
+      ACCOUNT_MAPPINGS: {
+        GET: '/Finance/MasterData/account-mappings',
+        SAVE: '/Finance/MasterData/account-mappings',
+      },
+
+      VENDORS: {
+        GET: '/Finance/MasterData/vendors',
+        SYNC: '/Finance/MasterData/vendors/sync',
+      },
+
+      EXCHANGE_RATES: {
+        GET: '/Finance/MasterData/exchange-rates',
+        SYNC: '/Finance/MasterData/exchange-rates/sync',
+      },
+    },
+  },
+  PUBLIC: {
+    IDENTITY: {
+      REGISTER: '/public/Identity/register',
+      LOGIN: '/public/Identity/login',
+      REFRESH: '/public/Identity/refresh',
+      CONFIRM_EMAIL: '/public/Identity/confirmEmail',
+      RESEND_CONFIRMATION_EMAIL: '/public/Identity/resendConfirmationEmail',
+      FORGET_PASSWORD: '/public/Identity/forgetPassword',
+      RESET_PASSWORD: '/public/Identity/resetPassword',
+    },
   },
   DATA_MIGRATION: {
+    DATA_BATCH: {
+      LIST: '/DataMigration/DataBatch/list',
+      ONE: '/DataMigration/DataBatch/:batchId',
+      DOWNLOAD_ENHANCED_RECORD_LIST:
+        '/DataMigration/DataBatch/download-enhanced-record-list',
+      DOWNLOAD_BATCH_ERROR_LIST:
+        '/DataMigration/DataBatch/download-batch-error-list',
+      ERROR_LIST: '/DataMigration/DataBatch/error-list',
+      DELETE: '/DataMigration/DataBatch',
+      INSERT: '/DataMigration/DataBatch/insert',
+    },
     ACCOUNT_RECEIVABLE: {
       FREIGHT_DOCUMENT: '/DataMigration/AccountReceivable/Freight-Document',
       FREIGHT: '/DataMigration/AccountReceivable/Freight',
@@ -20,13 +92,27 @@ export const API_ROUTES = {
       TRUCKING_CREDIT_NOTE:
         '/DataMigration/AccountReceivable/Trucking-CreditNote',
     },
-    DATA_BATCH: {
-      LIST: '/DataMigration/DataBatch/list',
-      DOWNLOAD_ENHANCED_RECORD_LIST:
-        '/DataMigration/DataBatch/download-enhanced-record-list',
-      DOWNLOAD_BATCH_ERROR_LIST:
-        '/DataMigration/DataBatch/download-batch-error-list',
-      ERROR_LIST: '/DataMigration/DataBatch/error-list',
+    LEDGER: {
+      FREIGHT_CLOSING_DOCUMENT: '/DataMigration/Ledger/Freight-Closing-Entry',
+      FREIGHT_CLOSING: '/DataMigration/Ledger/Freight-Closing',
+      TRUCKING_CLOSING_DOCUMENT: '/DataMigration/Ledger/Trucking-Closing-Entry',
+      TRUCKING_CLOSING: '/DataMigration/Ledger/Trucking-Closing',
+      FREIGHT_VENDOR_ACCRUAL_DOCUMENT:
+        '/DataMigration/Ledger/Freight-Vendor-Accrual-Document',
+      FREIGHT_VENDOR_ACCRUAL: '/DataMigration/Ledger/Freight-Vendor-Accrual',
+      TRUCKING_VENDOR_ACCRUAL_DOCUMENT:
+        '/DataMigration/Ledger/Trucking-Vendor-Accrual-Document',
+      TRUCKING_VENDOR_ACCRUAL: '/DataMigration/Ledger/Trucking-Vendor-Accrual',
+      CASH_OUT_DOCUMENT: '/DataMigration/Ledger/Cash-Out-Document',
+      CASH_IN_DOCUMENT: '/DataMigration/Ledger/Cash-In-Document',
+    },
+    VENDOR: {
+      FREIGHT_DOCUMENT: '/DataMigration/Vendor/Freight-Document',
+      FREIGHT_DOCUMENT_ADJUSTMENT:
+        '/DataMigration/Vendor/Freight-Document-Adjustment',
+      TRUCKING_DOCUMENT: '/DataMigration/Vendor/Trucking-Document',
+      TRUCKING_DOCUMENT_ADJUSTMENT:
+        '/DataMigration/Vendor/Trucking-Document-Adjustment',
     },
   },
 } as const;

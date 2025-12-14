@@ -1,20 +1,27 @@
 import type { ComponentProps } from 'react';
 
-import { cn } from '@/lib/utils';
 import { Link } from '@tanstack/react-router';
 
-interface LogoProps extends ComponentProps<'div'> {}
+import { ROUTES, type TRoutes } from '@/router';
+import { LogoVertical } from '@/assets/icons/logo-v';
+import { LogoHorizontal } from '@/assets/icons/logo-h';
+import { LogoSmall } from '@/assets/icons/logo-small';
 
-export const Logo = ({ ...props }: LogoProps) => {
+interface LogoProps extends ComponentProps<'svg'> {
+  to?: TRoutes;
+  orientation?: 'horizontal' | 'vertical' | 'small';
+}
+
+export const Logo = ({ to, orientation, ...props }: LogoProps) => {
   return (
-    <div
-      {...props}
-      className={cn(
-        'text-base md:text-2xl font-bold',
-        props.className
+    <Link to={to || ROUTES.PUBLIC.HOME}>
+      {orientation === 'vertical' ? (
+        <LogoVertical {...props} />
+      ) : orientation === 'small' ? (
+        <LogoSmall {...props} />
+      ) : (
+        <LogoHorizontal {...props} />
       )}
-    >
-      <Link to='/'>Logo</Link>
-    </div>
+    </Link>
   );
 };

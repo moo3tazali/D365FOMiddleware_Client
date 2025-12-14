@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
-import {
-  UploadCloud,
-  SlidersHorizontal,
-  CloudAlert,
-  AlertCircleIcon,
-  CheckCircle2Icon,
-} from 'lucide-react';
+import { Link } from '@tanstack/react-router';
+import UploadCloud from 'lucide-react/dist/esm/icons/upload-cloud';
+import SlidersHorizontal from 'lucide-react/dist/esm/icons/sliders-horizontal';
+import CloudAlert from 'lucide-react/dist/esm/icons/cloud-alert';
+import AlertCircleIcon from 'lucide-react/dist/esm/icons/alert-circle';
+import CheckCircle2Icon from 'lucide-react/dist/esm/icons/check-circle-2';
 
 import { Frame } from '@/components/ui/frame';
 import type { TDataBatch } from '@/interfaces/data-batch';
@@ -13,7 +12,6 @@ import { CloudCheck } from '@/assets/icons/cloud-check';
 import { useBatchQueryData } from '../-hooks/use-batch-query-data';
 import { Description } from '@/components/ui/description';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Link } from '@tanstack/react-router';
 import { ROUTES } from '@/router';
 
 export const BatchResult = () => {

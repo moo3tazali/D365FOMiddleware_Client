@@ -7,12 +7,15 @@ export const Route = createFileRoute(
   '/dashboard/accounts-receivable/batch/$batchId/errors/'
 )({
   component: BatchErrorPage,
-  beforeLoad: async ({ params, context, search }) => {
+  loader: ({ params, context }) => {
     const { services, queryClient } = context;
     const { batchId } = params;
 
-    await queryClient.prefetchQuery(
-      services.dataBatchError.errorListQueryOptions({ ...search, batchId })
+    queryClient.ensureQueryData(
+      services.dataBatchError.errorListQueryOptions({
+        ...services.pagination.defaultValues,
+        batchId,
+      })
     );
   },
 });

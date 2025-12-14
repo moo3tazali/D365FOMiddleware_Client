@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import EyeIcon from 'lucide-react/dist/esm/icons/eye';
+import EyeOffIcon from 'lucide-react/dist/esm/icons/eye-off';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,21 +10,15 @@ const PasswordInput = React.forwardRef<
   HTMLInputElement,
   React.ComponentProps<'input'>
 >(({ className, ...props }, ref) => {
-  const [showPassword, setShowPassword] =
-    React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
   const disabled =
-    props.value === '' ||
-    props.value === undefined ||
-    props.disabled;
+    props.value === '' || props.value === undefined || props.disabled;
 
   return (
     <div className='relative'>
       <Input
         type={showPassword ? 'text' : 'password'}
-        className={cn(
-          'hide-password-toggle pr-10',
-          className
-        )}
+        className={cn('hide-password-toggle pr-10', className)}
         ref={ref}
         {...props}
       />
@@ -38,10 +33,7 @@ const PasswordInput = React.forwardRef<
         {showPassword && !disabled ? (
           <EyeIcon className='h-4 w-4' aria-hidden='true' />
         ) : (
-          <EyeOffIcon
-            className='h-4 w-4'
-            aria-hidden='true'
-          />
+          <EyeOffIcon className='h-4 w-4' aria-hidden='true' />
         )}
         <span className='sr-only'>
           {showPassword ? 'Hide password' : 'Show password'}

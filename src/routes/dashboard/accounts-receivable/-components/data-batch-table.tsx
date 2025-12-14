@@ -1,32 +1,32 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useServices } from '@/hooks/use-services';
 import { DataTable, type ColumnDef } from '@/components/data-table';
-import {
-  TDataBatchStatus,
-  TEntryProcessorTypes,
-  type TDataBatch,
-} from '@/interfaces/data-batch';
-import { DataBatchFilters } from './data-batch-filters';
+import { TDataBatchStatus, type TDataBatch } from '@/interfaces/data-batch';
+import { DataBatchFilters, DataBatchQuerySchema } from './data-batch-filters';
 import { enumToOptions } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { Link, useSearch } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { TableActionCol } from '@/components/table-action-col';
 import { useDataBatchAction } from '../-hooks/use-data-batch-action';
 import { ROUTES } from '@/router';
 import { Button } from '@/components/ui/button';
+import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/daya-batch';
+import { useSearchQuery } from '@/hooks/use-search-query';
+import { ClampText } from '@/components/ui/clamp-text';
 
 export const DataBatchTable = () => {
   const { dataBatch } = useServices();
 
-  const searchQueries = useSearch({
-    strict: false,
-    structuralSharing: true,
+  const [searchQueries] = useSearchQuery(DataBatchQuerySchema, {
+    withPagination: true,
   });
 
-  const { data, isPending, error } = useQuery(
-    dataBatch.freightDocumentQueryOptions(searchQueries)
+  const { data, isPending, error, isPlaceholderData } = useQuery(
+    dataBatch.batchQueryOptions('accountReceivable', searchQueries)
   );
+
+  const queryClient = useQueryClient();
 
   return (
     <DataTable
@@ -35,6 +35,15 @@ export const DataBatchTable = () => {
       columns={columns}
       error={error?.message}
       isPending={isPending}
+      isPlaceholderData={isPlaceholderData}
+      onNextPageHover={(nextPage) => {
+        queryClient.prefetchQuery(
+          dataBatch.batchQueryOptions('accountReceivable', {
+            ...searchQueries,
+            ...nextPage,
+          })
+        );
+      }}
     />
   );
 };
@@ -48,6 +57,7 @@ const columns: ColumnDef<TDataBatch>[] = [
   {
     accessorKey: 'description',
     header: 'Description',
+    cell: ({ getValue }) => <CellDescription value={getValue<string>()} />,
   },
   {
     accessorKey: 'entryProcessorType',
@@ -90,7 +100,12 @@ const columns: ColumnDef<TDataBatch>[] = [
 
 const CellId = ({ value }: { value: string }) => {
   return (
-    <Button asChild variant='link'>
+    <Button
+      asChild
+      variant='link'
+      className='!p-0 items-start leading-tight'
+      style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+    >
       <Link
         to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.VIEW}
         params={{ batchId: value }}
@@ -101,6 +116,10 @@ const CellId = ({ value }: { value: string }) => {
   );
 };
 
+const CellDescription = ({ value }: { value: string }) => {
+  return <ClampText>{value}</ClampText>;
+};
+
 const CellCreatedAt = ({ value }: { value: string }) => {
   return new Date(value).toLocaleDateString('en-GB', {
     day: '2-digit',
@@ -109,7 +128,7 @@ const CellCreatedAt = ({ value }: { value: string }) => {
   });
 };
 
-const entryProcessorOptions = enumToOptions(TEntryProcessorTypes);
+const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.ACCOUNT_RECEIVABLE;
 
 const CellEntryProcessorType = ({ value }: { value: number }) => {
   return (
@@ -136,12 +155,13 @@ const CellStatus = ({ value }: { value: keyof typeof statusColorMap }) => {
 };
 
 const CellAction = ({ row }: { row: TDataBatch }) => {
-  const { onDownload, onView, onDownloadError } = useDataBatchAction(row);
+  const { onDownload, onView, onDownloadError, onDelete } =
+    useDataBatchAction(row);
   return (
     <TableActionCol>
-      {/* <TableActionCol.Copy textToCopy={row.id}>
+      <TableActionCol.Copy textToCopy={row.id}>
         Copy Batch Number
-      </TableActionCol.Copy> */}
+      </TableActionCol.Copy>
       <TableActionCol.View onClick={onView} />
       <TableActionCol.Download variant='primary' onClick={onDownload}>
         Download Batch
@@ -149,6 +169,9 @@ const CellAction = ({ row }: { row: TDataBatch }) => {
       <TableActionCol.Download variant='destructive' onClick={onDownloadError}>
         Download Errors
       </TableActionCol.Download>
+      <TableActionCol.Delete variant='destructive' onClick={onDelete}>
+        Delete Batch
+      </TableActionCol.Delete>
     </TableActionCol>
   );
 };

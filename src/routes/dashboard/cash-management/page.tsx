@@ -1,11 +1,28 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { DataBatchHeader } from './-components/data-batch-header';
+import { DataBatchTable } from './-components/data-batch-table';
+import { ErrorFallback, LoadingFallback } from '@/components/fallback';
 
-export const Route = createFileRoute(
-  '/dashboard/cash-management/'
-)({
-  component: CashManagement,
+export const Route = createFileRoute('/dashboard/cash-management/')({
+  component: CashManagementPage,
+  loader: ({ context }) => {
+    const { services, queryClient } = context;
+    queryClient.ensureQueryData(
+      services.dataBatch.batchQueryOptions(
+        'cashManagement',
+        services.pagination.defaultValues
+      )
+    );
+  },
+  pendingComponent: LoadingFallback,
+  errorComponent: ErrorFallback,
 });
 
-function CashManagement() {
-  return <div>Hello "/dashboard/cash-management/"!</div>;
+function CashManagementPage() {
+  return (
+    <div className='h-full space-y-10'>
+      <DataBatchHeader />
+      <DataBatchTable />
+    </div>
+  );
 }

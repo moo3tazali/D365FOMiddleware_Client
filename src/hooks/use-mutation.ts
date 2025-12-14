@@ -1,10 +1,6 @@
 import toast from 'react-hot-toast';
-import { useRef } from 'react';
-import type {
-  Control,
-  FieldValues,
-  // Path,
-} from 'react-hook-form';
+import { useCallback, useRef } from 'react';
+import type { Control, FieldValues, Path } from 'react-hook-form';
 import {
   useQueryClient,
   useMutation as useTanstackMutation,
@@ -18,13 +14,11 @@ interface Props<
   TData = unknown,
   TVariables = unknown,
   TFieldValues extends FieldValues = FieldValues
-> extends Omit<
-    MutationObserverOptions<TData, unknown, TVariables>,
-    'onError'
-  > {
+> extends Omit<MutationObserverOptions<TData, unknown, TVariables>, 'onError'> {
   operationName: string;
   refetchQueries?: unknown[][];
   formControl?: Control<TFieldValues>;
+  disableToast?: boolean;
   toastMsgs?: {
     loading?: string;
     success?: string;
@@ -47,6 +41,7 @@ export const useMutation = <
   onMutate,
   onError,
   refetchQueries,
+  disableToast = false,
   toastMsgs,
   operationName,
   formControl,
@@ -57,92 +52,124 @@ export const useMutation = <
 
   const loadingRef = useRef<string | null>(null);
 
-  // capitalize operation name
-  const operation =
-    operationName.charAt(0).toUpperCase() +
-    operationName.slice(1);
+  const operation = useRef(operationName);
 
-  return useTanstackMutation({
-    mutationFn,
-    ...options,
-    onMutate: (variables) => {
-      // show loading toast
-      const loading = toast.loading(
-        toastMsgs?.loading ?? `${operation} in progress...`
-      );
+  const dismissLoading = useCallback((newLoadingId: string) => {
+    if (loadingRef.current) {
+      toast.dismiss(loadingRef.current);
+    }
+    loadingRef.current = newLoadingId;
+  }, []);
 
-      // set loading ref
-      loadingRef.current = loading;
+  const setOperationName = useCallback((operationName: string) => {
+    operation.current = operationName;
+  }, []);
 
-      // call onMutate
-      if (onMutate) {
-        onMutate(variables);
-      }
-    },
-    onSuccess: (data, variables, context) => {
-      // remove loading toast
-      if (loadingRef.current) {
-        toast.dismiss(loadingRef.current);
-      }
+  return {
+    ...useTanstackMutation({
+      mutationFn,
+      ...options,
+      onMutate: (variables, ctx) => {
+        if (!disableToast) {
+          // show loading toast
+          const loading = toast.loading(
+            toastMsgs?.loading ?? `${operation.current} in progress...`
+          );
 
-      // show success toast
-      toast.success(
-        toastMsgs?.success ?? `${operation} success!`
-      );
+          // set loading ref
+          loadingRef.current = loading;
+        }
 
-      // refetch queries
-      if (refetchQueries) {
-        refetchQueries.forEach((queryKey) => {
-          queryClient.refetchQueries({ queryKey });
-        });
-      }
+        // call onMutate
+        if (onMutate) {
+          onMutate(variables, ctx);
+        }
+      },
+      onSuccess: (data, variables, onMutateResult: void, context) => {
+        if (!disableToast) {
+          // remove loading toast
+          if (loadingRef.current) {
+            toast.dismiss(loadingRef.current);
+          }
 
-      // call onSuccess
-      if (onSuccess) {
-        onSuccess(data, variables, context);
-      }
-    },
-    onError: (error: ErrorRes, variables, context) => {
-      // remove loading toast
-      if (loadingRef.current) {
-        toast.dismiss(loadingRef.current);
-      }
+          // show success toast
+          toast.success(toastMsgs?.success ?? `${operation.current} success!`);
+        }
 
-      // show error toast
-      toast.error(
-        toastMsgs?.error ??
-          error?.message ??
-          `${operation} failed!`
-      );
+        // refetch queries
+        if (refetchQueries) {
+          refetchQueries.forEach((queryKey) => {
+            queryClient.refetchQueries({ queryKey });
+          });
+        }
 
-      // set form errors
-      if (formControl) {
-        // set root error
-        formControl.setError('root', {
-          type: 'manual',
-          message: error.message,
-        });
+        // call onSuccess
+        if (onSuccess) {
+          onSuccess(data, variables, onMutateResult, context);
+        }
+      },
+      onError: (error: ErrorRes, variables, context) => {
+        if (!disableToast) {
+          // remove loading toast
+          if (loadingRef.current) {
+            toast.dismiss(loadingRef.current);
+          }
 
-        // set field errors
-        // if (error.validationsErrors) {
-        //   Object.entries(error.validationsErrors).forEach(
-        //     ([key, value]) => {
-        //       formControl.setError(
-        //         key as Path<TFieldValues>,
-        //         {
-        //           type: 'manual',
-        //           message: value.join(', '),
-        //         }
-        //       );
-        //     }
-        //   );
-        // }
-      }
+          const responseError =
+            error.message +
+            (typeof error.validationErrors === 'string'
+              ? `, ${error.validationErrors}`
+              : '');
 
-      // call onError
-      if (onError) {
-        onError(error, variables, context);
-      }
-    },
-  });
+          // show error toast
+          toast.error(
+            toastMsgs?.error ?? responseError ?? `${operation.current} failed!`
+          );
+        }
+
+        // set form errors
+        if (formControl) {
+          // set root error
+          formControl.setError('root', {
+            type: 'manual',
+            message: error.message,
+          });
+
+          // set field errors
+          const validationErrors = error?.validationErrors;
+          if (
+            validationErrors &&
+            typeof validationErrors === 'object' &&
+            Object.keys(validationErrors).length > 0
+          ) {
+            Object.entries(validationErrors).forEach(([key, value]) => {
+              if (!value) return;
+
+              let message = '';
+
+              if (Array.isArray(value)) {
+                message = value.join(', ');
+              } else if (typeof value === 'string') {
+                message = value;
+              } else {
+                message = JSON.stringify(value);
+              }
+
+              formControl.setError(key as Path<TFieldValues>, {
+                type: 'manual',
+                message,
+              });
+            });
+          }
+        }
+
+        // call onError
+        if (onError) {
+          onError(error, variables, context);
+        }
+      },
+    }),
+    dismissLoading,
+    setOperationName,
+  };
 };

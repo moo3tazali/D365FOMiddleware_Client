@@ -1,7 +1,8 @@
 'use client';
 
 import { memo } from 'react';
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import ChevronLeftIcon from 'lucide-react/dist/esm/icons/chevron-left';
+import ChevronRightIcon from 'lucide-react/dist/esm/icons/chevron-right';
 
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -18,6 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { usePagination } from '@/hooks/use-pagination';
+import { ROWS_PER_PAGE } from '@/constants/pagination';
 
 interface PaginationProps {
   pageSize: number;
@@ -27,16 +29,18 @@ interface PaginationProps {
 
 interface RowsPaginationProps {
   paginationData?: PaginationProps;
+  onNextPageHover?: (nextPage: { maxCount: number; skipCount: number }) => void;
 }
 
 export const RowsPagination = memo(
-  ({ paginationData }: RowsPaginationProps) => {
+  ({ paginationData, onNextPageHover }: RowsPaginationProps) => {
     const {
       currentPage,
       currentSize,
       handlePageSizeChange,
       handlePreviousPage,
       handleNextPage,
+      getNextPage,
     } = usePagination();
 
     const disabled = !paginationData;
@@ -64,12 +68,11 @@ export const RowsPagination = memo(
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='5'>5</SelectItem>
-              <SelectItem value='10'>10</SelectItem>
-              <SelectItem value='20'>20</SelectItem>
-              <SelectItem value='50'>50</SelectItem>
-              <SelectItem value='100'>100</SelectItem>
-              <SelectItem value='150'>150</SelectItem>
+              {ROWS_PER_PAGE.map((row) => (
+                <SelectItem key={row} value={row.toString()}>
+                  {row}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -100,6 +103,14 @@ export const RowsPagination = memo(
                   onClick={() =>
                     handleNextPage(paginationData?.totalCount || 0)
                   }
+                  onMouseEnter={() => {
+                    if (!onNextPageHover) return;
+                    const nextPage = getNextPage(
+                      paginationData?.totalCount || 0
+                    );
+                    if (!nextPage) return;
+                    onNextPageHover(nextPage);
+                  }}
                 >
                   <ChevronRightIcon className='h-4 w-4' />
                 </Button>

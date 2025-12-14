@@ -1,4 +1,5 @@
-import { CloudUpload, Paperclip } from 'lucide-react';
+import CloudUpload from 'lucide-react/dist/esm/icons/cloud-upload';
+import Paperclip from 'lucide-react/dist/esm/icons/paperclip';
 
 import {
   Form,
@@ -24,9 +25,10 @@ import {
 } from '@/components/ui/file-upload';
 import { useBatchForm } from '../-hooks/use-batch-form';
 import { Progress } from '@/components/ui/progress';
+import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/daya-batch';
 
 export const BatchForm = () => {
-  const { form, UPLOAD_TYPES } = useBatchForm();
+  const { form } = useBatchForm();
 
   return (
     <Form {...form}>
@@ -41,7 +43,7 @@ export const BatchForm = () => {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
-                  disabled={form.isPending}
+                  disabled={form.isDisabled}
                   name='type'
                 >
                   <FormControl>
@@ -50,12 +52,7 @@ export const BatchForm = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value={String(UPLOAD_TYPES.FREIGHT_DOC)}>
-                      Freight
-                    </SelectItem>
-                    <SelectItem value={String(UPLOAD_TYPES.TRUCKING_DOC)}>
-                      Trucking
-                    </SelectItem>
+                    <TargetServiceSelectItem />
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -72,8 +69,9 @@ export const BatchForm = () => {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
-                  disabled={form.isPending}
+                  disabled={form.isBillingCodeDisabled || form.isDisabled}
                   name='billingCodeId'
+                  key={form.billingCodeKey}
                 >
                   <FormControl>
                     <SelectTrigger className='w-full'>
@@ -81,9 +79,10 @@ export const BatchForm = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value='INV-FW'>Invoices</SelectItem>
-                    <SelectItem value='OR-FW'>Official Receipts</SelectItem>
-                    <SelectItem value='OF-FW'>Ocean Freight</SelectItem>
+                    <BillingCodeSelectItem
+                      isFreight={form.isFreight}
+                      isTrucking={form.isTrucking}
+                    />
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -114,7 +113,7 @@ export const BatchForm = () => {
                     maxSize: 1024 * 1024 * 250, // 250MB
                   }}
                   className='relative bg-background rounded-lg p-2'
-                  disabled={form.isPending}
+                  disabled={form.isDisabled}
                 >
                   <FileInput
                     id='dataFile'
@@ -160,9 +159,51 @@ export const BatchForm = () => {
           type='submit'
           id='upload_entries_btn'
           className='hidden absolute'
-          aria-disabled={form.isPending}
+          aria-disabled={form.isDisabled}
         />
       </form>
     </Form>
   );
 };
+
+const BillingCodeSelectItem = ({
+  isTrucking,
+  isFreight,
+}: {
+  isTrucking: boolean;
+  isFreight: boolean;
+}) => {
+  if (isFreight)
+    return (
+      <>
+        <SelectItem value='INV-FW'>Invoices</SelectItem>
+        <SelectItem value='OR-FW'>Official Receipts</SelectItem>
+        <SelectItem value='OF-FW'>Ocean Freight</SelectItem>
+      </>
+    );
+
+  if (isTrucking)
+    return (
+      <>
+        <SelectItem value='INV-TR'>Invoices</SelectItem>
+        <SelectItem value='OR-TR'>Official Receipts</SelectItem>
+      </>
+    );
+
+  return (
+    <SelectItem
+      disabled
+      value='null'
+      className='h-16 items-center justify-center'
+    >
+      Select target service first
+    </SelectItem>
+  );
+};
+
+const TargetServiceSelectItem = () =>
+  ENTRY_PROCESSOR_OPTIONS.ACCOUNT_RECEIVABLE.map(({ label, value }) => (
+    <SelectItem key={value} value={String(value)}>
+      {label}
+    </SelectItem>
+  ));

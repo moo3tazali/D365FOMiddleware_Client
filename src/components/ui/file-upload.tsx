@@ -20,7 +20,8 @@ import {
   type DropzoneOptions,
 } from 'react-dropzone';
 import toast from 'react-hot-toast';
-import { Trash2 as RemoveIcon } from 'lucide-react';
+
+import RemoveIcon from 'lucide-react/dist/esm/icons/trash-2';
 import { buttonVariants } from '@/components/ui/button';
 
 type DirectionOptions = 'rtl' | 'ltr' | undefined;
@@ -37,15 +38,12 @@ type FileUploaderContextType = {
   disabled: boolean;
 };
 
-const FileUploaderContext =
-  createContext<FileUploaderContextType | null>(null);
+const FileUploaderContext = createContext<FileUploaderContextType | null>(null);
 
 export const useFileUpload = () => {
   const context = useContext(FileUploaderContext);
   if (!context) {
-    throw new Error(
-      'useFileUpload must be used within a FileUploaderProvider'
-    );
+    throw new Error('useFileUpload must be used within a FileUploaderProvider');
   }
   return context;
 };
@@ -95,18 +93,14 @@ export const FileUploader = forwardRef<
     } = dropzoneOptions;
 
     const reSelectAll = maxFiles === 1 ? true : reSelect;
-    const direction: DirectionOptions =
-      dir === 'rtl' ? 'rtl' : 'ltr';
+    const direction: DirectionOptions = dir === 'rtl' ? 'rtl' : 'ltr';
 
     const opts = dropzoneOptions
       ? dropzoneOptions
       : { accept, maxFiles, maxSize, multiple };
 
     const onDrop = useCallback(
-      (
-        acceptedFiles: File[],
-        rejectedFiles: FileRejection[]
-      ) => {
+      (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
         const files = acceptedFiles;
 
         if (!files) {
@@ -130,21 +124,14 @@ export const FileUploader = forwardRef<
 
         if (rejectedFiles.length > 0) {
           for (let i = 0; i < rejectedFiles.length; i++) {
-            if (
-              rejectedFiles[i].errors[0]?.code ===
-              'file-too-large'
-            ) {
+            if (rejectedFiles[i].errors[0]?.code === 'file-too-large') {
               toast.error(
-                `File is too large. Max size is ${
-                  maxSize / 1024 / 1024
-                }MB`
+                `File is too large. Max size is ${maxSize / 1024 / 1024}MB`
               );
               break;
             }
             if (rejectedFiles[i].errors[0]?.message) {
-              toast.error(
-                rejectedFiles[i].errors[0].message
-              );
+              toast.error(rejectedFiles[i].errors[0].message);
               break;
             }
           }
@@ -163,9 +150,7 @@ export const FileUploader = forwardRef<
     const removeFileFromSet = useCallback(
       (i: number) => {
         if (!value) return;
-        const newFiles = value.filter(
-          (_, index) => index !== i
-        );
+        const newFiles = value.filter((_, index) => index !== i);
         onValueChange(newFiles);
       },
       [value, onValueChange]
@@ -180,16 +165,12 @@ export const FileUploader = forwardRef<
 
         const moveNext = () => {
           const nextIndex = activeIndex + 1;
-          setActiveIndex(
-            nextIndex > value.length - 1 ? 0 : nextIndex
-          );
+          setActiveIndex(nextIndex > value.length - 1 ? 0 : nextIndex);
         };
 
         const movePrev = () => {
           const nextIndex = activeIndex - 1;
-          setActiveIndex(
-            nextIndex < 0 ? value.length - 1 : nextIndex
-          );
+          setActiveIndex(nextIndex < 0 ? value.length - 1 : nextIndex);
         };
 
         const prevKey =
@@ -214,10 +195,7 @@ export const FileUploader = forwardRef<
           if (activeIndex === -1) {
             dropzoneState.inputRef.current?.click();
           }
-        } else if (
-          e.key === 'Delete' ||
-          e.key === 'Backspace'
-        ) {
+        } else if (e.key === 'Delete' || e.key === 'Backspace') {
           if (activeIndex !== -1) {
             removeFileFromSet(activeIndex);
             if (value.length - 1 === 0) {
@@ -308,11 +286,8 @@ export const FileUploaderContent = forwardRef<
         ref={ref}
         className={cn(
           'flex rounded-xl gap-1',
-          orientation === 'horizontal'
-            ? 'flex-row flex-wrap'
-            : 'flex-col',
-          disabled &&
-            'pointer-events-none! text-muted-foreground!',
+          orientation === 'horizontal' ? 'flex-row flex-wrap' : 'flex-col',
+          disabled && 'pointer-events-none! text-muted-foreground!',
           className
         )}
       >
@@ -330,8 +305,7 @@ export const FileUploaderItem = forwardRef<
     index: number;
   } & React.HTMLAttributes<HTMLDivElement>
 >(({ className, index, children, ...props }, ref) => {
-  const { removeFileFromSet, activeIndex, direction } =
-    useFileUpload();
+  const { removeFileFromSet, activeIndex, direction } = useFileUpload();
   const isSelected = index === activeIndex;
   return (
     <div
@@ -351,9 +325,7 @@ export const FileUploaderItem = forwardRef<
         type='button'
         className={cn(
           'absolute group',
-          direction === 'rtl'
-            ? 'top-1 left-1'
-            : 'top-1 right-1'
+          direction === 'rtl' ? 'top-1 left-1' : 'top-1 right-1'
         )}
         onClick={() => removeFileFromSet(index)}
       >
@@ -370,19 +342,14 @@ export const FileInput = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => {
-  const { dropzoneState, isFileTooBig, isLOF } =
-    useFileUpload();
-  const rootProps = isLOF
-    ? {}
-    : dropzoneState.getRootProps();
+  const { dropzoneState, isFileTooBig, isLOF } = useFileUpload();
+  const rootProps = isLOF ? {} : dropzoneState.getRootProps();
   return (
     <div
       ref={ref}
       {...props}
       className={`relative w-full ${
-        isLOF
-          ? 'opacity-50 cursor-not-allowed '
-          : 'cursor-pointer '
+        isLOF ? 'opacity-50 cursor-not-allowed ' : 'cursor-pointer '
       }`}
     >
       <div
