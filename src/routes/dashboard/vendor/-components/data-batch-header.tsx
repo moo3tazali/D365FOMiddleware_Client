@@ -35,14 +35,14 @@ export const DataBatchHeader = () => {
 const RefreshBtn = () => {
   const { dataBatch } = useServices();
 
-  const { invalidate } = useInvalidate();
+  const { refetch } = useInvalidate();
   return (
     <Tooltip delayDuration={300}>
       <TooltipTrigger asChild>
         <Button
           variant='ghost'
           size='icon'
-          onClick={() => invalidate(dataBatch.queryKey)}
+          onClick={() => refetch(dataBatch.queryKey)}
         >
           <RefreshCw className='size-5 md:size-7' />
         </Button>

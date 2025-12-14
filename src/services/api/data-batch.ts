@@ -72,7 +72,7 @@ export class DataBatch {
     await this.syncService.download(
       API_ROUTES.DATA_MIGRATION.DATA_BATCH.DOWNLOAD_ENHANCED_RECORD_LIST,
       {
-        query,
+        body: query,
       }
     );
   };
@@ -83,14 +83,14 @@ export class DataBatch {
     await this.syncService.download(
       API_ROUTES.DATA_MIGRATION.DATA_BATCH.DOWNLOAD_BATCH_ERROR_LIST,
       {
-        query,
+        body: query,
       }
     );
   };
 
   public deleteBatch = async (query: { batchId: string }): Promise<void> => {
     await this.syncService.del(API_ROUTES.DATA_MIGRATION.DATA_BATCH.DELETE, {
-      query: { id: query.batchId },
+      query: { batchId: query.batchId },
     });
   };
 

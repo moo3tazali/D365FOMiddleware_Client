@@ -26,9 +26,10 @@ interface PostRequestConfig extends GetRequestConfig {
   formData?: boolean;
 }
 
-interface DownloadConfig {
+interface DownloadConfig<TBody = unknown> {
   params?: BuildUrlOptions['params'];
   query?: BuildUrlOptions['query'];
+  body?: TBody;
   downloadMethod?: 'get' | 'post';
 }
 
@@ -103,9 +104,9 @@ export class Sync {
     return this._handle<TRes>(() => this._axiosInstance.get(builtUrl, config));
   }
 
-  public async download(
+  public async download<TBody = unknown>(
     url: TUrl,
-    config?: DownloadConfig
+    config?: DownloadConfig<TBody>
   ): Promise<{ blob: Blob; fileName: string }> {
     const builtUrl = this._apiRoutes.build(url, {
       params: config?.params,
@@ -117,11 +118,17 @@ export class Sync {
 
       if (config && config?.downloadMethod) {
         const downloadMethod = config?.downloadMethod;
-        res = await this._axiosInstance?.[downloadMethod](builtUrl, {
-          responseType: 'blob',
-        });
+        if (downloadMethod === 'get') {
+          res = await this._axiosInstance.get(builtUrl, {
+            responseType: 'blob',
+          });
+        } else {
+          res = await this._axiosInstance.post(builtUrl, config?.body, {
+            responseType: 'blob',
+          });
+        }
       } else {
-        res = await this._axiosInstance.post(builtUrl, undefined, {
+        res = await this._axiosInstance.post(builtUrl, config?.body, {
           responseType: 'blob',
         });
       }
