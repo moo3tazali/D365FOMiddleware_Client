@@ -4,6 +4,7 @@ import type { D365FOSetting } from '@/interfaces/d365fo-setting';
 
 import { useMutation } from '@/hooks/use-mutation';
 import { useServices } from '@/hooks/use-services';
+import toast from 'react-hot-toast';
 
 export const useAppSettings = () => {
   const { appSetting } = useServices();
@@ -16,7 +17,16 @@ export const useAppSettings = () => {
 
   const onSubmit = useCallback(
     (data: D365FOSetting & { newValue: string }) => {
+      if (!data.newValue) {
+        return;
+      }
+
       if (data.value === data.newValue) {
+        return;
+      }
+
+      if (isNaN(Number(data.newValue))) {
+        toast.error('Value must be a number');
         return;
       }
 

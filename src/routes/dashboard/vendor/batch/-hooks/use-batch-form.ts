@@ -63,7 +63,7 @@ export const useBatchForm = () => {
 
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const { vendor, dataBatch } = useServices();
+  const { vendor, dataBatch, appSetting } = useServices();
 
   const defaultPagination = useParsedPagination();
 
@@ -76,7 +76,10 @@ export const useBatchForm = () => {
     operationName: 'upload',
     mutationFn: vendor.upload,
     formControl: form.control,
-    refetchQueries: [[...dataBatch.getQueryKey('vendor', defaultPagination)]],
+    refetchQueries: [
+      [...dataBatch.getQueryKey('vendor', defaultPagination)],
+      [...appSetting.queryKey],
+    ],
   });
 
   const navigate = useNavigate();

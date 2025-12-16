@@ -64,6 +64,7 @@ const SettingsRow = ({ setting }: SettingsRowProps) => {
           onChange={(e) => setNewValue(e.target.value)}
           readOnly={!hasAction}
           disabled={isPending}
+          type='number'
         />
         {hasAction && (
           <Button
