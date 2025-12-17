@@ -103,10 +103,13 @@ const CellId = ({ value }: { value: string }) => {
     <Button
       asChild
       variant='link'
-      className='!p-0 items-start leading-tight'
+      className='p-0! items-start leading-tight'
       style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
     >
-      <Link to={ROUTES.DASHBOARD.CASH_IN.BATCH.VIEW} params={{ batchId: value }}>
+      <Link
+        to={ROUTES.DASHBOARD.CASH_IN.BATCH.VIEW}
+        params={{ batchId: value }}
+      >
         {value}
       </Link>
     </Button>
