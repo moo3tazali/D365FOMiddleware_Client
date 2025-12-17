@@ -13,10 +13,7 @@ interface TDataBatchErrorQuery {
 
 export class DataBatchError {
   private static _instance: DataBatchError;
-  private readonly syncService = Sync.getInstance({
-    public: true,
-    backend: 'NEST',
-  });
+  private readonly syncService = Sync.getInstance();
 
   public readonly queryKey = ['data-batch-error'];
 

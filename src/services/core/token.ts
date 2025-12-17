@@ -2,15 +2,15 @@ import { set, get, del } from 'idb-keyval';
 import Cookies from 'universal-cookie';
 
 export interface IToken {
-  tokenType: string;
   accessToken: string;
-  expiresIn: number;
   refreshToken: string;
+  accessTokenExpiresAt: string;
+  refreshTokenExpiresAt: string;
 }
 
 interface IRefreshTokenData {
   refreshToken: string;
-  tokenType: string;
+  refreshTokenExpiresAt: string;
 }
 
 export class Token {
@@ -41,17 +41,26 @@ export class Token {
   public async setToken(token: IToken): Promise<void> {
     try {
       // Store access token in cookie with expiration
-      const expirationDate = new Date();
-      expirationDate.setSeconds(expirationDate.getSeconds() + token.expiresIn);
+      const accessTokenExpirationDate = new Date(token.accessTokenExpiresAt);
+      const refreshTokenExpirationDate = new Date(token.refreshTokenExpiresAt);
 
-      this._setAccessTokenCookie(token.accessToken, expirationDate);
-      this._setTokenTypeCookie(token.tokenType, expirationDate);
+      this._setAccessTokenCookie(token.accessToken, accessTokenExpirationDate);
+      // Default token type expected by our interceptors/server
+      this._setTokenTypeCookie('Bearer', accessTokenExpirationDate);
 
-      // Store refresh token in IndexedDB
+      // Store refresh token in IndexedDB (avoid cookies for refresh token)
       await this._setRefreshToken({
         refreshToken: token.refreshToken,
-        tokenType: token.tokenType,
+        refreshTokenExpiresAt: token.refreshTokenExpiresAt,
       });
+
+      // Best-effort cleanup if refresh token is already expired/invalid date
+      if (
+        isNaN(refreshTokenExpirationDate.getTime()) ||
+        refreshTokenExpirationDate <= new Date()
+      ) {
+        await this._clearRefreshToken();
+      }
     } catch (error) {
       console.error('Error saving token', error);
       throw error;
@@ -72,7 +81,16 @@ export class Token {
   public async getRefreshToken(): Promise<string | null> {
     try {
       const tokenData = await this._getRefreshTokenData();
-      return tokenData?.refreshToken || null;
+      if (!tokenData?.refreshToken) return null;
+
+      const expiresAt = new Date(tokenData.refreshTokenExpiresAt);
+
+      if (isNaN(expiresAt.getTime()) || expiresAt <= new Date()) {
+        await this._clearRefreshToken();
+        return null;
+      }
+
+      return tokenData.refreshToken;
     } catch (error) {
       console.error('Error getting refresh token', error);
       return null;

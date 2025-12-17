@@ -11,10 +11,7 @@ interface AppSettingUpdatePayload {
 
 export class AppSetting {
   private static _instance: AppSetting;
-  private readonly syncService = Sync.getInstance({
-    public: true,
-    backend: 'NEST',
-  });
+  private readonly syncService = Sync.getInstance();
 
   public readonly queryKey = ['admin.app-setting'];
 

@@ -9,10 +9,7 @@ interface UploadData {
 
 interface UploadResponse extends TDataBatch {}
 
-const syncService = Sync.getInstance({
-  public: true,
-  backend: 'NEST',
-});
+const syncService = Sync.getInstance();
 
 export class Ledger {
   private static _instance: Ledger;

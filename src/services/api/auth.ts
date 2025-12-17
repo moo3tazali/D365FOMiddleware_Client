@@ -7,26 +7,13 @@ import type { TUser } from '@/interfaces/user';
 export interface LoginPayload {
   email: string;
   password: string;
-  twoFactorCode?: string;
-  twoFactorRecoveryCode?: string;
 }
 
-interface LoginResponse {
-  tokenType: string;
+export interface AuthResponse {
   accessToken: string;
-  expiresIn: number;
   refreshToken: string;
-}
-
-interface RefreshTokenPayload {
-  refreshToken: string;
-}
-
-interface RefreshTokenResponse {
-  tokenType: string;
-  accessToken: string;
-  expiresIn: number;
-  refreshToken: string;
+  accessTokenExpiresAt: string;
+  refreshTokenExpiresAt: string;
 }
 
 const syncService = Sync.getInstance({ public: true });
@@ -48,8 +35,8 @@ export class Auth {
 
   public async login(data: LoginPayload): Promise<TUser> {
     try {
-      const res = await syncService.save<LoginResponse, LoginPayload>(
-        API_ROUTES.PUBLIC.IDENTITY.LOGIN,
+      const res = await syncService.save<AuthResponse, LoginPayload>(
+        API_ROUTES.PUBLIC.AUTH.LOGIN,
         data
       );
 
@@ -72,12 +59,15 @@ export class Auth {
         throw new Error('No refresh token available');
       }
 
-      const refreshData: RefreshTokenPayload = { refreshToken };
-
-      const res = await syncService.save<
-        RefreshTokenResponse,
-        RefreshTokenPayload
-      >(API_ROUTES.PUBLIC.IDENTITY.REFRESH, refreshData);
+      const res = await syncService.save<AuthResponse>(
+        API_ROUTES.PUBLIC.AUTH.REFRESH,
+        undefined,
+        {
+          headers: {
+            'X-Refresh-Token': refreshToken,
+          },
+        }
+      );
 
       await tokenService.setToken(res);
     } catch (error) {
@@ -90,10 +80,48 @@ export class Auth {
 
   public async logout(): Promise<void> {
     try {
+      const refreshToken = await tokenService.getRefreshToken();
+
+      if (refreshToken) {
+        await syncService.save<void>(API_ROUTES.PUBLIC.AUTH.LOGOUT, undefined, {
+          headers: {
+            'X-Refresh-Token': refreshToken,
+          },
+        });
+      }
+
       await tokenService.clearToken();
       userService.clear();
     } catch (error) {
       console.error('Logout failed:', error);
+      throw error;
+    }
+  }
+
+  public async logoutAll(): Promise<void> {
+    try {
+      const accessToken = tokenService.getAccessToken();
+
+      if (!accessToken) {
+        throw new Error('No access token available');
+      }
+
+      const tokenType = tokenService.getTokenType() ?? 'Bearer';
+
+      await syncService.save<void>(
+        API_ROUTES.PUBLIC.AUTH.LOGOUT_ALL,
+        undefined,
+        {
+          headers: {
+            Authorization: `${tokenType} ${accessToken}`,
+          },
+        }
+      );
+
+      await tokenService.clearToken();
+      userService.clear();
+    } catch (error) {
+      console.error('Logout all failed:', error);
       throw error;
     }
   }

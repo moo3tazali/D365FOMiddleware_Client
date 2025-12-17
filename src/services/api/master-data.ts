@@ -27,10 +27,7 @@ export interface MasterDataPayload {
 
 export class MasterData {
   private static _instance: MasterData;
-  private readonly syncService = Sync.getInstance({
-    public: true,
-    backend: 'NEST',
-  });
+  private readonly syncService = Sync.getInstance();
 
   public readonly queryKey = ['finance.master-data'];
 

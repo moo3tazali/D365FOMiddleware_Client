@@ -13,7 +13,6 @@ import type { SuccessRes } from '@/interfaces/api-res';
 
 interface SyncOptions {
   public?: boolean;
-  backend?: 'NEST' | 'DOT_NET';
 }
 
 interface GetRequestConfig extends AxiosRequestConfig {
@@ -36,10 +35,8 @@ interface DownloadConfig<TBody = unknown> {
 type TUrl = BuildUrlOptions['url'];
 
 export class Sync {
-  private static _publicDotNetInstance: Sync;
-  private static _publicNestInstance: Sync;
-  private static _privateDotNetInstance: Sync;
-  private static _privateNestInstance: Sync;
+  private static _publicInstance: Sync;
+  private static _privateInstance: Sync;
   private readonly _axiosInstance: AxiosInstance;
   private readonly _withAuth: boolean;
   private readonly _env = Env.getInstance();
@@ -47,13 +44,11 @@ export class Sync {
   private readonly _errorHandler = ErrorHandler.getInstance();
   private readonly _apiRoutes = ApiRoutes.getInstance();
 
-  private constructor(isPublic: boolean, backend: 'NEST' | 'DOT_NET') {
+  private constructor(isPublic: boolean) {
     this._withAuth = !isPublic;
 
     this._axiosInstance = axios.create({
-      baseURL: this._env.get(
-        backend === 'DOT_NET' ? ENV.SERVER_BASE_URL : ENV.NEST_SERVER_BASE_URL
-      ),
+      baseURL: this._env.get(ENV.NEST_SERVER_BASE_URL),
     });
 
     if (this._withAuth) {
@@ -63,33 +58,19 @@ export class Sync {
 
   public static getInstance(opt?: SyncOptions): Sync {
     const isPublic = opt?.public ?? false;
-    const backend = opt?.backend || 'DOT_NET';
 
-    if (backend === 'DOT_NET') {
-      if (isPublic) {
-        if (!this._publicDotNetInstance) {
-          this._publicDotNetInstance = new Sync(true, backend);
-        }
-        return this._publicDotNetInstance;
-      } else {
-        if (!this._privateDotNetInstance) {
-          this._privateDotNetInstance = new Sync(false, backend);
-        }
-        return this._privateDotNetInstance;
+    if (isPublic) {
+      if (!this._publicInstance) {
+        this._publicInstance = new Sync(true);
       }
-    } else {
-      if (isPublic) {
-        if (!this._publicNestInstance) {
-          this._publicNestInstance = new Sync(true, backend);
-        }
-        return this._publicNestInstance;
-      } else {
-        if (!this._privateNestInstance) {
-          this._privateNestInstance = new Sync(false, backend);
-        }
-        return this._privateNestInstance;
-      }
+      return this._publicInstance;
     }
+
+    if (!this._privateInstance) {
+      this._privateInstance = new Sync(false);
+    }
+
+    return this._privateInstance;
   }
 
   public async fetch<TRes>(
@@ -279,12 +260,18 @@ export class Sync {
             }
 
             // Attempt token refresh using public sync instance
-            const publicSync = Sync.getInstance({ public: true });
-            const refreshData = { refreshToken };
+            const publicSync = Sync.getInstance({
+              public: true,
+            });
 
             const refreshResponse = await publicSync.save<IToken>(
-              API_ROUTES.PUBLIC.IDENTITY.REFRESH,
-              refreshData
+              API_ROUTES.PUBLIC.AUTH.REFRESH,
+              undefined,
+              {
+                headers: {
+                  'X-Refresh-Token': refreshToken,
+                },
+              }
             );
 
             // Update tokens

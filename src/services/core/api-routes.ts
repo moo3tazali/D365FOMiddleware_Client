@@ -56,14 +56,12 @@ export const API_ROUTES = {
     },
   },
   PUBLIC: {
-    IDENTITY: {
-      REGISTER: '/public/Identity/register',
-      LOGIN: '/public/Identity/login',
-      REFRESH: '/public/Identity/refresh',
-      CONFIRM_EMAIL: '/public/Identity/confirmEmail',
-      RESEND_CONFIRMATION_EMAIL: '/public/Identity/resendConfirmationEmail',
-      FORGET_PASSWORD: '/public/Identity/forgetPassword',
-      RESET_PASSWORD: '/public/Identity/resetPassword',
+    AUTH: {
+      REGISTER: '/auth/register',
+      LOGIN: '/auth/login',
+      REFRESH: '/auth/refresh',
+      LOGOUT: '/auth/logout',
+      LOGOUT_ALL: '/auth/logout-all',
     },
   },
   DATA_MIGRATION: {
