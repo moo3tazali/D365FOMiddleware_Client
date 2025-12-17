@@ -7,6 +7,7 @@ import HandCoins from 'lucide-react/dist/esm/icons/hand-coins';
 import Wallet from 'lucide-react/dist/esm/icons/wallet';
 import BookOpen from 'lucide-react/dist/esm/icons/book-open';
 import Users from 'lucide-react/dist/esm/icons/users';
+import Settings from 'lucide-react/dist/esm/icons/settings';
 
 export const ModuleCards = () => {
   const { modules } = useModuleItems();
@@ -22,7 +23,6 @@ export const ModuleCards = () => {
           </Module>
         ))}
       </div>
-      <div className='flex-1 rounded-xl bg-muted/50' />
     </div>
   );
 };
@@ -68,6 +68,11 @@ const useModuleItems = () => {
         label: 'Vendor',
         to: ROUTES.DASHBOARD.VENDOR.HOME,
         Icon: Users,
+      },
+      {
+        label: 'Settings',
+        to: ROUTES.DASHBOARD.SETTINGS.HOME,
+        Icon: Settings,
       },
     ],
     []

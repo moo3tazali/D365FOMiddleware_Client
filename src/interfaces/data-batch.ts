@@ -19,6 +19,7 @@ export enum TEntryProcessorTypes {
   VendorTrucking = 18,
   VendorFreightAdjustment = 19,
   VendorTruckingAdjustment = 20,
+  CashInFreight = 21,
 }
 
 export enum TDataBatchStatus {
