@@ -20,6 +20,7 @@ type TModule =
   | 'accountPayable'
   | 'ledger'
   | 'cashManagement'
+  | 'cashIn'
   | 'vendor';
 
 export class DataBatch {
@@ -152,6 +153,8 @@ export class DataBatch {
           TEntryProcessorTypes.LedgerBankOut,
           TEntryProcessorTypes.LedgerVisaOut,
         ];
+      case 'cashIn':
+        return [TEntryProcessorTypes.CashInFreight];
       case 'vendor':
         return [
           TEntryProcessorTypes.VendorFreight,

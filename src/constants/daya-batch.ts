@@ -67,4 +67,10 @@ export const ENTRY_PROCESSOR_OPTIONS = {
       value: TEntryProcessorTypes.VendorTruckingAdjustment,
     },
   ],
+  CASH_IN: [
+    {
+      label: 'Freight Document',
+      value: TEntryProcessorTypes.CashInFreight,
+    },
+  ],
 } as const;

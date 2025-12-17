@@ -7,6 +7,7 @@ import { AppSetting } from './api/app-setting';
 import { Pagination } from './core/pagination';
 import { MasterData } from './api/master-data';
 import { Vendor } from './api/vendor';
+import { CashIn } from './api/cash-in';
 
 export const services = {
   authService: Auth.getInstance(),
@@ -14,6 +15,7 @@ export const services = {
   dataBatch: DataBatch.getInstance(),
   dataBatchError: DataBatchError.getInstance(),
   ledger: Ledger.getInstance(),
+  cashIn: CashIn.getInstance(),
   appSetting: AppSetting.getInstance(),
   pagination: Pagination.getInstance(),
   masterData: MasterData.getInstance(),

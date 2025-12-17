@@ -2,7 +2,7 @@ import { Frame } from '@/components/ui/frame';
 import { ROUTES, type TRoutes } from '@/router';
 import { Link } from '@tanstack/react-router';
 import { useMemo } from 'react';
-import Landmark from 'lucide-react/dist/esm/icons/landmark';
+// import Landmark from 'lucide-react/dist/esm/icons/landmark';
 import HandCoins from 'lucide-react/dist/esm/icons/hand-coins';
 import Wallet from 'lucide-react/dist/esm/icons/wallet';
 import BookOpen from 'lucide-react/dist/esm/icons/book-open';
@@ -44,19 +44,24 @@ const Module = ({
 const useModuleItems = () => {
   const modules = useMemo(
     () => [
-      {
-        label: 'Accounts Payable',
-        to: ROUTES.DASHBOARD.ACCOUNTS_PAYABLE.HOME,
-        Icon: Landmark,
-      },
+      // {
+      //   label: 'Accounts Payable',
+      //   to: ROUTES.DASHBOARD.ACCOUNTS_PAYABLE.HOME,
+      //   Icon: Landmark,
+      // },
       {
         label: 'Accounts Receivable',
         to: ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.HOME,
         Icon: HandCoins,
       },
+      // {
+      //   label: 'Cash Management',
+      //   to: ROUTES.DASHBOARD.CASH_MANAGEMENT.HOME,
+      //   Icon: Wallet,
+      // },
       {
-        label: 'Cash Management',
-        to: ROUTES.DASHBOARD.CASH_MANAGEMENT.HOME,
+        label: 'Cash In',
+        to: ROUTES.DASHBOARD.CASH_IN.HOME,
         Icon: Wallet,
       },
       {

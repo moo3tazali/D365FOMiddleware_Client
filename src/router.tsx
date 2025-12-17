@@ -62,6 +62,14 @@ export const ROUTES = {
         ERRORS: '/dashboard/ledger/batch/$batchId/errors',
       },
     },
+    CASH_IN: {
+      HOME: '/dashboard/cash-in',
+      BATCH: {
+        NEW: '/dashboard/cash-in/batch/new',
+        VIEW: '/dashboard/cash-in/batch/$batchId',
+        ERRORS: '/dashboard/cash-in/batch/$batchId/errors',
+      },
+    },
     VENDOR: {
       HOME: '/dashboard/vendor',
       BATCH: {
