@@ -8,6 +8,7 @@ import { Pagination } from './core/pagination';
 import { MasterData } from './api/master-data';
 import { Vendor } from './api/vendor';
 import { CashIn } from './api/cash-in';
+import { CashOut } from './api/cash-out';
 
 export const services = {
   authService: Auth.getInstance(),
@@ -16,6 +17,7 @@ export const services = {
   dataBatchError: DataBatchError.getInstance(),
   ledger: Ledger.getInstance(),
   cashIn: CashIn.getInstance(),
+  cashOut: CashOut.getInstance(),
   appSetting: AppSetting.getInstance(),
   pagination: Pagination.getInstance(),
   masterData: MasterData.getInstance(),

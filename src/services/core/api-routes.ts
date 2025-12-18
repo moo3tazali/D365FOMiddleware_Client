@@ -115,6 +115,9 @@ export const API_ROUTES = {
     CASH_IN: {
       FREIGHT_DOCUMENT: '/DataMigration/CashIn/Freight-Document',
     },
+    CASH_OUT: {
+      FREIGHT_DOCUMENT: '/DataMigration/CashOut/Freight-Document',
+    },
   },
 } as const;
 

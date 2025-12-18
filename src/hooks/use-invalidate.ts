@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -6,6 +7,7 @@ export const useInvalidate = () => {
 
   const invalidate = useCallback(
     (queryKey: readonly unknown[]) => {
+      console.debug('invalidate', queryKey);
       queryClient.invalidateQueries({
         predicate: (query) => query.queryKey[0] === queryKey[0],
       });
@@ -15,6 +17,7 @@ export const useInvalidate = () => {
 
   const refetch = useCallback(
     (queryKey: readonly unknown[]) => {
+      console.debug('refetch', queryKey);
       queryClient.refetchQueries({
         predicate: (query) => query.queryKey[0] === queryKey[0],
       });

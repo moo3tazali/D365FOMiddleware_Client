@@ -23,7 +23,7 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar variant='sidebar' collapsible='icon'>
-      <SidebarHeader className='h-16 md:h-20 group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 group-has-[[data-collapsible=icon]]/sidebar-wrapper:md:h-16 flex justify-center items-center'>
+      <SidebarHeader className='h-16 md:h-20 group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 group-has-data-[collapsible=icon]/sidebar-wrapper:md:h-16 flex justify-center items-center'>
         <SidebarMenu>
           <SidebarMenuItem>
             <NavLogo />

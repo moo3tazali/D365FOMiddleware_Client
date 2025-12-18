@@ -3,10 +3,11 @@ import { useLocation } from '@tanstack/react-router';
 import Home from 'lucide-react/dist/esm/icons/home';
 // import Landmark from 'lucide-react/dist/esm/icons/landmark';
 import HandCoins from 'lucide-react/dist/esm/icons/hand-coins';
-import Wallet from 'lucide-react/dist/esm/icons/wallet';
 import Settings from 'lucide-react/dist/esm/icons/settings';
 import BookOpen from 'lucide-react/dist/esm/icons/book-open';
 import Users from 'lucide-react/dist/esm/icons/users';
+import CashIn from 'lucide-react/dist/esm/icons/banknote-arrow-down';
+import CashOut from 'lucide-react/dist/esm/icons/banknote-arrow-up';
 
 import { ROUTES } from '@/router';
 
@@ -50,8 +51,14 @@ export const useNavItems = () => {
       {
         title: 'Cash In',
         url: ROUTES.DASHBOARD.CASH_IN.HOME,
-        icon: Wallet,
+        icon: CashIn,
         isActive: pathname.startsWith(ROUTES.DASHBOARD.CASH_IN.HOME),
+      },
+      {
+        title: 'Cash Out',
+        url: ROUTES.DASHBOARD.CASH_OUT.HOME,
+        icon: CashOut,
+        isActive: pathname.startsWith(ROUTES.DASHBOARD.CASH_OUT.HOME),
       },
       {
         title: 'Vendor',

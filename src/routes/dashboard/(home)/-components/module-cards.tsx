@@ -4,10 +4,11 @@ import { Link } from '@tanstack/react-router';
 import { useMemo } from 'react';
 // import Landmark from 'lucide-react/dist/esm/icons/landmark';
 import HandCoins from 'lucide-react/dist/esm/icons/hand-coins';
-import Wallet from 'lucide-react/dist/esm/icons/wallet';
 import BookOpen from 'lucide-react/dist/esm/icons/book-open';
 import Users from 'lucide-react/dist/esm/icons/users';
 import Settings from 'lucide-react/dist/esm/icons/settings';
+import CashIn from 'lucide-react/dist/esm/icons/banknote-arrow-down';
+import CashOut from 'lucide-react/dist/esm/icons/banknote-arrow-up';
 
 export const ModuleCards = () => {
   const { modules } = useModuleItems();
@@ -62,7 +63,12 @@ const useModuleItems = () => {
       {
         label: 'Cash In',
         to: ROUTES.DASHBOARD.CASH_IN.HOME,
-        Icon: Wallet,
+        Icon: CashIn,
+      },
+      {
+        label: 'Cash Out',
+        to: ROUTES.DASHBOARD.CASH_OUT.HOME,
+        Icon: CashOut,
       },
       {
         label: 'Ledger',

@@ -70,6 +70,14 @@ export const ROUTES = {
         ERRORS: '/dashboard/cash-in/batch/$batchId/errors',
       },
     },
+    CASH_OUT: {
+      HOME: '/dashboard/cash-out',
+      BATCH: {
+        NEW: '/dashboard/cash-out/batch/new',
+        VIEW: '/dashboard/cash-out/batch/$batchId',
+        ERRORS: '/dashboard/cash-out/batch/$batchId/errors',
+      },
+    },
     VENDOR: {
       HOME: '/dashboard/vendor',
       BATCH: {
