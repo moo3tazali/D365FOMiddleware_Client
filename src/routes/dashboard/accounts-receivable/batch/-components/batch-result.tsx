@@ -13,6 +13,7 @@ import { useBatchQueryData } from '../-hooks/use-batch-query-data';
 import { Description } from '@/components/ui/description';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ROUTES } from '@/router';
+import { BatchDFOStatus } from './batch-dfo-status';
 
 export const BatchResult = () => {
   const [batch] = useBatchQueryData();
@@ -43,6 +44,8 @@ export const BatchResult = () => {
       {batch && !!batch.totalUploadedCount && (
         <BatchResultAlert errorCount={batch.errorCount} batchId={batch.id} />
       )}
+
+      {batch && <BatchDFOStatus batch={batch} />}
     </div>
   );
 };
@@ -62,8 +65,8 @@ const BatchResultAlert = ({
         <AlertDescription>
           <p>
             All entries have been formatted. Click
-            <span className='font-medium px-1'>Submit</span>
-            to send them to Dynamics.
+            <span className='font-medium px-1'>Post to D365FO</span>
+            to send them to Dynamics 365 Finance & Operations.
           </p>
         </AlertDescription>
       </Alert>

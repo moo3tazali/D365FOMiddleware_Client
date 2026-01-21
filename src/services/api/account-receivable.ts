@@ -10,6 +10,11 @@ interface UploadData {
 
 interface UploadResponse extends TDataBatch {}
 
+interface PostToDFOResponse {
+  jobId: string;
+  message: string;
+}
+
 const syncService = Sync.getInstance();
 
 export class AccountReceivable {
@@ -71,6 +76,13 @@ export class AccountReceivable {
       this.UPLOAD_TYPES.TRUCKING_CREDIT_NOTE_DOC,
     ].includes(Number(type));
   }
+
+  public postToDFO = async (batchId: string): Promise<PostToDFOResponse> => {
+    return syncService.save<PostToDFOResponse, { batchId: string }>(
+      API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE.POST_TO_DFO,
+      { batchId }
+    );
+  };
 
   private async _getUploadApiRoute(type: number | string) {
     switch (Number(type)) {
