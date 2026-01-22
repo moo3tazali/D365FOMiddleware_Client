@@ -10,6 +10,11 @@ interface UploadData {
 
 interface UploadResponse extends TDataBatch {}
 
+interface PostToDFOResponse {
+  jobId: string;
+  message: string;
+}
+
 const syncService = Sync.getInstance();
 
 export class Vendor {
@@ -60,6 +65,13 @@ export class Vendor {
       this.UPLOAD_TYPES.TRUCKING_DOCUMENT_ADJUSTMENT,
     ].includes(Number(type));
   }
+
+  public postToDFO = async (batchId: string): Promise<PostToDFOResponse> => {
+    return syncService.save<PostToDFOResponse, { batchId: string }>(
+      API_ROUTES.DATA_MIGRATION.VENDOR.POST_TO_DFO,
+      { batchId }
+    );
+  };
 
   private async _getUploadApiRoute(type: number | string) {
     switch (Number(type)) {

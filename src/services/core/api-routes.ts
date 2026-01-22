@@ -112,6 +112,7 @@ export const API_ROUTES = {
       TRUCKING_DOCUMENT: '/DataMigration/Vendor/Trucking-Document',
       TRUCKING_DOCUMENT_ADJUSTMENT:
         '/DataMigration/Vendor/Trucking-Document-Adjustment',
+      POST_TO_DFO: '/DataMigration/Vendor/PostToDFO',
     },
     CASH_IN: {
       FREIGHT_DOCUMENT: '/DataMigration/CashIn/Freight-Document',
