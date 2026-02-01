@@ -9,6 +9,11 @@ interface UploadData {
 
 interface UploadResponse extends TDataBatch {}
 
+interface PostToDFOResponse {
+  jobId: string;
+  message: string;
+}
+
 const syncService = Sync.getInstance();
 
 export class Ledger {
@@ -52,6 +57,13 @@ export class Ledger {
         options.uploadProgress(percentCompleted);
       },
     });
+  };
+
+  public postToDFO = async (batchId: string): Promise<PostToDFOResponse> => {
+    return syncService.save<PostToDFOResponse, { batchId: string }>(
+      API_ROUTES.DATA_MIGRATION.LEDGER.POST_TO_DFO,
+      { batchId }
+    );
   };
 
   private async _getUploadApiRoute(type: number | string) {
