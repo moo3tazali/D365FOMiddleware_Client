@@ -48,11 +48,22 @@ export const API_ROUTES = {
         GET: '/Finance/MasterData/vendors',
         SYNC: '/Finance/MasterData/vendors/sync',
       },
-
       EXCHANGE_RATES: {
         GET: '/Finance/MasterData/exchange-rates',
         SYNC: '/Finance/MasterData/exchange-rates/sync',
       },
+      PAYMENT_TERMS: {
+        GET: '/Finance/MasterData/payment-terms',
+        SYNC: '/Finance/MasterData/payment-terms/sync',
+      },
+      LEDGERS: {
+        GET: '/Finance/MasterData/ledgers',
+        SYNC: '/Finance/MasterData/ledgers/sync',
+      },
+      TAX_ITEM_GROUP_HEADINGS: {
+        GET: '/Finance/MasterData/tax-item-group-headings',
+        SYNC: '/Finance/MasterData/tax-item-group-headings/sync',
+      }
     },
   },
   PUBLIC: {

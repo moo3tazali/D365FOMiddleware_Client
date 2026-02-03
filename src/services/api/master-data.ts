@@ -13,6 +13,9 @@ export const SYNC_TYPES = {
   MAIN_ACCOUNTS: 'main-accounts',
   VENDORS: 'vendors',
   EXCHANGE_RATES: 'exchange-rates',
+  PAYMENT_TERMS: 'payment-terms',
+  LEDGERS: 'ledgers',
+  TAX_ITEM_GROUP_HEADINGS: 'tax-item-group-headings',
 } as const;
 
 export const SYNC_TYPES_LIST = Object.values(SYNC_TYPES);
@@ -74,6 +77,12 @@ export class MasterData {
         return this.syncVendors(payload);
       case SYNC_TYPES.EXCHANGE_RATES:
         return this.syncExchangeRates(payload);
+      case SYNC_TYPES.PAYMENT_TERMS:
+        return this.syncPaymentTerms(payload);
+      case SYNC_TYPES.LEDGERS:
+        return this.syncLedgers(payload);
+      case SYNC_TYPES.TAX_ITEM_GROUP_HEADINGS:
+        return this.syncTaxItemGroupHeadings(payload);
       default:
         throw new Error(`No Sync function for this master data '${type}'`);
     }
@@ -147,6 +156,42 @@ export class MasterData {
       undefined,
       {
         query: { company: payload.company, rateType: payload.rateType },
+      }
+    );
+  };
+
+  public syncPaymentTerms = async (
+    payload: MasterDataPayload
+  ): Promise<IMasterDataSyncJobResponse> => {
+    return this.syncService.save<IMasterDataSyncJobResponse>(
+      API_ROUTES.FINANCE.MASTER_DATA.PAYMENT_TERMS.SYNC,
+      undefined,
+      {
+        query: { company: payload.company },
+      }
+    );
+  };
+
+  public syncLedgers = async (
+    payload: MasterDataPayload
+  ): Promise<IMasterDataSyncJobResponse> => {
+    return this.syncService.save<IMasterDataSyncJobResponse>(
+      API_ROUTES.FINANCE.MASTER_DATA.LEDGERS.SYNC,
+      undefined,
+      {
+        query: { company: payload.company },
+      }
+    );
+  };
+
+  public syncTaxItemGroupHeadings = async (
+    payload: MasterDataPayload
+  ): Promise<IMasterDataSyncJobResponse> => {
+    return this.syncService.save<IMasterDataSyncJobResponse>(
+      API_ROUTES.FINANCE.MASTER_DATA.TAX_ITEM_GROUP_HEADINGS.SYNC,
+      undefined,
+      {
+        query: { company: payload.company },
       }
     );
   };
