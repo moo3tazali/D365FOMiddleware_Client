@@ -30,6 +30,8 @@ interface DownloadConfig<TBody = unknown> {
   query?: BuildUrlOptions['query'];
   body?: TBody;
   downloadMethod?: 'get' | 'post';
+  /** Fallback filename when Content-Disposition is missing */
+  defaultFileName?: string;
 }
 
 type TUrl = BuildUrlOptions['url'];
@@ -114,7 +116,10 @@ export class Sync {
         });
       }
 
-      const fileName = await this._downloadFileFromResponse(res);
+      const fileName = await this._downloadFileFromResponse(
+        res,
+        config?.defaultFileName
+      );
 
       return {
         blob: res.data,
@@ -180,9 +185,10 @@ export class Sync {
   }
 
   private async _downloadFileFromResponse(
-    response: AxiosResponse
+    response: AxiosResponse,
+    defaultFileName?: string
   ): Promise<string> {
-    let fileName: string = 'downloaded-file';
+    let fileName: string = defaultFileName ?? 'downloaded-file';
     const headers = response.headers;
 
     if (headers) {

@@ -28,7 +28,7 @@ function ViewBatchPage() {
     );
   return (
     <div className='h-full flex flex-col gap-5'>
-      <BatchHeader />
+      <BatchHeader batch={batch} />
       <BatchForm />
       <BatchResult />
       <BatchFooter />

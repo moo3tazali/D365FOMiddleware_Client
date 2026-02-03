@@ -24,6 +24,11 @@ export const useDataBatchAction = (data: TDataBatch) => {
     mutationFn: () => dataBatch.downloadBatchErrorList({ batchId }),
   });
 
+  const { mutateAsync: onDownloadSourceFile } = useMutation({
+    operationName: 'download source file',
+    mutationFn: () => dataBatch.downloadSourceFile({ batchId }),
+  });
+
   const { mutateAsync: onDelete } = useMutation({
     operationName: 'delete record',
     mutationFn: () => dataBatch.deleteBatch({ batchId }),
@@ -37,5 +42,11 @@ export const useDataBatchAction = (data: TDataBatch) => {
     });
   }, [batchId, navigate]);
 
-  return { onDownload, onView, onDownloadError, onDelete };
+  return {
+    onDownload,
+    onView,
+    onDownloadError,
+    onDownloadSourceFile,
+    onDelete,
+  };
 };

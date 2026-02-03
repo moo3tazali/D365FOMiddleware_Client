@@ -87,6 +87,18 @@ export class DataBatch {
     );
   };
 
+  public downloadSourceFile = async (query: {
+    batchId: string;
+  }): Promise<void> => {
+    await this.syncService.download(
+      API_ROUTES.DATA_MIGRATION.DATA_BATCH.DOWNLOAD_SOURCE_FILE,
+      {
+        body: query,
+        defaultFileName: `source-records-${query.batchId}.xlsx`,
+      }
+    );
+  };
+
   public deleteBatch = async (query: { batchId: string }): Promise<void> => {
     await this.syncService.del(API_ROUTES.DATA_MIGRATION.DATA_BATCH.DELETE, {
       query: { batchId: query.batchId },

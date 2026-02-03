@@ -72,6 +72,8 @@ export const API_ROUTES = {
         '/DataMigration/DataBatch/download-enhanced-record-list',
       DOWNLOAD_BATCH_ERROR_LIST:
         '/DataMigration/DataBatch/download-batch-error-list',
+      DOWNLOAD_SOURCE_FILE:
+        '/DataMigration/DataBatch/download-source-file',
       ERROR_LIST: '/DataMigration/DataBatch/error-list',
       DELETE: '/DataMigration/DataBatch',
       INSERT: '/DataMigration/DataBatch/insert',
