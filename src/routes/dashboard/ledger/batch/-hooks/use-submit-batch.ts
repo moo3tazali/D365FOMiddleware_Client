@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { useParams } from '@tanstack/react-router';
 import toast from 'react-hot-toast';
 
+import { useInvalidate } from '@/hooks/use-invalidate';
 import { useMutation } from '@/hooks/use-mutation';
 import { useServices } from '@/hooks/use-services';
 import type { TDataBatch } from '@/interfaces/data-batch';
@@ -9,6 +10,7 @@ import { useParsedPagination } from '@/hooks/use-parsed-pagination';
 import type { ErrorRes } from '@/interfaces/api-res';
 
 export const useSubmitBatch = () => {
+  const { refetch } = useInvalidate();
   const { dataBatch, ledger } = useServices();
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string[]> | null
@@ -33,6 +35,7 @@ export const useSubmitBatch = () => {
       error: 'Failed to post batch to D365FO',
     },
     onSuccess: (data) => {
+      refetch(dataBatch.queryKey);
       // Dismiss the default success toast and show custom one with jobId
       toast.dismiss();
       const response = data as { jobId: string; message: string };

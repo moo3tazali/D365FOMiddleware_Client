@@ -1,12 +1,14 @@
 import { useCallback } from 'react';
 import { useParams } from '@tanstack/react-router';
 
+import { useInvalidate } from '@/hooks/use-invalidate';
 import { useMutation } from '@/hooks/use-mutation';
 import { useServices } from '@/hooks/use-services';
 import type { TDataBatch } from '@/interfaces/data-batch';
 import { useParsedPagination } from '@/hooks/use-parsed-pagination';
 
 export const useSubmitBatch = () => {
+  const { refetch } = useInvalidate();
   const { dataBatch } = useServices();
 
   const batchNumber = useParams({
@@ -22,6 +24,9 @@ export const useSubmitBatch = () => {
       [...dataBatch.queryKey, { batchNumber }],
       [...dataBatch.getQueryKey('cashManagement', defaultPagination)],
     ],
+    onSuccess: () => {
+      refetch(dataBatch.queryKey);
+    },
   });
 
   const onSubmit = useCallback(
