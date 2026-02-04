@@ -1,5 +1,6 @@
 import Upload from 'lucide-react/dist/esm/icons/upload';
 import CloudUpload from 'lucide-react/dist/esm/icons/cloud-upload';
+import RotateCcw from 'lucide-react/dist/esm/icons/rotate-ccw';
 import { useIsMutating } from '@tanstack/react-query';
 
 import { TDataBatchStatus, type TDataBatch } from '@/interfaces/data-batch';
@@ -49,11 +50,15 @@ const SubmitBtn = ({ data }: { data: TDataBatch }) => {
   const { onSubmit, isPending, validationErrors, closeValidationModal } =
     useSubmitBatch();
 
-  const showSubmit = data.status === TDataBatchStatus.Pending;
+  const showSubmit =
+    data.status === TDataBatchStatus.Pending ||
+    data.status === TDataBatchStatus.Canceled;
   const isAlreadyPosted =
     (data.dfoIds && data.dfoIds.length > 0) ||
     (data.dfoPostingErrors && data.dfoPostingErrors.length > 0);
-  const isDisabled = isPending || isAlreadyPosted;
+  const canRetry = data.status === TDataBatchStatus.Canceled;
+  const isDisabled =
+    isPending || (isAlreadyPosted && !canRetry);
 
   if (!showSubmit)
     return (
@@ -90,8 +95,17 @@ const SubmitBtn = ({ data }: { data: TDataBatch }) => {
           disabled={isDisabled}
           onClick={() => onSubmit(data)}
         >
-          <CloudUpload className='size-5' />
-          Post to D365FO
+          {canRetry ? (
+            <>
+              <RotateCcw className='size-5' />
+              Retry
+            </>
+          ) : (
+            <>
+              <CloudUpload className='size-5' />
+              Post to D365FO
+            </>
+          )}
         </Button>
       </div>
       {validationErrors && (
