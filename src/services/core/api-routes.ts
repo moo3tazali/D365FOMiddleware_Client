@@ -117,6 +117,7 @@ export const API_ROUTES = {
       TRUCKING_VENDOR_ACCRUAL: '/DataMigration/Ledger/Trucking-Vendor-Accrual',
       CASH_OUT_DOCUMENT: '/DataMigration/Ledger/Cash-Out-Document',
       CASH_IN_DOCUMENT: '/DataMigration/Ledger/Cash-In-Document',
+      CUSTODY_SETTLEMENT: '/DataMigration/Ledger/custody-settlement',
       POST_TO_DFO: '/DataMigration/Ledger/PostToDFO',
     },
     VENDOR: {

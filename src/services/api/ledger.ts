@@ -26,6 +26,7 @@ export class Ledger {
     FREIGHT_VENDOR_ACCRUAL_DOC: TEntryProcessorTypes.VendorFreight,
     TRUCKING_VENDOR_ACCRUAL_DOC: TEntryProcessorTypes.VendorTrucking,
     CASH_OUT_DOC: TEntryProcessorTypes.LedgerCashOut,
+    CUSTODY_SETTLEMENT: TEntryProcessorTypes.LedgerCustodySettlement,
   };
 
   private constructor() {}
@@ -79,6 +80,8 @@ export class Ledger {
           .TRUCKING_VENDOR_ACCRUAL_DOCUMENT;
       case this.UPLOAD_TYPES.CASH_OUT_DOC:
         return API_ROUTES.DATA_MIGRATION.LEDGER.CASH_OUT_DOCUMENT;
+      case this.UPLOAD_TYPES.CUSTODY_SETTLEMENT:
+        return API_ROUTES.DATA_MIGRATION.LEDGER.CUSTODY_SETTLEMENT;
 
       default:
         throw new Error(

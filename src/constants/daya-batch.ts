@@ -38,6 +38,10 @@ export const ENTRY_PROCESSOR_OPTIONS = {
       label: 'Trucking Closing',
       value: TEntryProcessorTypes.LedgerTruckingClosingEntry,
     },
+    {
+      label: 'Custody Settlement',
+      value: TEntryProcessorTypes.LedgerCustodySettlement,
+    },
   ],
   CASH_MANAGEMENT: [
     {
