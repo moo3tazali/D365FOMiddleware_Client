@@ -106,6 +106,7 @@ export const API_ROUTES = {
     },
     LEDGER: {
       FREIGHT_CLOSING_DOCUMENT: '/DataMigration/Ledger/Freight-Closing-Entry',
+      FREIGHT_CLOSING_DIFFERENCE: '/DataMigration/Ledger/Freight-Closing-Difference',
       FREIGHT_CLOSING: '/DataMigration/Ledger/Freight-Closing',
       TRUCKING_CLOSING_DOCUMENT: '/DataMigration/Ledger/Trucking-Closing-Entry',
       TRUCKING_CLOSING: '/DataMigration/Ledger/Trucking-Closing',

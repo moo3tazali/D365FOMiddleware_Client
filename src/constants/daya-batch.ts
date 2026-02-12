@@ -42,6 +42,10 @@ export const ENTRY_PROCESSOR_OPTIONS = {
       label: 'Custody Settlement',
       value: TEntryProcessorTypes.LedgerCustodySettlement,
     },
+    {
+      label: 'Freight Closing Difference',
+      value: TEntryProcessorTypes.LedgerFreightClosingDifference,
+    },
   ],
   CASH_MANAGEMENT: [
     {

@@ -22,6 +22,7 @@ export enum TEntryProcessorTypes {
   CashInFreight = 21,
   CashOutFreight = 22,
   LedgerCustodySettlement = 23,
+  LedgerFreightClosingDifference = 24,
 }
 
 export enum TDataBatchStatus {

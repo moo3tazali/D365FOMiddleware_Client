@@ -155,6 +155,7 @@ export class DataBatch {
           TEntryProcessorTypes.LedgerFreightClosingEntry,
           TEntryProcessorTypes.LedgerTruckingClosingEntry,
           TEntryProcessorTypes.LedgerCustodySettlement,
+          TEntryProcessorTypes.LedgerFreightClosingDifference,
         ];
       case 'accountPayable':
         return [

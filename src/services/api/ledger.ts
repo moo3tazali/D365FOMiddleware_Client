@@ -22,6 +22,7 @@ export class Ledger {
   public readonly mutationKey = ['ledger-upload'];
   public readonly UPLOAD_TYPES = {
     FREIGHT_CLOSING_DOC: TEntryProcessorTypes.LedgerFreightClosingEntry,
+    FREIGHT_CLOSING_DIFFERENCE: TEntryProcessorTypes.LedgerFreightClosingDifference,
     TRUCKING_CLOSING_DOC: TEntryProcessorTypes.LedgerTruckingClosingEntry,
     FREIGHT_VENDOR_ACCRUAL_DOC: TEntryProcessorTypes.VendorFreight,
     TRUCKING_VENDOR_ACCRUAL_DOC: TEntryProcessorTypes.VendorTrucking,
@@ -71,6 +72,8 @@ export class Ledger {
     switch (Number(type)) {
       case this.UPLOAD_TYPES.FREIGHT_CLOSING_DOC:
         return API_ROUTES.DATA_MIGRATION.LEDGER.FREIGHT_CLOSING_DOCUMENT;
+      case this.UPLOAD_TYPES.FREIGHT_CLOSING_DIFFERENCE:
+        return API_ROUTES.DATA_MIGRATION.LEDGER.FREIGHT_CLOSING_DIFFERENCE;
       case this.UPLOAD_TYPES.TRUCKING_CLOSING_DOC:
         return API_ROUTES.DATA_MIGRATION.LEDGER.TRUCKING_CLOSING_DOCUMENT;
       case this.UPLOAD_TYPES.FREIGHT_VENDOR_ACCRUAL_DOC:
