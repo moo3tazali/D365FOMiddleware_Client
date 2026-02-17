@@ -15,7 +15,6 @@ export const API_ROUTES = {
         GET: '/Finance/MasterData/customers',
         SYNC: '/Finance/MasterData/customers/sync',
       },
-
       FINANCIAL_DIMENSIONS: {
         GET: '/Finance/MasterData/financial-dimensions',
         SYNC: '/Finance/MasterData/financial-dimensions/sync',
@@ -91,35 +90,19 @@ export const API_ROUTES = {
     },
     ACCOUNT_RECEIVABLE: {
       FREIGHT_DOCUMENT: '/DataMigration/AccountReceivable/Freight-Document',
-      FREIGHT: '/DataMigration/AccountReceivable/Freight',
       TRUCKING_DOCUMENT: '/DataMigration/AccountReceivable/Trucking-Document',
-      TRUCKING: '/DataMigration/AccountReceivable/Trucking',
       FREIGHT_CREDIT_NOTE_DOCUMENT:
         '/DataMigration/AccountReceivable/Freight-CreditNote-Document',
-      FREIGHT_CREDIT_NOTE:
-        '/DataMigration/AccountReceivable/Freight-CreditNote',
       TRUCKING_CREDIT_NOTE_DOCUMENT:
         '/DataMigration/AccountReceivable/Trucking-CreditNote-Document',
-      TRUCKING_CREDIT_NOTE:
-        '/DataMigration/AccountReceivable/Trucking-CreditNote',
       POST_TO_DFO: '/DataMigration/AccountReceivable/PostToDFO',
     },
-    LEDGER: {
-      FREIGHT_CLOSING_DOCUMENT: '/DataMigration/Ledger/Freight-Closing-Entry',
-      FREIGHT_CLOSING_DIFFERENCE: '/DataMigration/Ledger/Freight-Closing-Difference',
-      FREIGHT_CLOSING: '/DataMigration/Ledger/Freight-Closing',
-      TRUCKING_CLOSING_DOCUMENT: '/DataMigration/Ledger/Trucking-Closing-Entry',
-      TRUCKING_CLOSING: '/DataMigration/Ledger/Trucking-Closing',
-      FREIGHT_VENDOR_ACCRUAL_DOCUMENT:
-        '/DataMigration/Ledger/Freight-Vendor-Accrual-Document',
-      FREIGHT_VENDOR_ACCRUAL: '/DataMigration/Ledger/Freight-Vendor-Accrual',
-      TRUCKING_VENDOR_ACCRUAL_DOCUMENT:
-        '/DataMigration/Ledger/Trucking-Vendor-Accrual-Document',
-      TRUCKING_VENDOR_ACCRUAL: '/DataMigration/Ledger/Trucking-Vendor-Accrual',
-      CASH_OUT_DOCUMENT: '/DataMigration/Ledger/Cash-Out-Document',
-      CASH_IN_DOCUMENT: '/DataMigration/Ledger/Cash-In-Document',
-      CUSTODY_SETTLEMENT: '/DataMigration/Ledger/custody-settlement',
-      POST_TO_DFO: '/DataMigration/Ledger/PostToDFO',
+    CLOSING: {
+      FREIGHT_CLOSING_ENTRY: '/DataMigration/Closing/Freight-Closing-Entry',
+      TRUCKING_CLOSING_ENTRY: '/DataMigration/Closing/Trucking-Closing-Entry',
+      FREIGHT_CLOSING_DIFFERENCE: '/DataMigration/Closing/Freight-Closing-Difference',
+      CUSTODY_SETTLEMENT: '/DataMigration/Closing/Custody-Settlement',
+      POST_TO_DFO: '/DataMigration/Closing/PostToDFO',
     },
     VENDOR: {
       FREIGHT_DOCUMENT: '/DataMigration/Vendor/Freight-Document',
@@ -130,11 +113,9 @@ export const API_ROUTES = {
         '/DataMigration/Vendor/Trucking-Document-Adjustment',
       POST_TO_DFO: '/DataMigration/Vendor/PostToDFO',
     },
-    CASH_IN: {
-      FREIGHT_DOCUMENT: '/DataMigration/CashIn/Freight-Document',
-    },
-    CASH_OUT: {
-      FREIGHT_DOCUMENT: '/DataMigration/CashOut/Freight-Document',
+    CASH: {
+      CASH_IN_FREIGHT_DOCUMENT: '/DataMigration/Cash/CashIn-Freight-Document',
+      CASH_OUT_FREIGHT_DOCUMENT: '/DataMigration/Cash/CashOut-Freight-Document',
     },
   },
 } as const;

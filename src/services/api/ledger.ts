@@ -24,9 +24,6 @@ export class Ledger {
     FREIGHT_CLOSING_DOC: TEntryProcessorTypes.LedgerFreightClosingEntry,
     FREIGHT_CLOSING_DIFFERENCE: TEntryProcessorTypes.LedgerFreightClosingDifference,
     TRUCKING_CLOSING_DOC: TEntryProcessorTypes.LedgerTruckingClosingEntry,
-    FREIGHT_VENDOR_ACCRUAL_DOC: TEntryProcessorTypes.VendorFreight,
-    TRUCKING_VENDOR_ACCRUAL_DOC: TEntryProcessorTypes.VendorTrucking,
-    CASH_OUT_DOC: TEntryProcessorTypes.LedgerCashOut,
     CUSTODY_SETTLEMENT: TEntryProcessorTypes.LedgerCustodySettlement,
   };
 
@@ -63,7 +60,7 @@ export class Ledger {
 
   public postToDFO = async (batchId: string): Promise<PostToDFOResponse> => {
     return syncService.save<PostToDFOResponse, { batchId: string }>(
-      API_ROUTES.DATA_MIGRATION.LEDGER.POST_TO_DFO,
+      API_ROUTES.DATA_MIGRATION.CLOSING.POST_TO_DFO,
       { batchId }
     );
   };
@@ -71,20 +68,16 @@ export class Ledger {
   private async _getUploadApiRoute(type: number | string) {
     switch (Number(type)) {
       case this.UPLOAD_TYPES.FREIGHT_CLOSING_DOC:
-        return API_ROUTES.DATA_MIGRATION.LEDGER.FREIGHT_CLOSING_DOCUMENT;
+        return API_ROUTES.DATA_MIGRATION.CLOSING.FREIGHT_CLOSING_ENTRY;
+
       case this.UPLOAD_TYPES.FREIGHT_CLOSING_DIFFERENCE:
-        return API_ROUTES.DATA_MIGRATION.LEDGER.FREIGHT_CLOSING_DIFFERENCE;
+        return API_ROUTES.DATA_MIGRATION.CLOSING.FREIGHT_CLOSING_DIFFERENCE;
+
       case this.UPLOAD_TYPES.TRUCKING_CLOSING_DOC:
-        return API_ROUTES.DATA_MIGRATION.LEDGER.TRUCKING_CLOSING_DOCUMENT;
-      case this.UPLOAD_TYPES.FREIGHT_VENDOR_ACCRUAL_DOC:
-        return API_ROUTES.DATA_MIGRATION.LEDGER.FREIGHT_VENDOR_ACCRUAL_DOCUMENT;
-      case this.UPLOAD_TYPES.TRUCKING_VENDOR_ACCRUAL_DOC:
-        return API_ROUTES.DATA_MIGRATION.LEDGER
-          .TRUCKING_VENDOR_ACCRUAL_DOCUMENT;
-      case this.UPLOAD_TYPES.CASH_OUT_DOC:
-        return API_ROUTES.DATA_MIGRATION.LEDGER.CASH_OUT_DOCUMENT;
+        return API_ROUTES.DATA_MIGRATION.CLOSING.TRUCKING_CLOSING_ENTRY;
+
       case this.UPLOAD_TYPES.CUSTODY_SETTLEMENT:
-        return API_ROUTES.DATA_MIGRATION.LEDGER.CUSTODY_SETTLEMENT;
+        return API_ROUTES.DATA_MIGRATION.CLOSING.CUSTODY_SETTLEMENT;
 
       default:
         throw new Error(

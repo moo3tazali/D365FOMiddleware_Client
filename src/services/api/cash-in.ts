@@ -53,7 +53,7 @@ export class CashIn {
   private async _getUploadApiRoute(type: number | string) {
     switch (Number(type)) {
       case this.UPLOAD_TYPES.FREIGHT_DOC:
-        return API_ROUTES.DATA_MIGRATION.CASH_IN.FREIGHT_DOCUMENT;
+        return API_ROUTES.DATA_MIGRATION.CASH.CASH_IN_FREIGHT_DOCUMENT;
       default:
         throw new Error(
           `Invalid upload type, Upload type must satisfies ${Object.entries(
