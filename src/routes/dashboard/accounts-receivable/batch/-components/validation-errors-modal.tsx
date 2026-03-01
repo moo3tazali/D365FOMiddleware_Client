@@ -15,7 +15,8 @@ interface ValidationErrorsModalProps {
 }
 
 interface ParsedError {
-  invoiceIndex: number;
+  /** Invoice index from API, or null when API returns "Invoice[?]" */
+  invoiceIndex: number | null;
   location: 'Header' | 'Line';
   lineNumber?: number;
   fields: string[];
@@ -44,8 +45,8 @@ export const ValidationErrorsModal = ({
               <AlertCircleIcon />
               <AlertTitle>
                 {error.location === 'Header'
-                  ? `Invoice ${error.invoiceIndex} Header`
-                  : `Invoice ${error.invoiceIndex}, Line ${error.lineNumber}`}
+                  ? `Invoice ${error.invoiceIndex ?? '?'} Header`
+                  : `Invoice ${error.invoiceIndex ?? '?'}, Line ${error.lineNumber}`}
               </AlertTitle>
               <AlertDescription>
                 <ul className='list-disc list-inside space-y-1 mt-2'>
@@ -62,19 +63,25 @@ export const ValidationErrorsModal = ({
   );
 };
 
+/** Matches "Invoice[0].Header", "Invoice[?].Header" */
+const HEADER_REGEX = /Invoice\[(\d+|\?)\]\.Header/;
+/** Matches "Invoice[0].Line[1]", "Invoice[?].Line[1]" */
+const LINE_REGEX = /Invoice\[(\d+|\?)\]\.Line\[(\d+)\]/;
+
 function parseValidationErrors(
   validationErrors: Record<string, string[]>
 ): ParsedError[] {
   const grouped = new Map<string, ParsedError>();
 
   for (const [key, messages] of Object.entries(validationErrors)) {
-    // Parse key format: "Invoice[0].Header" or "Invoice[0].Line[1]"
-    const headerMatch = key.match(/Invoice\[(\d+)\]\.Header/);
-    const lineMatch = key.match(/Invoice\[(\d+)\]\.Line\[(\d+)\]/);
+    const headerMatch = key.match(HEADER_REGEX);
+    const lineMatch = key.match(LINE_REGEX);
 
     if (headerMatch) {
-      const invoiceIndex = parseInt(headerMatch[1], 10);
-      const mapKey = `invoice-${invoiceIndex}-header`;
+      const rawIndex = headerMatch[1];
+      const invoiceIndex =
+        rawIndex === '?' ? null : parseInt(rawIndex, 10);
+      const mapKey = `invoice-${rawIndex}-header`;
 
       if (!grouped.has(mapKey)) {
         grouped.set(mapKey, {
@@ -85,15 +92,16 @@ function parseValidationErrors(
       }
 
       const error = grouped.get(mapKey)!;
-      // Extract field names from messages like "Missing required field: PostingProfile"
       const fields = messages.map((msg) =>
         msg.replace(/^Missing required field:\s*/i, '')
       );
       error.fields.push(...fields);
     } else if (lineMatch) {
-      const invoiceIndex = parseInt(lineMatch[1], 10);
+      const rawIndex = lineMatch[1];
+      const invoiceIndex =
+        rawIndex === '?' ? null : parseInt(rawIndex, 10);
       const lineNumber = parseInt(lineMatch[2], 10);
-      const mapKey = `invoice-${invoiceIndex}-line-${lineNumber}`;
+      const mapKey = `invoice-${rawIndex}-line-${lineNumber}`;
 
       if (!grouped.has(mapKey)) {
         grouped.set(mapKey, {
@@ -105,7 +113,6 @@ function parseValidationErrors(
       }
 
       const error = grouped.get(mapKey)!;
-      // Extract field names from messages
       const fields = messages.map((msg) =>
         msg.replace(/^Missing required field:\s*/i, '')
       );
@@ -113,11 +120,10 @@ function parseValidationErrors(
     }
   }
 
-  // Convert map to array and sort by invoice index, then by location (Header first)
   return Array.from(grouped.values()).sort((a, b) => {
-    if (a.invoiceIndex !== b.invoiceIndex) {
-      return a.invoiceIndex - b.invoiceIndex;
-    }
+    const aIdx = a.invoiceIndex ?? -1;
+    const bIdx = b.invoiceIndex ?? -1;
+    if (aIdx !== bIdx) return aIdx - bIdx;
     if (a.location === 'Header' && b.location === 'Line') return -1;
     if (a.location === 'Line' && b.location === 'Header') return 1;
     if (a.location === 'Line' && b.location === 'Line') {
