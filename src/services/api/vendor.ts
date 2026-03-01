@@ -26,6 +26,8 @@ export class Vendor {
     TRUCKING_DOC: TEntryProcessorTypes.VendorTrucking,
     FREIGHT_DOCUMENT_ADJUSTMENT: TEntryProcessorTypes.VendorFreightAdjustment,
     TRUCKING_DOCUMENT_ADJUSTMENT: TEntryProcessorTypes.VendorTruckingAdjustment,
+    PAYMENT_FREIGHT: TEntryProcessorTypes.VendorPaymentFreight,
+    PAYMENT_TRUCKING: TEntryProcessorTypes.VendorPaymentTrucking,
   };
 
   private constructor() {}
@@ -83,6 +85,10 @@ export class Vendor {
         return API_ROUTES.DATA_MIGRATION.VENDOR.FREIGHT_DOCUMENT_ADJUSTMENT;
       case this.UPLOAD_TYPES.TRUCKING_DOCUMENT_ADJUSTMENT:
         return API_ROUTES.DATA_MIGRATION.VENDOR.TRUCKING_DOCUMENT_ADJUSTMENT;
+      case this.UPLOAD_TYPES.PAYMENT_FREIGHT:
+        return API_ROUTES.DATA_MIGRATION.VENDOR.PAYMENT_FREIGHT;
+      case this.UPLOAD_TYPES.PAYMENT_TRUCKING:
+        return API_ROUTES.DATA_MIGRATION.VENDOR.PAYMENT_TRUCKING;
       default:
         throw new Error(
           `Invalid upload type, Upload type must satisfies ${Object.entries(

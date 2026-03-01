@@ -11,7 +11,7 @@ import { TableActionCol } from '@/components/table-action-col';
 import { useDataBatchAction } from '../-hooks/use-data-batch-action';
 import { ROUTES } from '@/router';
 import { Button } from '@/components/ui/button';
-import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/daya-batch';
+import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/data-batch';
 import { useSearchQuery } from '@/hooks/use-search-query';
 import { ClampText } from '@/components/ui/clamp-text';
 

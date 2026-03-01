@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { useSearchQuery } from '@/hooks/use-search-query';
 
-import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/daya-batch';
+import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/data-batch';
 
 const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.ACCOUNT_RECEIVABLE;
 const entryProcessorValues = entryProcessorOptions.map(({ value }) => value);

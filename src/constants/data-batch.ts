@@ -74,6 +74,14 @@ export const ENTRY_PROCESSOR_OPTIONS = {
       label: 'Trucking Vendor Adjustment',
       value: TEntryProcessorTypes.VendorTruckingAdjustment,
     },
+    {
+      label: 'Payment Freight',
+      value: TEntryProcessorTypes.VendorPaymentFreight,
+    },
+    {
+      label: 'Payment Trucking',
+      value: TEntryProcessorTypes.VendorPaymentTrucking,
+    },
   ],
   CASH_IN: [
     {

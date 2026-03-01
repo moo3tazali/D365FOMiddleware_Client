@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/file-upload';
 import { useBatchForm } from '../-hooks/use-batch-form';
 import { Progress } from '@/components/ui/progress';
-import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/daya-batch';
+import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/data-batch';
 
 export const BatchForm = () => {
   const { form } = useBatchForm();
