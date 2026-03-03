@@ -59,7 +59,7 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
         </AlertTitle>
         <AlertDescription className='text-emerald-800 dark:text-emerald-200'>
           <div className='space-y-2'>
-            <p>{batch.dfoIds.length} invoice(s) created in D365FO</p>
+            <p>{batch.dfoIds.length} BatchNumber(s) created in D365FO</p>
             <details
               open={isExpanded}
               onToggle={(e) => setIsExpanded(e.currentTarget.open)}
@@ -69,19 +69,19 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
                 {isExpanded ? (
                   <>
                     <ChevronUp className='size-4' />
-                    Hide Invoice IDs
+                    Hide BatchNumbers
                   </>
                 ) : (
                   <>
                     <ChevronDown className='size-4' />
-                    View Invoice IDs
+                    View BatchNumbers
                   </>
                 )}
               </summary>
               <ul className='list-disc list-inside space-y-1 mt-2 ml-2'>
                 {batch.dfoIds.map((id, idx) => (
                   <li key={idx} className='text-sm font-mono'>
-                    Invoice ID: {id}
+                    BatchNumber: {id}
                   </li>
                 ))}
               </ul>
