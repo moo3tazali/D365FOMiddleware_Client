@@ -178,6 +178,8 @@ export class DataBatch {
           TEntryProcessorTypes.VendorTrucking,
           TEntryProcessorTypes.VendorFreightAdjustment,
           TEntryProcessorTypes.VendorTruckingAdjustment,
+          TEntryProcessorTypes.VendorPaymentFreight,
+          TEntryProcessorTypes.VendorPaymentTrucking,
         ];
       default:
         return [];
