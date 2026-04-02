@@ -17,6 +17,7 @@ export class CashOut {
   public readonly mutationKey = ['cash-out-upload'];
   public readonly UPLOAD_TYPES = {
     FREIGHT_DOC: TEntryProcessorTypes.CashOutFreight,
+    TRUCKING_DOC: TEntryProcessorTypes.CashOutTrucking,
   };
 
   private constructor() {}
@@ -54,6 +55,8 @@ export class CashOut {
     switch (Number(type)) {
       case this.UPLOAD_TYPES.FREIGHT_DOC:
         return API_ROUTES.DATA_MIGRATION.CASH.CASH_OUT_FREIGHT_DOCUMENT;
+      case this.UPLOAD_TYPES.TRUCKING_DOC:
+        return API_ROUTES.DATA_MIGRATION.CASH.CASH_OUT_TRUCKING_DOCUMENT;
       default:
         throw new Error(
           `Invalid upload type, Upload type must satisfies ${Object.entries(

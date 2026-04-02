@@ -118,6 +118,9 @@ export const API_ROUTES = {
     CASH: {
       CASH_IN_FREIGHT_DOCUMENT: '/DataMigration/Cash/CashIn-Freight-Document',
       CASH_OUT_FREIGHT_DOCUMENT: '/DataMigration/Cash/CashOut-Freight-Document',
+      CASH_IN_TRUCKING_DOCUMENT: '/DataMigration/Cash/CashIn-Trucking-Document',
+      CASH_OUT_TRUCKING_DOCUMENT: '/DataMigration/Cash/CashOut-Trucking-Document',
+      POST_TO_DFO: '/DataMigration/Cash/PostToDFO',
     },
   },
 } as const;

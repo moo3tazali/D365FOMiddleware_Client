@@ -169,9 +169,15 @@ export class DataBatch {
           TEntryProcessorTypes.LedgerVisaOut,
         ];
       case 'cashIn':
-        return [TEntryProcessorTypes.CashInFreight];
+        return [
+          TEntryProcessorTypes.CashInFreight,
+          TEntryProcessorTypes.CashInTrucking,
+        ];
       case 'cashOut':
-        return [TEntryProcessorTypes.CashOutFreight];
+        return [
+          TEntryProcessorTypes.CashOutFreight,
+          TEntryProcessorTypes.CashOutTrucking,
+        ];
       case 'vendor':
         return [
           TEntryProcessorTypes.VendorFreight,
