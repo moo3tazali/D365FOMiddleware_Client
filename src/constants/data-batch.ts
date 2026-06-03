@@ -1,5 +1,26 @@
 import { TEntryProcessorTypes } from '@/interfaces/data-batch';
 
+export const ACCOUNT_RECEIVABLE_ENTRY_PROCESSOR_TYPES = [
+  TEntryProcessorTypes.AccountReceivableFreight,
+  TEntryProcessorTypes.AccountReceivableTrucking,
+  TEntryProcessorTypes.AccountReceivableFreightCreditNote,
+  TEntryProcessorTypes.AccountReceivableTruckingCreditNote,
+] as const;
+
+export const isAccountReceivableEntryProcessorType = (
+  entryProcessorType: TEntryProcessorTypes
+) =>
+  (ACCOUNT_RECEIVABLE_ENTRY_PROCESSOR_TYPES as readonly TEntryProcessorTypes[]).includes(
+    entryProcessorType
+  );
+
+export const getExpectedGroupCountLabel = (
+  entryProcessorType: TEntryProcessorTypes
+) =>
+  isAccountReceivableEntryProcessorType(entryProcessorType)
+    ? 'invoice(s)'
+    : 'BatchNumber(s)';
+
 export const ENTRY_PROCESSOR_OPTIONS = {
   ACCOUNT_RECEIVABLE: [
     {

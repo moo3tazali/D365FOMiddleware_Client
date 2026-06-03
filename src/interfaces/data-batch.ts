@@ -53,6 +53,7 @@ export interface TDataBatch {
   totalUploadedCount: number;
   status: TDataBatchStatus;
   skipErrors?: boolean;
-  dfoIds?: string[]; // Array of D365FO invoice header IDs
+  expectedGroupCount?: number;
+  dfoIds?: string[]; // Array of created D365FO group IDs
   dfoPostingErrors?: string[]; // Array of error messages from D365FO posting failures
 }

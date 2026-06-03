@@ -5,6 +5,7 @@ import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down';
 import ChevronUp from 'lucide-react/dist/esm/icons/chevron-up';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { getExpectedGroupCountLabel } from '@/constants/data-batch';
 import type { TDataBatch } from '@/interfaces/data-batch';
 
 interface BatchDFOStatusProps {
@@ -13,22 +14,44 @@ interface BatchDFOStatusProps {
 
 export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const expectedGroupCount =
+    typeof batch.expectedGroupCount === 'number'
+      ? batch.expectedGroupCount
+      : undefined;
+  const dfoIds = batch.dfoIds ?? [];
+  const dfoPostingErrors = batch.dfoPostingErrors ?? [];
+  const hasDfoIds = dfoIds.length > 0;
+  const hasDfoPostingErrors = dfoPostingErrors.length > 0;
+  const groupLabels = getDfoGroupLabels(batch.entryProcessorType);
 
   // Not posted yet
-  if (!batch.dfoIds && !batch.dfoPostingErrors) {
+  if (!hasDfoIds && !hasDfoPostingErrors) {
     return (
       <Alert variant='default'>
         <AlertCircleIcon />
         <AlertTitle>Not posted to D365FO yet</AlertTitle>
         <AlertDescription>
-          This batch has not been posted to Dynamics 365 Finance & Operations.
+          {expectedGroupCount === undefined ? (
+            'This batch has not been posted to Dynamics 365 Finance & Operations.'
+          ) : (
+            <div className='space-y-1'>
+              <p>
+                This batch has not been posted to Dynamics 365 Finance &
+                Operations.
+              </p>
+              <p>
+                {expectedGroupCount} {groupLabels.countLabel} will be created
+                in D365FO
+              </p>
+            </div>
+          )}
         </AlertDescription>
       </Alert>
     );
   }
 
   // Posting failed
-  if (batch.dfoPostingErrors && batch.dfoPostingErrors.length > 0) {
+  if (hasDfoPostingErrors) {
     return (
       <Alert variant='destructive'>
         <AlertCircleIcon />
@@ -37,7 +60,7 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
           <div className='space-y-2'>
             <p>The batch failed to post to D365FO with the following errors:</p>
             <ul className='list-disc list-inside space-y-1'>
-              {batch.dfoPostingErrors.map((error, idx) => (
+              {dfoPostingErrors.map((error, idx) => (
                 <li key={idx} className='text-sm'>
                   {error}
                 </li>
@@ -50,7 +73,7 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
   }
 
   // Posting succeeded
-  if (batch.dfoIds && batch.dfoIds.length > 0) {
+  if (hasDfoIds) {
     return (
       <Alert variant='default' className='bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800'>
         <CheckCircle2Icon className='text-emerald-600 dark:text-emerald-400' />
@@ -59,7 +82,9 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
         </AlertTitle>
         <AlertDescription className='text-emerald-800 dark:text-emerald-200'>
           <div className='space-y-2'>
-            <p>{batch.dfoIds.length} BatchNumber(s) created in D365FO</p>
+            <p>
+              {dfoIds.length} {groupLabels.countLabel} created in D365FO
+            </p>
             <details
               open={isExpanded}
               onToggle={(e) => setIsExpanded(e.currentTarget.open)}
@@ -69,19 +94,19 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
                 {isExpanded ? (
                   <>
                     <ChevronUp className='size-4' />
-                    Hide BatchNumbers
+                    Hide {groupLabels.detailsLabel}
                   </>
                 ) : (
                   <>
                     <ChevronDown className='size-4' />
-                    View BatchNumbers
+                    View {groupLabels.detailsLabel}
                   </>
                 )}
               </summary>
               <ul className='list-disc list-inside space-y-1 mt-2 ml-2'>
-                {batch.dfoIds.map((id, idx) => (
+                {dfoIds.map((id, idx) => (
                   <li key={idx} className='text-sm font-mono'>
-                    BatchNumber: {id}
+                    {groupLabels.itemLabel}: {id}
                   </li>
                 ))}
               </ul>
@@ -93,4 +118,20 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
   }
 
   return null;
+};
+
+const getDfoGroupLabels = (entryProcessorType: TDataBatch['entryProcessorType']) => {
+  if (getExpectedGroupCountLabel(entryProcessorType) === 'invoice(s)') {
+    return {
+      countLabel: 'invoice(s)',
+      detailsLabel: 'Invoices',
+      itemLabel: 'Invoice',
+    };
+  }
+
+  return {
+    countLabel: 'BatchNumber(s)',
+    detailsLabel: 'BatchNumbers',
+    itemLabel: 'BatchNumber',
+  };
 };
