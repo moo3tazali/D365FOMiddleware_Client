@@ -5,11 +5,9 @@ import SlidersHorizontal from 'lucide-react/dist/esm/icons/sliders-horizontal';
 import CloudAlert from 'lucide-react/dist/esm/icons/cloud-alert';
 import AlertCircleIcon from 'lucide-react/dist/esm/icons/alert-circle';
 import CheckCircle2Icon from 'lucide-react/dist/esm/icons/check-circle-2';
-import Files from 'lucide-react/dist/esm/icons/files';
 
 import { Frame } from '@/components/ui/frame';
 import type { TDataBatch } from '@/interfaces/data-batch';
-import { getExpectedGroupCountLabel } from '@/constants/data-batch';
 import { CloudCheck } from '@/assets/icons/cloud-check';
 import { useBatchQueryData } from '../-hooks/use-batch-query-data';
 import { Description } from '@/components/ui/description';
@@ -114,27 +112,10 @@ const ErrorIcon = () => (
   </div>
 );
 
-const ExpectedGroupIcon = () => (
-  <div className='bg-amber-100 dark:bg-amber-800/20 rounded-full p-2 md:p-4'>
-    <Files className='text-amber-500 dark:text-amber-400 size-[clamp(1.75rem,2vw,4rem)]' />
-  </div>
-);
-
 const useResultItems = (entries?: TDataBatch | null) => {
   const defaultTotal = '--';
   return useMemo(
     () => {
-      const expectedGroupItems =
-        entries && typeof entries.expectedGroupCount === 'number'
-          ? [
-              {
-                label: `Expected ${getExpectedGroupCountLabel(entries.entryProcessorType)}`,
-                total: entries.expectedGroupCount.toLocaleString('en-US'),
-                Icon: ExpectedGroupIcon,
-              },
-            ]
-          : [];
-
       return [
         {
           label: 'Total Uploaded',
@@ -160,7 +141,6 @@ const useResultItems = (entries?: TDataBatch | null) => {
           total: entries?.errorCount?.toLocaleString('en-US') || defaultTotal,
           Icon: ErrorIcon,
         },
-        ...expectedGroupItems,
       ] satisfies {
         label: string;
         total: string;
