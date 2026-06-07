@@ -9,7 +9,7 @@ import { useParsedPagination } from '@/hooks/use-parsed-pagination';
 
 export const useSubmitBatch = () => {
   const { refetch } = useInvalidate();
-  const { dataBatch } = useServices();
+  const { cashOut, dataBatch } = useServices();
 
   const batchNumber = useParams({
     from: '/dashboard/cash-out/batch/$batchId',
@@ -19,7 +19,7 @@ export const useSubmitBatch = () => {
 
   const { mutate, isPending } = useMutation({
     operationName: 'submit batch',
-    mutationFn: dataBatch.insertBatch,
+    mutationFn: (batchId: string) => cashOut.postToDFO(batchId),
     refetchQueries: [
       [...dataBatch.queryKey, { batchNumber }],
       [...dataBatch.getQueryKey('cashOut', defaultPagination)],
@@ -31,10 +31,7 @@ export const useSubmitBatch = () => {
 
   const onSubmit = useCallback(
     (values: TDataBatch) => {
-      mutate({
-        batchId: values.id,
-        skipErrors: true,
-      });
+      mutate(values.id);
     },
     [mutate]
   );
