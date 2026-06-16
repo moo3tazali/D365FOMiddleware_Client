@@ -28,6 +28,7 @@ export class AccountReceivable {
       TEntryProcessorTypes.AccountReceivableFreightCreditNote,
     TRUCKING_CREDIT_NOTE_DOC:
       TEntryProcessorTypes.AccountReceivableTruckingCreditNote,
+    YARD_DOC: TEntryProcessorTypes.AccountReceivableYard,
   };
 
   private constructor() {}
@@ -47,12 +48,7 @@ export class AccountReceivable {
   }): Promise<UploadResponse> => {
     const { data, type } = options;
 
-    if (
-      [this.UPLOAD_TYPES.FREIGHT_DOC, this.UPLOAD_TYPES.TRUCKING_DOC].includes(
-        Number(type)
-      ) &&
-      !data.billingCodeId
-    ) {
+    if (this.isBillingCodeRequired(type) && !data.billingCodeId) {
       throw new Error('billingCodeId is required for this upload type.');
     }
 
@@ -62,7 +58,7 @@ export class AccountReceivable {
       formData: true,
       onUploadProgress: (progressEvent) => {
         const percentCompleted = Math.round(
-          (progressEvent.loaded * 100) / (progressEvent?.total || 1)
+          (progressEvent.loaded * 100) / (progressEvent?.total || 1),
         );
         if (!options.uploadProgress) return;
         options.uploadProgress(percentCompleted);
@@ -77,10 +73,17 @@ export class AccountReceivable {
     ].includes(Number(type));
   }
 
+  public isBillingCodeRequired(type: number | string) {
+    return [
+      this.UPLOAD_TYPES.FREIGHT_DOC,
+      this.UPLOAD_TYPES.TRUCKING_DOC,
+    ].includes(Number(type));
+  }
+
   public postToDFO = async (batchId: string): Promise<PostToDFOResponse> => {
     return syncService.save<PostToDFOResponse, { batchId: string }>(
       API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE.POST_TO_DFO,
-      { batchId }
+      { batchId },
     );
   };
 
@@ -96,13 +99,15 @@ export class AccountReceivable {
       case this.UPLOAD_TYPES.TRUCKING_CREDIT_NOTE_DOC:
         return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE
           .TRUCKING_CREDIT_NOTE_DOCUMENT;
+      case this.UPLOAD_TYPES.YARD_DOC:
+        return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE.YARD_DOCUMENT;
       default:
         throw new Error(
           `Invalid upload type, Upload type must satisfies ${Object.entries(
-            this.UPLOAD_TYPES
+            this.UPLOAD_TYPES,
           )
             .map(([key, value]) => `${key}: ${value}`)
-            .join(', ')}`
+            .join(', ')}`,
         );
     }
   }

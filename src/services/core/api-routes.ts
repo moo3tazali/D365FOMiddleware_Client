@@ -62,7 +62,7 @@ export const API_ROUTES = {
       TAX_ITEM_GROUP_HEADINGS: {
         GET: '/Finance/MasterData/tax-item-group-headings',
         SYNC: '/Finance/MasterData/tax-item-group-headings/sync',
-      }
+      },
     },
   },
   PUBLIC: {
@@ -82,8 +82,7 @@ export const API_ROUTES = {
         '/DataMigration/DataBatch/download-enhanced-record-list',
       DOWNLOAD_BATCH_ERROR_LIST:
         '/DataMigration/DataBatch/download-batch-error-list',
-      DOWNLOAD_SOURCE_FILE:
-        '/DataMigration/DataBatch/download-source-file',
+      DOWNLOAD_SOURCE_FILE: '/DataMigration/DataBatch/download-source-file',
       ERROR_LIST: '/DataMigration/DataBatch/error-list',
       DELETE: '/DataMigration/DataBatch',
       INSERT: '/DataMigration/DataBatch/insert',
@@ -95,12 +94,14 @@ export const API_ROUTES = {
         '/DataMigration/AccountReceivable/Freight-CreditNote-Document',
       TRUCKING_CREDIT_NOTE_DOCUMENT:
         '/DataMigration/AccountReceivable/Trucking-CreditNote-Document',
+      YARD_DOCUMENT: '/DataMigration/AccountReceivable/Yard-Document',
       POST_TO_DFO: '/DataMigration/AccountReceivable/PostToDFO',
     },
     CLOSING: {
       FREIGHT_CLOSING_ENTRY: '/DataMigration/Closing/Freight-Closing-Entry',
       TRUCKING_CLOSING_ENTRY: '/DataMigration/Closing/Trucking-Closing-Entry',
-      FREIGHT_CLOSING_DIFFERENCE: '/DataMigration/Closing/Freight-Closing-Difference',
+      FREIGHT_CLOSING_DIFFERENCE:
+        '/DataMigration/Closing/Freight-Closing-Difference',
       CUSTODY_SETTLEMENT: '/DataMigration/Closing/Custody-Settlement',
       POST_TO_DFO: '/DataMigration/Closing/PostToDFO',
     },
@@ -119,7 +120,8 @@ export const API_ROUTES = {
       CASH_IN_FREIGHT_DOCUMENT: '/DataMigration/Cash/CashIn-Freight-Document',
       CASH_OUT_FREIGHT_DOCUMENT: '/DataMigration/Cash/CashOut-Freight-Document',
       CASH_IN_TRUCKING_DOCUMENT: '/DataMigration/Cash/CashIn-Trucking-Document',
-      CASH_OUT_TRUCKING_DOCUMENT: '/DataMigration/Cash/CashOut-Trucking-Document',
+      CASH_OUT_TRUCKING_DOCUMENT:
+        '/DataMigration/Cash/CashOut-Trucking-Document',
       POST_TO_DFO: '/DataMigration/Cash/PostToDFO',
     },
   },
@@ -148,7 +150,7 @@ export class ApiRoutes {
 
   public build(
     url: ApiRoutesValues,
-    options?: Omit<BuildUrlOptions, 'url'>
+    options?: Omit<BuildUrlOptions, 'url'>,
   ): string {
     if (!options) return url;
 
@@ -163,7 +165,7 @@ export class ApiRoutes {
     for (const [key, value] of Object.entries(params)) {
       updatedUrl = updatedUrl.replace(
         new RegExp(`:${key}\\b`, 'g'),
-        encodeURIComponent(value)
+        encodeURIComponent(value),
       );
     }
 

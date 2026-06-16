@@ -45,7 +45,7 @@ const FormSchema = z
     const type = Number(data.type);
     const billingCode = data.billingCodeId;
     const isBillingCodeRequired =
-      !AccountReceivable.getInstance().isCreditNote(type);
+      AccountReceivable.getInstance().isBillingCodeRequired(type);
 
     if (isBillingCodeRequired && (!billingCode || billingCode.trim() === '')) {
       ctx.addIssue({
@@ -115,8 +115,8 @@ export const useBatchForm = () => {
   }, [type]);
 
   const isBillingCodeDisabled = useMemo(
-    () => accountReceivable.isCreditNote(type),
-    [type, accountReceivable]
+    () => !accountReceivable.isBillingCodeRequired(type),
+    [type, accountReceivable],
   );
 
   const isDisabled = useMemo(() => {
@@ -152,7 +152,7 @@ export const useBatchForm = () => {
         });
       });
     },
-    [startUpload, navigate, setBatch, dismissLoading]
+    [startUpload, navigate, setBatch, dismissLoading],
   );
 
   useEffect(() => {

@@ -5,17 +5,18 @@ export const ACCOUNT_RECEIVABLE_ENTRY_PROCESSOR_TYPES = [
   TEntryProcessorTypes.AccountReceivableTrucking,
   TEntryProcessorTypes.AccountReceivableFreightCreditNote,
   TEntryProcessorTypes.AccountReceivableTruckingCreditNote,
+  TEntryProcessorTypes.AccountReceivableYard,
 ] as const;
 
 export const isAccountReceivableEntryProcessorType = (
-  entryProcessorType: TEntryProcessorTypes
+  entryProcessorType: TEntryProcessorTypes,
 ) =>
-  (ACCOUNT_RECEIVABLE_ENTRY_PROCESSOR_TYPES as readonly TEntryProcessorTypes[]).includes(
-    entryProcessorType
-  );
+  (
+    ACCOUNT_RECEIVABLE_ENTRY_PROCESSOR_TYPES as readonly TEntryProcessorTypes[]
+  ).includes(entryProcessorType);
 
 export const getExpectedGroupCountLabel = (
-  entryProcessorType: TEntryProcessorTypes
+  entryProcessorType: TEntryProcessorTypes,
 ) =>
   isAccountReceivableEntryProcessorType(entryProcessorType)
     ? 'invoice(s)'
@@ -38,6 +39,10 @@ export const ENTRY_PROCESSOR_OPTIONS = {
     {
       label: 'Trucking Credit Note',
       value: TEntryProcessorTypes.AccountReceivableTruckingCreditNote,
+    },
+    {
+      label: 'Yard',
+      value: TEntryProcessorTypes.AccountReceivableYard,
     },
   ],
   ACCOUNT_PAYABLE: [

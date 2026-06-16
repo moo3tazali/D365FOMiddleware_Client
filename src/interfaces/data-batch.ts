@@ -27,6 +27,7 @@ export enum TEntryProcessorTypes {
   VendorPaymentTrucking = 26,
   CashInTrucking = 27,
   CashOutTrucking = 28,
+  AccountReceivableYard = 29,
 }
 
 export enum TDataBatchStatus {
