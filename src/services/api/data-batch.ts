@@ -149,6 +149,7 @@ export class DataBatch {
           TEntryProcessorTypes.AccountReceivableTrucking,
           TEntryProcessorTypes.AccountReceivableFreightCreditNote,
           TEntryProcessorTypes.AccountReceivableTruckingCreditNote,
+          TEntryProcessorTypes.AccountReceivableYard,
         ];
       case 'ledger':
         return [
