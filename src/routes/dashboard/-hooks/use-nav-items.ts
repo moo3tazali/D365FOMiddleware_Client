@@ -1,18 +1,20 @@
 import { useMemo } from 'react';
 import { useLocation } from '@tanstack/react-router';
 import Home from 'lucide-react/dist/esm/icons/home';
-// import Landmark from 'lucide-react/dist/esm/icons/landmark';
 import HandCoins from 'lucide-react/dist/esm/icons/hand-coins';
 import Settings from 'lucide-react/dist/esm/icons/settings';
 import BookOpen from 'lucide-react/dist/esm/icons/book-open';
 import Users from 'lucide-react/dist/esm/icons/users';
 import CashIn from 'lucide-react/dist/esm/icons/banknote-arrow-down';
 import CashOut from 'lucide-react/dist/esm/icons/banknote-arrow-up';
+import Activity from 'lucide-react/dist/esm/icons/activity';
 
 import { ROUTES } from '@/router';
+import { useAuth } from '@/hooks/use-auth';
 
 export const useNavItems = () => {
   const { pathname } = useLocation();
+  const user = useAuth((state) => state.user);
 
   const items = useMemo(
     () => [
@@ -22,12 +24,6 @@ export const useNavItems = () => {
         icon: Home,
         isActive: pathname === ROUTES.DASHBOARD.HOME,
       },
-      // {
-      //   title: 'Accounts Payable',
-      //   url: ROUTES.DASHBOARD.ACCOUNTS_PAYABLE.HOME,
-      //   icon: Landmark,
-      //   isActive: pathname.startsWith(ROUTES.DASHBOARD.ACCOUNTS_PAYABLE.HOME),
-      // },
       {
         title: 'Accounts Receivable',
         url: ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.HOME,
@@ -36,12 +32,6 @@ export const useNavItems = () => {
           ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.HOME
         ),
       },
-      // {
-      //   title: 'Cash Management',
-      //   url: ROUTES.DASHBOARD.CASH_MANAGEMENT.HOME,
-      //   icon: Wallet,
-      //   isActive: pathname.startsWith(ROUTES.DASHBOARD.CASH_MANAGEMENT.HOME),
-      // },
       {
         title: 'Ledger',
         url: ROUTES.DASHBOARD.LEDGER.HOME,
@@ -72,8 +62,20 @@ export const useNavItems = () => {
         icon: Settings,
         isActive: pathname.startsWith(ROUTES.DASHBOARD.SETTINGS.HOME),
       },
+      ...(user?.role === 'ADMIN'
+        ? [
+            {
+              title: 'Observability',
+              url: ROUTES.DASHBOARD.OBSERVABILITY.HOME,
+              icon: Activity,
+              isActive: pathname.startsWith(
+                ROUTES.DASHBOARD.OBSERVABILITY.HOME
+              ),
+            },
+          ]
+        : []),
     ],
-    [pathname]
+    [pathname, user?.role]
   );
 
   return { items };

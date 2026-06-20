@@ -42,7 +42,7 @@ export class Auth {
 
       await tokenService.setToken(res);
 
-      userService.set(data);
+      userService.set(data, res.accessToken);
 
       return userService.get!;
     } catch (error) {

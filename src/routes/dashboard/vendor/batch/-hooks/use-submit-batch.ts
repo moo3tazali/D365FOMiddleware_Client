@@ -34,12 +34,11 @@ export const useSubmitBatch = () => {
       success: '', // Will be replaced in onSuccess
       error: 'Failed to post batch to D365FO',
     },
-    onSuccess: (data) => {
+    onSuccess: (submissionResult) => {
       refetch(dataBatch.queryKey);
-      // Dismiss the default success toast and show custom one with jobId
       toast.dismiss();
-      const response = data as { jobId: string; message: string };
-      toast.success(`Batch queued for posting. Job ID: ${response.jobId}`, {
+      const submitResponse = submissionResult as { jobId: string; message: string };
+      toast.success(submitResponse.message, {
         duration: 5000,
       });
     },
@@ -51,8 +50,8 @@ export const useSubmitBatch = () => {
   });
 
   const onSubmit = useCallback(
-    (values: TDataBatch) => {
-      mutate(values.id);
+    (batch: TDataBatch) => {
+      mutate(batch.id);
     },
     [mutate]
   );

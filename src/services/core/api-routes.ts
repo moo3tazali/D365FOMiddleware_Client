@@ -2,6 +2,12 @@ import type { FlattenObj } from '@/lib/utils';
 
 export const API_ROUTES = {
   ADMIN: {
+    OBSERVABILITY: {
+      LOGS: '/admin/logs',
+      LOG: '/admin/logs/:eventId',
+      QUEUES: '/admin/queues',
+      JOB: '/admin/queues/:queueName/jobs/:jobId',
+    },
     APP_SETTING: {
       LIST: '/settings',
       ONE: '/settings/:logicalName',

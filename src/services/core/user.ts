@@ -25,11 +25,13 @@ export class User {
     return User._instance;
   }
 
-  public set(user: { email: string }) {
+  public set(user: { email: string }, accessToken: string) {
+    const tokenPayload = this.decodeAccessToken(accessToken);
     this._user = {
       email: user.email,
       username: user.email.split('@')[0],
-      avatarPath: '',
+      avatarPath: tokenPayload.avatarPath ?? '',
+      role: tokenPayload.role === 'ADMIN' ? 'ADMIN' : 'OPS',
     };
     this._cookies.set(this._cookieId, this._user);
   }
@@ -50,5 +52,26 @@ export class User {
   public clear() {
     this._user = null;
     this._cookies.remove(this._cookieId);
+  }
+
+  private decodeAccessToken(accessToken: string): {
+    role?: 'ADMIN' | 'OPS';
+    avatarPath?: string;
+  } {
+    try {
+      const encoded = accessToken.split('.')[1];
+      return JSON.parse(
+        decodeURIComponent(
+          Array.from(atob(encoded.replace(/-/g, '+').replace(/_/g, '/')))
+            .map(
+              (character) =>
+                `%${character.charCodeAt(0).toString(16).padStart(2, '0')}`
+            )
+            .join('')
+        )
+      );
+    } catch {
+      return {};
+    }
   }
 }

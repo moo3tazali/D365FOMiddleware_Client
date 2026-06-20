@@ -15,6 +15,7 @@ import { Route as AuthLayoutRouteImport } from './routes/_auth/layout'
 import { Route as AuthForgetPasswordRouteImport } from './routes/_auth/forget-password'
 import { Route as DashboardVendorPageRouteImport } from './routes/dashboard/vendor/page'
 import { Route as DashboardSettingsPageRouteImport } from './routes/dashboard/settings/page'
+import { Route as DashboardObservabilityPageRouteImport } from './routes/dashboard/observability/page'
 import { Route as DashboardLedgerPageRouteImport } from './routes/dashboard/ledger/page'
 import { Route as DashboardCashOutPageRouteImport } from './routes/dashboard/cash-out/page'
 import { Route as DashboardCashManagementPageRouteImport } from './routes/dashboard/cash-management/page'
@@ -94,6 +95,12 @@ const DashboardSettingsPageRoute = DashboardSettingsPageRouteImport.update({
   path: '/settings/',
   getParentRoute: () => DashboardLayoutRoute,
 } as any)
+const DashboardObservabilityPageRoute =
+  DashboardObservabilityPageRouteImport.update({
+    id: '/observability/',
+    path: '/observability/',
+    getParentRoute: () => DashboardLayoutRoute,
+  } as any)
 const DashboardLedgerPageRoute = DashboardLedgerPageRouteImport.update({
   id: '/ledger/',
   path: '/ledger/',
@@ -408,6 +415,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/cash-management': typeof DashboardCashManagementPageRoute
   '/dashboard/cash-out': typeof DashboardCashOutPageRoute
   '/dashboard/ledger': typeof DashboardLedgerPageRoute
+  '/dashboard/observability': typeof DashboardObservabilityPageRoute
   '/dashboard/settings': typeof DashboardSettingsPageRoute
   '/dashboard/vendor': typeof DashboardVendorPageRoute
   '/dashboard/accounts-payable/batch/$batchId': typeof DashboardAccountsPayableBatchBatchIdLayoutRouteWithChildren
@@ -457,6 +465,7 @@ export interface FileRoutesByTo {
   '/dashboard/cash-management': typeof DashboardCashManagementPageRoute
   '/dashboard/cash-out': typeof DashboardCashOutPageRoute
   '/dashboard/ledger': typeof DashboardLedgerPageRoute
+  '/dashboard/observability': typeof DashboardObservabilityPageRoute
   '/dashboard/settings': typeof DashboardSettingsPageRoute
   '/dashboard/vendor': typeof DashboardVendorPageRoute
   '/dashboard/accounts-payable/batch': typeof DashboardAccountsPayableBatchPageRoute
@@ -509,6 +518,7 @@ export interface FileRoutesById {
   '/dashboard/cash-management/': typeof DashboardCashManagementPageRoute
   '/dashboard/cash-out/': typeof DashboardCashOutPageRoute
   '/dashboard/ledger/': typeof DashboardLedgerPageRoute
+  '/dashboard/observability/': typeof DashboardObservabilityPageRoute
   '/dashboard/settings/': typeof DashboardSettingsPageRoute
   '/dashboard/vendor/': typeof DashboardVendorPageRoute
   '/dashboard/accounts-payable/batch/$batchId': typeof DashboardAccountsPayableBatchBatchIdLayoutRouteWithChildren
@@ -567,6 +577,7 @@ export interface FileRouteTypes {
     | '/dashboard/cash-management'
     | '/dashboard/cash-out'
     | '/dashboard/ledger'
+    | '/dashboard/observability'
     | '/dashboard/settings'
     | '/dashboard/vendor'
     | '/dashboard/accounts-payable/batch/$batchId'
@@ -616,6 +627,7 @@ export interface FileRouteTypes {
     | '/dashboard/cash-management'
     | '/dashboard/cash-out'
     | '/dashboard/ledger'
+    | '/dashboard/observability'
     | '/dashboard/settings'
     | '/dashboard/vendor'
     | '/dashboard/accounts-payable/batch'
@@ -667,6 +679,7 @@ export interface FileRouteTypes {
     | '/dashboard/cash-management/'
     | '/dashboard/cash-out/'
     | '/dashboard/ledger/'
+    | '/dashboard/observability/'
     | '/dashboard/settings/'
     | '/dashboard/vendor/'
     | '/dashboard/accounts-payable/batch/$batchId'
@@ -753,6 +766,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/dashboard/settings'
       preLoaderRoute: typeof DashboardSettingsPageRouteImport
+      parentRoute: typeof DashboardLayoutRoute
+    }
+    '/dashboard/observability/': {
+      id: '/dashboard/observability/'
+      path: '/observability'
+      fullPath: '/dashboard/observability'
+      preLoaderRoute: typeof DashboardObservabilityPageRouteImport
       parentRoute: typeof DashboardLayoutRoute
     }
     '/dashboard/ledger/': {
@@ -1412,6 +1432,7 @@ interface DashboardLayoutRouteChildren {
   DashboardCashManagementPageRoute: typeof DashboardCashManagementPageRoute
   DashboardCashOutPageRoute: typeof DashboardCashOutPageRoute
   DashboardLedgerPageRoute: typeof DashboardLedgerPageRoute
+  DashboardObservabilityPageRoute: typeof DashboardObservabilityPageRoute
   DashboardSettingsPageRoute: typeof DashboardSettingsPageRoute
   DashboardVendorPageRoute: typeof DashboardVendorPageRoute
 }
@@ -1435,6 +1456,7 @@ const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
   DashboardCashManagementPageRoute: DashboardCashManagementPageRoute,
   DashboardCashOutPageRoute: DashboardCashOutPageRoute,
   DashboardLedgerPageRoute: DashboardLedgerPageRoute,
+  DashboardObservabilityPageRoute: DashboardObservabilityPageRoute,
   DashboardSettingsPageRoute: DashboardSettingsPageRoute,
   DashboardVendorPageRoute: DashboardVendorPageRoute,
 }

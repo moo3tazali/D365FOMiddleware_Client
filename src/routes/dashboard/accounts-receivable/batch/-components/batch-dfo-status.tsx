@@ -7,6 +7,7 @@ import ChevronUp from 'lucide-react/dist/esm/icons/chevron-up';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getExpectedGroupCountLabel } from '@/constants/data-batch';
 import type { TDataBatch } from '@/interfaces/data-batch';
+import { useAuth } from '@/hooks/use-auth';
 
 interface BatchDFOStatusProps {
   batch: TDataBatch;
@@ -23,6 +24,7 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
   const hasDfoIds = dfoIds.length > 0;
   const hasDfoPostingErrors = dfoPostingErrors.length > 0;
   const groupLabels = getDfoGroupLabels(batch.entryProcessorType);
+  const isAdmin = useAuth((state) => state.user?.role === 'ADMIN');
 
   // Not posted yet
   if (!hasDfoIds && !hasDfoPostingErrors) {
@@ -66,6 +68,7 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
                 </li>
               ))}
             </ul>
+            {isAdmin && <TraceLink batchId={batch.id} />}
           </div>
         </AlertDescription>
       </Alert>
@@ -111,6 +114,7 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
                 ))}
               </ul>
             </details>
+            {isAdmin && <TraceLink batchId={batch.id} />}
           </div>
         </AlertDescription>
       </Alert>
@@ -119,6 +123,15 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
 
   return null;
 };
+
+const TraceLink = ({ batchId }: { batchId: string }) => (
+  <a
+    className='inline-block text-sm underline underline-offset-4'
+    href={`/dashboard/observability?batchId=${encodeURIComponent(batchId)}`}
+  >
+    View processing trace
+  </a>
+);
 
 const getDfoGroupLabels = (entryProcessorType: TDataBatch['entryProcessorType']) => {
   if (getExpectedGroupCountLabel(entryProcessorType) === 'invoice(s)') {
