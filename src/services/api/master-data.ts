@@ -1,4 +1,5 @@
 import type {
+  ICreateCustomerFromMissingDataResponse,
   IMasterDataSyncStatus,
   IMasterDataSyncJobResponse,
 } from '@/interfaces/master-data';
@@ -48,7 +49,7 @@ export class MasterData {
 
   public getSyncList = async (): Promise<IMasterDataSyncStatus[]> => {
     return this.syncService.fetch<IMasterDataSyncStatus[]>(
-      API_ROUTES.FINANCE.MASTER_DATA.SYNC_STATUS
+      API_ROUTES.FINANCE.MASTER_DATA.SYNC_STATUS,
     );
   };
 
@@ -89,110 +90,133 @@ export class MasterData {
   };
 
   public syncCustomers = async (
-    payload: MasterDataPayload
+    payload: MasterDataPayload,
   ): Promise<IMasterDataSyncJobResponse> => {
     return this.syncService.save<IMasterDataSyncJobResponse>(
       API_ROUTES.FINANCE.MASTER_DATA.CUSTOMERS.SYNC,
       undefined,
       {
         query: { company: payload.company },
-      }
+      },
     );
   };
 
   public syncFinancilDimensions = async (
-    payload: MasterDataPayload
+    payload: MasterDataPayload,
   ): Promise<IMasterDataSyncJobResponse> => {
     return this.syncService.save<IMasterDataSyncJobResponse>(
       API_ROUTES.FINANCE.MASTER_DATA.FINANCIAL_DIMENSIONS.SYNC,
       undefined,
       {
         query: { company: payload.company },
-      }
+      },
     );
   };
 
   public syncBillingData = async (
-    payload: MasterDataPayload
+    payload: MasterDataPayload,
   ): Promise<IMasterDataSyncJobResponse> => {
     return this.syncService.save<IMasterDataSyncJobResponse>(
       API_ROUTES.FINANCE.MASTER_DATA.BILLING_DATA.SYNC,
       undefined,
       {
         query: { company: payload.company },
-      }
+      },
     );
   };
 
   public syncMainAccountsData = async (
-    payload: MasterDataPayload
+    payload: MasterDataPayload,
   ): Promise<IMasterDataSyncJobResponse> => {
     return this.syncService.save<IMasterDataSyncJobResponse>(
       API_ROUTES.FINANCE.MASTER_DATA.MAIN_ACCOUNTS.SYNC,
       undefined,
       {
         query: { chartOfAccounts: payload.chartOfAccounts },
-      }
+      },
     );
   };
 
   public syncVendors = async (
-    payload: MasterDataPayload
+    payload: MasterDataPayload,
   ): Promise<IMasterDataSyncJobResponse> => {
     return this.syncService.save<IMasterDataSyncJobResponse>(
       API_ROUTES.FINANCE.MASTER_DATA.VENDORS.SYNC,
       undefined,
       {
         query: { company: payload.company },
-      }
+      },
     );
   };
 
   public syncExchangeRates = async (
-    payload: MasterDataPayload
+    payload: MasterDataPayload,
   ): Promise<IMasterDataSyncJobResponse> => {
     return this.syncService.save<IMasterDataSyncJobResponse>(
       API_ROUTES.FINANCE.MASTER_DATA.EXCHANGE_RATES.SYNC,
       undefined,
       {
         query: { company: payload.company, rateType: payload.rateType },
-      }
+      },
     );
   };
 
   public syncPaymentTerms = async (
-    payload: MasterDataPayload
+    payload: MasterDataPayload,
   ): Promise<IMasterDataSyncJobResponse> => {
     return this.syncService.save<IMasterDataSyncJobResponse>(
       API_ROUTES.FINANCE.MASTER_DATA.PAYMENT_TERMS.SYNC,
       undefined,
       {
         query: { company: payload.company },
-      }
+      },
     );
   };
 
   public syncLedgers = async (
-    payload: MasterDataPayload
+    payload: MasterDataPayload,
   ): Promise<IMasterDataSyncJobResponse> => {
     return this.syncService.save<IMasterDataSyncJobResponse>(
       API_ROUTES.FINANCE.MASTER_DATA.LEDGERS.SYNC,
       undefined,
       {
         query: { company: payload.company },
-      }
+      },
     );
   };
 
   public syncTaxItemGroupHeadings = async (
-    payload: MasterDataPayload
+    payload: MasterDataPayload,
   ): Promise<IMasterDataSyncJobResponse> => {
     return this.syncService.save<IMasterDataSyncJobResponse>(
       API_ROUTES.FINANCE.MASTER_DATA.TAX_ITEM_GROUP_HEADINGS.SYNC,
       undefined,
       {
         query: { company: payload.company },
-      }
+      },
     );
+  };
+
+  public createCustomerFromMissingData = async (
+    missingDataId: string,
+    payload: {
+      customerAccount: string;
+      name: string;
+      customerGroupId: string;
+      salesTaxGroup: string;
+      paymentTerms: string;
+      partyType: string;
+      isSalesTaxIncludedInPrices: string;
+      addressCountryRegionId?: string;
+      salesCurrencyCode?: string;
+      taxExemptNumber?: string;
+    },
+  ): Promise<ICreateCustomerFromMissingDataResponse> => {
+    return this.syncService.save<
+      ICreateCustomerFromMissingDataResponse,
+      typeof payload
+    >(API_ROUTES.FINANCE.MASTER_DATA.CUSTOMERS.CREATE_FROM_MISSING, payload, {
+      params: { missingDataId },
+    });
   };
 }

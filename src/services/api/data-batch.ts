@@ -1,7 +1,11 @@
 import type { PaginationRes } from '@/interfaces/api-res';
 import { API_ROUTES } from '../core/api-routes';
 import { Sync } from '../core/sync';
-import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
+import {
+  TEntryProcessorTypes,
+  type TDataBatch,
+  type TDataBatchMissingMasterData,
+} from '@/interfaces/data-batch';
 import { keepPreviousData, queryOptions } from '@tanstack/react-query';
 import type { TPagination } from '@/interfaces/pagination';
 
@@ -41,13 +45,13 @@ export class DataBatch {
   }
 
   public list = async (
-    query?: DataBatchQuery
+    query?: DataBatchQuery,
   ): Promise<PaginationRes<TDataBatch>> => {
     return this.syncService.fetch<PaginationRes<TDataBatch>>(
       API_ROUTES.DATA_MIGRATION.DATA_BATCH.LIST,
       {
         query: query && { ...query },
-      }
+      },
     );
   };
 
@@ -72,7 +76,7 @@ export class DataBatch {
       API_ROUTES.DATA_MIGRATION.DATA_BATCH.DOWNLOAD_ENHANCED_RECORD_LIST,
       {
         body: query,
-      }
+      },
     );
   };
 
@@ -83,7 +87,7 @@ export class DataBatch {
       API_ROUTES.DATA_MIGRATION.DATA_BATCH.DOWNLOAD_BATCH_ERROR_LIST,
       {
         body: query,
-      }
+      },
     );
   };
 
@@ -95,7 +99,7 @@ export class DataBatch {
       {
         body: query,
         defaultFileName: `source-records-${query.batchId}.xlsx`,
-      }
+      },
     );
   };
 
@@ -108,13 +112,13 @@ export class DataBatch {
   public insertBatch = async (payload: InsertBatchPayload): Promise<void> => {
     await this.syncService.save<void, InsertBatchPayload>(
       API_ROUTES.DATA_MIGRATION.DATA_BATCH.INSERT,
-      payload
+      payload,
     );
   };
 
   public batchQueryOptions = (
     module: TModule,
-    searchQuery?: DataBatchQuery
+    searchQuery?: DataBatchQuery,
   ) => {
     const queryKey = this.getQueryKey(module, searchQuery);
 
@@ -195,7 +199,7 @@ export class DataBatch {
 
   public getQueryKey(
     module: TModule,
-    searchQuery?: DataBatchQuery
+    searchQuery?: DataBatchQuery,
   ): [string, DataBatchQuery] {
     const entryProcessorTypes =
       searchQuery?.entryProcessorTypes ||
@@ -208,4 +212,41 @@ export class DataBatch {
 
     return [this.queryKey[0], query];
   }
+
+  public getMissingMasterData = async (
+    batchId: string,
+    query?: {
+      type?: 'customer';
+      creationStatus?: TDataBatchMissingMasterData['creationStatus'];
+    },
+  ): Promise<TDataBatchMissingMasterData[]> => {
+    return this.syncService.fetch<TDataBatchMissingMasterData[]>(
+      API_ROUTES.DATA_MIGRATION.DATA_BATCH.MISSING_MASTER_DATA,
+      {
+        params: { batchId },
+        query,
+      },
+    );
+  };
+
+  public reprocess = async (
+    batchId: string,
+    missingDataId?: string,
+  ): Promise<void> => {
+    await this.syncService.save<void, void>(
+      API_ROUTES.DATA_MIGRATION.DATA_BATCH.REPROCESS,
+      undefined,
+      {
+        params: { batchId },
+        query: missingDataId ? { missingDataId } : undefined,
+      },
+    );
+  };
+
+  public missingMasterDataQueryOptions = (batchId: string) => {
+    return queryOptions({
+      queryKey: [...this.queryKey, 'missing-master-data', batchId],
+      queryFn: () => this.getMissingMasterData(batchId),
+    });
+  };
 }

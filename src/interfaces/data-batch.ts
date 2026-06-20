@@ -31,10 +31,11 @@ export enum TEntryProcessorTypes {
 }
 
 export enum TDataBatchStatus {
-  Pending = 1,
-  Processing = 2,
-  Completed = 3,
+  PendingPosting = 1,
+  Posting = 2,
+  Posted = 3,
   Canceled = 4,
+  Revalidating = 5,
 }
 
 export interface TDataBatch {
@@ -57,4 +58,28 @@ export interface TDataBatch {
   expectedGroupCount?: number;
   dfoIds?: string[]; // Array of created D365FO group IDs
   dfoPostingErrors?: string[]; // Array of error messages from D365FO posting failures
+}
+
+export interface TDataBatchMissingMasterData {
+  id: string;
+  batchId: string;
+  company: string;
+  entryProcessorType: number;
+  type: 'customer';
+  missingField: 'CustomerAccount' | 'TaxExemptNumber';
+  missingValue: string;
+  creationStatus: 'missing' | 'creating' | 'created' | 'create_failed';
+  reprocessStatus:
+    | 'not_started'
+    | 'pending'
+    | 'processing'
+    | 'succeeded'
+    | 'failed';
+  affectedCount: number;
+  formDefaults?: Record<string, unknown>;
+  readonlyFormFields: string[];
+  createdData?: Record<string, unknown>;
+  createErrorMessage?: string;
+  reprocessErrorMessage?: string;
+  reprocessAttempts: number;
 }

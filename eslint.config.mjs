@@ -8,12 +8,10 @@ import tseslint from 'typescript-eslint';
 
 export default [
   { ignores: ['dist', 'eslint.config.mjs', 'node_modules'] },
+  eslint.configs.recommended,
+  ...tseslint.configs.recommended,
+  eslintPluginPrettierRecommended,
   {
-    extends: [
-      eslint.configs.recommended,
-      ...tseslint.configs.recommended,
-      eslintPluginPrettierRecommended,
-    ],
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
@@ -35,5 +33,5 @@ export default [
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'prettier/prettier': ['error', { endOfLine: 'auto' }],
     },
-  }
+  },
 ];

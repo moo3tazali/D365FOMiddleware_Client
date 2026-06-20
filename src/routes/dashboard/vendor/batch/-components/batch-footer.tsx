@@ -51,14 +51,13 @@ const SubmitBtn = ({ data }: { data: TDataBatch }) => {
     useSubmitBatch();
 
   const showSubmit =
-    data.status === TDataBatchStatus.Pending ||
+    data.status === TDataBatchStatus.PendingPosting ||
     data.status === TDataBatchStatus.Canceled;
   const isAlreadyPosted =
     (data.dfoIds && data.dfoIds.length > 0) ||
     (data.dfoPostingErrors && data.dfoPostingErrors.length > 0);
   const canRetry = data.status === TDataBatchStatus.Canceled;
-  const isDisabled =
-    isPending || (isAlreadyPosted && !canRetry);
+  const isDisabled = isPending || (isAlreadyPosted && !canRetry);
 
   if (!showSubmit)
     return (

@@ -15,10 +15,11 @@ import { TDataBatchStatus, type TDataBatch } from '@/interfaces/data-batch';
 
 const statusOptions = enumToOptions(TDataBatchStatus);
 const statusColorMap = {
-  [TDataBatchStatus.Pending]: 'warning',
-  [TDataBatchStatus.Processing]: 'info',
-  [TDataBatchStatus.Completed]: 'success',
+  [TDataBatchStatus.PendingPosting]: 'warning',
+  [TDataBatchStatus.Posting]: 'info',
+  [TDataBatchStatus.Posted]: 'success',
   [TDataBatchStatus.Canceled]: 'destructive',
+  [TDataBatchStatus.Revalidating]: 'info',
 } as const;
 
 interface BatchHeaderProps {
@@ -35,7 +36,9 @@ export const BatchHeader = ({ batch }: BatchHeaderProps) => {
             <Badge
               dot
               variant='ghost'
-              color={statusColorMap[batch.status as keyof typeof statusColorMap]}
+              color={
+                statusColorMap[batch.status as keyof typeof statusColorMap]
+              }
             >
               {statusOptions.find(({ value }) => value === batch.status)
                 ?.label ?? ''}

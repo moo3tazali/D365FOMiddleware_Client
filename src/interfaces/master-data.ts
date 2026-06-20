@@ -22,3 +22,15 @@ export interface IMasterDataSyncJobResponse {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ICreateCustomerFromMissingDataResponse {
+  customer: {
+    id: string;
+    company: string;
+    customerAccount: string;
+    name?: string;
+  };
+  creationStatus: 'created';
+  reprocessStatus: 'succeeded' | 'failed';
+  reprocessErrorMessage?: string;
+}

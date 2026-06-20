@@ -20,6 +20,8 @@ export const API_ROUTES = {
       CUSTOMERS: {
         GET: '/Finance/MasterData/customers',
         SYNC: '/Finance/MasterData/customers/sync',
+        CREATE_FROM_MISSING:
+          '/Finance/MasterData/customers/from-missing-data/:missingDataId',
       },
       FINANCIAL_DIMENSIONS: {
         GET: '/Finance/MasterData/financial-dimensions',
@@ -92,6 +94,9 @@ export const API_ROUTES = {
       ERROR_LIST: '/DataMigration/DataBatch/error-list',
       DELETE: '/DataMigration/DataBatch',
       INSERT: '/DataMigration/DataBatch/insert',
+      MISSING_MASTER_DATA:
+        '/DataMigration/DataBatch/:batchId/missing-master-data',
+      REPROCESS: '/DataMigration/DataBatch/:batchId/reprocess',
     },
     ACCOUNT_RECEIVABLE: {
       FREIGHT_DOCUMENT: '/DataMigration/AccountReceivable/Freight-Document',

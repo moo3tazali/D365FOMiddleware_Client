@@ -47,7 +47,7 @@ const UploadBtn = () => {
 const SubmitBtn = ({ data }: { data: TDataBatch }) => {
   const { onSubmit, isPending } = useSubmitBatch();
 
-  const showSubmit = data.status === TDataBatchStatus.Pending;
+  const showSubmit = data.status === TDataBatchStatus.PendingPosting;
 
   if (!showSubmit)
     return (

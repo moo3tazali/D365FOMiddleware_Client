@@ -23,7 +23,7 @@ export const DataBatchTable = () => {
   });
 
   const { data, isPending, error, isPlaceholderData } = useQuery(
-    dataBatch.batchQueryOptions('vendor', searchQueries)
+    dataBatch.batchQueryOptions('vendor', searchQueries),
   );
 
   const queryClient = useQueryClient();
@@ -41,7 +41,7 @@ export const DataBatchTable = () => {
           dataBatch.batchQueryOptions('vendor', {
             ...searchQueries,
             ...nextPage,
-          })
+          }),
         );
       }}
     />
@@ -130,17 +130,18 @@ const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.VENDOR;
 const CellEntryProcessorType = ({ value }: { value: number }) => {
   return (
     entryProcessorOptions.find(
-      ({ value: optionValue }) => optionValue === value
+      ({ value: optionValue }) => optionValue === value,
     )?.label ?? ''
   );
 };
 
 const statusOptions = enumToOptions(TDataBatchStatus);
 const statusColorMap = {
-  [TDataBatchStatus.Pending]: 'warning',
-  [TDataBatchStatus.Processing]: 'info',
-  [TDataBatchStatus.Completed]: 'success',
+  [TDataBatchStatus.PendingPosting]: 'warning',
+  [TDataBatchStatus.Posting]: 'info',
+  [TDataBatchStatus.Posted]: 'success',
   [TDataBatchStatus.Canceled]: 'destructive',
+  [TDataBatchStatus.Revalidating]: 'info',
 } as const;
 const CellStatus = ({ value }: { value: keyof typeof statusColorMap }) => {
   return (
