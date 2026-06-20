@@ -113,7 +113,7 @@ export const useBatchForm = () => {
         });
       });
     },
-    [startUpload, navigate, setBatch, dismissLoading]
+    [startUpload, navigate, setBatch, dismissLoading],
   );
 
   return {

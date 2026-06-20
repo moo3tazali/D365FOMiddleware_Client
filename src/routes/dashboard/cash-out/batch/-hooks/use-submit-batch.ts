@@ -33,7 +33,7 @@ export const useSubmitBatch = () => {
     (values: TDataBatch) => {
       mutate(values.id);
     },
-    [mutate]
+    [mutate],
   );
 
   return { onSubmit, isPending };

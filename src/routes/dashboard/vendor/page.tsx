@@ -10,8 +10,8 @@ export const Route = createFileRoute('/dashboard/vendor/')({
     queryClient.ensureQueryData(
       services.dataBatch.batchQueryOptions(
         'vendor',
-        services.pagination.defaultValues
-      )
+        services.pagination.defaultValues,
+      ),
     );
   },
   pendingComponent: LoadingFallback,

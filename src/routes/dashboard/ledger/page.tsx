@@ -10,8 +10,8 @@ export const Route = createFileRoute('/dashboard/ledger/')({
     queryClient.ensureQueryData(
       services.dataBatch.batchQueryOptions(
         'ledger',
-        services.pagination.defaultValues
-      )
+        services.pagination.defaultValues,
+      ),
     );
   },
   pendingComponent: LoadingFallback,

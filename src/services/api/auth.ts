@@ -37,7 +37,7 @@ export class Auth {
     try {
       const res = await syncService.save<AuthResponse, LoginPayload>(
         API_ROUTES.PUBLIC.AUTH.LOGIN,
-        data
+        data,
       );
 
       await tokenService.setToken(res);
@@ -66,7 +66,7 @@ export class Auth {
           headers: {
             'X-Refresh-Token': refreshToken,
           },
-        }
+        },
       );
 
       await tokenService.setToken(res);
@@ -115,7 +115,7 @@ export class Auth {
           headers: {
             Authorization: `${tokenType} ${accessToken}`,
           },
-        }
+        },
       );
 
       await tokenService.clearToken();

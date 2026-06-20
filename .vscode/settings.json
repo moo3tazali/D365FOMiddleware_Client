@@ -18,13 +18,8 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
-  "eslint.validate": [
-    "typescript",
-    "typescriptreact"
-  ],
-  "eslint.workingDirectories": [
-    "."
-  ],
+  "eslint.validate": ["typescript", "typescriptreact"],
+  "eslint.workingDirectories": ["."],
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"

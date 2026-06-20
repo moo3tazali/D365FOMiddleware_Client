@@ -22,7 +22,7 @@ const ResponsiveModalOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     className={cn(
       'fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-      className
+      className,
     )}
     {...props}
     ref={ref}
@@ -33,7 +33,7 @@ ResponsiveModalOverlay.displayName = DialogPrimitive.Overlay.displayName;
 const ResponsiveModalVariants = cva(
   cn(
     'fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500 overflow-y-auto',
-    'lg:left-[50%] lg:top-[50%] lg:w-full lg:max-w-lg lg:translate-x-[-50%] lg:translate-y-[-50%] lg:border lg:duration-200 lg:data-[state=open]:animate-in lg:data-[state=closed]:animate-out lg:data-[state=closed]:fade-out-0 lg:data-[state=open]:fade-in-0 lg:data-[state=closed]:zoom-out-95 lg:data-[state=open]:zoom-in-95 lg:data-[state=closed]:slide-out-to-left-1/2 lg:data-[state=closed]:slide-out-to-top-[48%] lg:data-[state=open]:slide-in-from-left-1/2 lg:data-[state=open]:slide-in-from-top-[48%] lg:rounded-xl'
+    'lg:left-[50%] lg:top-[50%] lg:w-full lg:max-w-lg lg:translate-x-[-50%] lg:translate-y-[-50%] lg:border lg:duration-200 lg:data-[state=open]:animate-in lg:data-[state=closed]:animate-out lg:data-[state=closed]:fade-out-0 lg:data-[state=open]:fade-in-0 lg:data-[state=closed]:zoom-out-95 lg:data-[state=open]:zoom-in-95 lg:data-[state=closed]:slide-out-to-left-1/2 lg:data-[state=closed]:slide-out-to-top-[48%] lg:data-[state=open]:slide-in-from-left-1/2 lg:data-[state=open]:slide-in-from-top-[48%] lg:rounded-xl',
   ),
   {
     variants: {
@@ -49,11 +49,12 @@ const ResponsiveModalVariants = cva(
     defaultVariants: {
       side: 'bottom',
     },
-  }
+  },
 );
 
 interface ResponsiveModalContentProps
-  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
+  extends
+    React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
     VariantProps<typeof ResponsiveModalVariants> {
   closeBtn?: boolean;
 }
@@ -64,7 +65,7 @@ const ResponsiveModalContent = React.forwardRef<
 >(
   (
     { side = 'bottom', closeBtn = true, className, children, ...props },
-    ref
+    ref,
   ) => (
     <ResponsiveModalPortal>
       <ResponsiveModalOverlay />
@@ -82,7 +83,7 @@ const ResponsiveModalContent = React.forwardRef<
         )}
       </DialogPrimitive.Content>
     </ResponsiveModalPortal>
-  )
+  ),
 );
 ResponsiveModalContent.displayName = DialogPrimitive.Content.displayName;
 
@@ -93,7 +94,7 @@ const ResponsiveModalHeader = ({
   <div
     className={cn(
       'flex flex-col space-y-2 text-center sm:text-left',
-      className
+      className,
     )}
     {...props}
   />
@@ -107,7 +108,7 @@ const ResponsiveModalFooter = ({
   <div
     className={cn(
       'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
-      className
+      className,
     )}
     {...props}
   />

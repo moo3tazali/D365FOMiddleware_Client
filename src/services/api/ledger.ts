@@ -22,7 +22,8 @@ export class Ledger {
   public readonly mutationKey = ['ledger-upload'];
   public readonly UPLOAD_TYPES = {
     FREIGHT_CLOSING_DOC: TEntryProcessorTypes.LedgerFreightClosingEntry,
-    FREIGHT_CLOSING_DIFFERENCE: TEntryProcessorTypes.LedgerFreightClosingDifference,
+    FREIGHT_CLOSING_DIFFERENCE:
+      TEntryProcessorTypes.LedgerFreightClosingDifference,
     TRUCKING_CLOSING_DOC: TEntryProcessorTypes.LedgerTruckingClosingEntry,
     CUSTODY_SETTLEMENT: TEntryProcessorTypes.LedgerCustodySettlement,
   };
@@ -50,7 +51,7 @@ export class Ledger {
       formData: true,
       onUploadProgress: (progressEvent) => {
         const percentCompleted = Math.round(
-          (progressEvent.loaded * 100) / (progressEvent?.total || 1)
+          (progressEvent.loaded * 100) / (progressEvent?.total || 1),
         );
         if (!options.uploadProgress) return;
         options.uploadProgress(percentCompleted);
@@ -61,7 +62,7 @@ export class Ledger {
   public postToDFO = async (batchId: string): Promise<PostToDFOResponse> => {
     return syncService.save<PostToDFOResponse, { batchId: string }>(
       API_ROUTES.DATA_MIGRATION.CLOSING.POST_TO_DFO,
-      { batchId }
+      { batchId },
     );
   };
 
@@ -82,10 +83,10 @@ export class Ledger {
       default:
         throw new Error(
           `Invalid upload type, Upload type must satisfies ${Object.entries(
-            this.UPLOAD_TYPES
+            this.UPLOAD_TYPES,
           )
             .map(([key, value]) => `${key}: ${value}`)
-            .join(', ')}`
+            .join(', ')}`,
         );
     }
   }

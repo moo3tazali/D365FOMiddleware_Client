@@ -5,8 +5,16 @@ export const API_ROUTES = {
     OBSERVABILITY: {
       LOGS: '/admin/logs',
       LOG: '/admin/logs/:eventId',
+      EXPLORER_LOGS: '/observability/logs',
+      EXPLORER_LOG: '/observability/logs/:eventId',
       QUEUES: '/admin/queues',
+      QUEUES_DETAIL: '/admin/queues/:queueName',
+      QUEUES_PAUSE: '/admin/queues/:queueName/pause',
+      QUEUES_RESUME: '/admin/queues/:queueName/resume',
+      QUEUES_JOBS: '/admin/queues/:queueName/jobs',
       JOB: '/admin/queues/:queueName/jobs/:jobId',
+      JOB_RETRY: '/admin/queues/:queueName/jobs/:jobId/retry',
+      JOB_DELETE: '/admin/queues/:queueName/jobs/:jobId',
     },
     APP_SETTING: {
       LIST: '/settings',

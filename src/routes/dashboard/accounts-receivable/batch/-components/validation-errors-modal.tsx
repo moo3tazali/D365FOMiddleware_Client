@@ -69,7 +69,7 @@ const HEADER_REGEX = /Invoice\[(\d+|\?)\]\.Header/;
 const LINE_REGEX = /Invoice\[(\d+|\?)\]\.Line\[(\d+)\]/;
 
 function parseValidationErrors(
-  validationErrors: Record<string, string[]>
+  validationErrors: Record<string, string[]>,
 ): ParsedError[] {
   const grouped = new Map<string, ParsedError>();
 
@@ -79,8 +79,7 @@ function parseValidationErrors(
 
     if (headerMatch) {
       const rawIndex = headerMatch[1];
-      const invoiceIndex =
-        rawIndex === '?' ? null : parseInt(rawIndex, 10);
+      const invoiceIndex = rawIndex === '?' ? null : parseInt(rawIndex, 10);
       const mapKey = `invoice-${rawIndex}-header`;
 
       if (!grouped.has(mapKey)) {
@@ -93,13 +92,12 @@ function parseValidationErrors(
 
       const error = grouped.get(mapKey)!;
       const fields = messages.map((msg) =>
-        msg.replace(/^Missing required field:\s*/i, '')
+        msg.replace(/^Missing required field:\s*/i, ''),
       );
       error.fields.push(...fields);
     } else if (lineMatch) {
       const rawIndex = lineMatch[1];
-      const invoiceIndex =
-        rawIndex === '?' ? null : parseInt(rawIndex, 10);
+      const invoiceIndex = rawIndex === '?' ? null : parseInt(rawIndex, 10);
       const lineNumber = parseInt(lineMatch[2], 10);
       const mapKey = `invoice-${rawIndex}-line-${lineNumber}`;
 
@@ -114,7 +112,7 @@ function parseValidationErrors(
 
       const error = grouped.get(mapKey)!;
       const fields = messages.map((msg) =>
-        msg.replace(/^Missing required field:\s*/i, '')
+        msg.replace(/^Missing required field:\s*/i, ''),
       );
       error.fields.push(...fields);
     }

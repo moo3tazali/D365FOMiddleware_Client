@@ -36,7 +36,7 @@ export class AppSetting {
       API_ROUTES.ADMIN.APP_SETTING.ONE,
       {
         params: { logicalName },
-      }
+      },
     );
   };
 
@@ -53,7 +53,7 @@ export class AppSetting {
       {
         saveMethod: 'put',
         params: { logicalName },
-      }
+      },
     );
   };
 

@@ -44,7 +44,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           isLoginModalOpen: false,
         });
       },
-    }))
+    })),
   );
 
   useEffect(() => {

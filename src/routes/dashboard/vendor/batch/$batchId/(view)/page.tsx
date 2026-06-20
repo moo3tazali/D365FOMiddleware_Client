@@ -7,14 +7,14 @@ import { useBatchQueryData } from '../../-hooks/use-batch-query-data';
 import { NotFoundFallback } from '@/components/fallback';
 
 export const Route = createFileRoute(
-  '/dashboard/vendor/batch/$batchId/(view)/'
+  '/dashboard/vendor/batch/$batchId/(view)/',
 )({
   component: ViewBatchPage,
   loader: ({ params, context }) => {
     const batchId = params.batchId;
     const { queryClient, services } = context;
     queryClient.ensureQueryData(
-      services.dataBatch.batchByIdQueryOptions(batchId)
+      services.dataBatch.batchByIdQueryOptions(batchId),
     );
   },
 });

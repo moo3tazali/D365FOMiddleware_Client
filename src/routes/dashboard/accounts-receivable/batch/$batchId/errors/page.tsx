@@ -4,7 +4,7 @@ import { BatchErrorTable } from '../../-components/batch-error-table';
 import { BatchErrorHeader } from '../../-components/batch-error-header';
 
 export const Route = createFileRoute(
-  '/dashboard/accounts-receivable/batch/$batchId/errors/'
+  '/dashboard/accounts-receivable/batch/$batchId/errors/',
 )({
   component: BatchErrorPage,
   loader: ({ params, context }) => {
@@ -15,7 +15,7 @@ export const Route = createFileRoute(
       services.dataBatchError.errorListQueryOptions({
         ...services.pagination.defaultValues,
         batchId,
-      })
+      }),
     );
   },
 });

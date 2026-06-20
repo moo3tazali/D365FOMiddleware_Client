@@ -2,9 +2,7 @@ import React, { createContext } from 'react';
 
 import type { TServices } from '@/services';
 
-const ServicesContext = createContext<TServices | null>(
-  null
-);
+const ServicesContext = createContext<TServices | null>(null);
 
 const ServicesProvider: React.FC<{
   children: React.ReactNode;

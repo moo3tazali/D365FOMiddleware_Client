@@ -60,7 +60,7 @@ export const useBatchForm = () => {
           TEntryProcessorTypes.LedgerVisaOut,
         ].includes(batch?.entryProcessorType ?? '')
           ? String(TEntryProcessorTypes.LedgerCashOut)
-          : ''
+          : '',
       ),
     };
   }
@@ -125,7 +125,7 @@ export const useBatchForm = () => {
         });
       });
     },
-    [startUpload, navigate, dismissLoading]
+    [startUpload, navigate, dismissLoading],
   );
 
   return {

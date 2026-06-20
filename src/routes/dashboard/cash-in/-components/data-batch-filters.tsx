@@ -22,7 +22,7 @@ export const DataBatchQuerySchema = z.object({
     .array(
       z.string().regex(/^[a-fA-F0-9]{24}$/, {
         message: 'Invalid MongoDB ObjectId',
-      })
+      }),
     )
     .optional(),
   entryProcessorTypes: z
@@ -35,7 +35,7 @@ export const DataBatchQuerySchema = z.object({
         values.every((v) => entryProcessorValues.includes(v)),
       {
         message: 'Invalid entryProcessorTypes value(s)',
-      }
+      },
     ),
 });
 
@@ -58,7 +58,7 @@ const TargetBatchNumberQuerySchema = DataBatchQuerySchema.pick({
 const TargetBatchNumberFilter = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [{ batchNumberIds }, set, remove] = useSearchQuery(
-    TargetBatchNumberQuerySchema
+    TargetBatchNumberQuerySchema,
   );
 
   useInputDebounce(inputRef, (value) => {
@@ -97,7 +97,7 @@ const EntryProcessorTypeQuerySchema = DataBatchQuerySchema.pick({
 
 const EntryProcessorTypeFilter = () => {
   const [{ entryProcessorTypes }, set, remove] = useSearchQuery(
-    EntryProcessorTypeQuerySchema
+    EntryProcessorTypeQuerySchema,
   );
 
   const isValid = useMemo(() => {
@@ -106,7 +106,7 @@ const EntryProcessorTypeFilter = () => {
   }, [entryProcessorTypes]);
 
   const [value, setValue] = useState<string>(
-    entryProcessorTypes ? String(isValid ? entryProcessorTypes[0] : '') : ''
+    entryProcessorTypes ? String(isValid ? entryProcessorTypes[0] : '') : '',
   );
 
   const SelectItems = useMemo(
@@ -116,7 +116,7 @@ const EntryProcessorTypeFilter = () => {
           {label}
         </SelectItem>
       )),
-    []
+    [],
   );
 
   return (

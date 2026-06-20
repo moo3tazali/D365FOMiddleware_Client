@@ -65,10 +65,10 @@ export class User {
           Array.from(atob(encoded.replace(/-/g, '+').replace(/_/g, '/')))
             .map(
               (character) =>
-                `%${character.charCodeAt(0).toString(16).padStart(2, '0')}`
+                `%${character.charCodeAt(0).toString(16).padStart(2, '0')}`,
             )
-            .join('')
-        )
+            .join(''),
+        ),
       );
     } catch {
       return {};

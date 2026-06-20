@@ -13,21 +13,25 @@ This guide provides a step-by-step plan for integrating the Post to D365FO endpo
 ## Required Information
 
 To implement this integration, you only need to provide:
+
 - **Endpoint Path**: The POST endpoint path (e.g., `/DataMigration/AccountReceivable/PostToDFO` or `/DataMigration/Vendor/PostToDFO`)
 - **Module Name**: The module identifier used in routes and services (e.g., `accountReceivable`, `vendor`)
 
 ## Implementation Steps
 
 ### 1. Update Data Batch Interface
+
 **File:** `src/interfaces/data-batch.ts`
 
 The interface should already include:
+
 - `dfoIds?: string[]` - Array of D365FO invoice header IDs
 - `dfoPostingErrors?: string[]` - Array of error messages from posting failures
 
 **Status:** ✅ Already completed (shared across all modules)
 
 ### 2. Add API Route
+
 **File:** `src/services/core/api-routes.ts`
 
 Add the route constant to the appropriate module section:
@@ -40,6 +44,7 @@ MODULE_NAME: {
 ```
 
 **Example for Vendor:**
+
 ```typescript
 VENDOR: {
   // ... existing routes
@@ -48,6 +53,7 @@ VENDOR: {
 ```
 
 ### 3. Add API Service Method
+
 **File:** `src/services/api/[module-service].ts`
 
 Add the `postToDFO` method to the service class:
@@ -68,6 +74,7 @@ public postToDFO = async (batchId: string): Promise<PostToDFOResponse> => {
 ```
 
 **Example for Vendor:**
+
 ```typescript
 public postToDFO = async (batchId: string): Promise<PostToDFOResponse> => {
   return syncService.save<PostToDFOResponse, { batchId: string }>(
@@ -78,6 +85,7 @@ public postToDFO = async (batchId: string): Promise<PostToDFOResponse> => {
 ```
 
 ### 4. Update Submit Batch Hook
+
 **File:** `src/routes/dashboard/[module]/batch/-hooks/use-submit-batch.ts`
 
 Replace the existing implementation with:
@@ -148,16 +156,19 @@ export const useSubmitBatch = () => {
 ```
 
 **Key Replacements:**
+
 - `[moduleService]`: The service name from `useServices()` (e.g., `accountReceivable`, `vendor`)
 - `[module]`: The module identifier (e.g., `'accountReceivable'`, `'vendor'`)
 - Route path: Update the `from` parameter in `useParams`
 
 ### 5. Update Batch Footer Component
+
 **File:** `src/routes/dashboard/[module]/batch/-components/batch-footer.tsx`
 
 **Changes needed:**
 
 1. **Update imports:**
+
 ```typescript
 import CloudUpload from 'lucide-react/dist/esm/icons/cloud-upload';
 // Remove: import Rocket from 'lucide-react/dist/esm/icons/rocket';
@@ -165,6 +176,7 @@ import { ValidationErrorsModal } from '@/routes/dashboard/accounts-receivable/ba
 ```
 
 2. **Update SubmitBtn component:**
+
 ```typescript
 const SubmitBtn = ({ data }: { data: TDataBatch }) => {
   const { onSubmit, isPending, validationErrors, closeValidationModal } =
@@ -228,21 +240,25 @@ const SubmitBtn = ({ data }: { data: TDataBatch }) => {
 ```
 
 **Key Replacements:**
+
 - `[MODULE]`: The module constant from ROUTES (e.g., `ACCOUNTS_RECEIVABLE`, `VENDOR`)
 - Change button text from "Submit" to "Post to D365FO"
 - Change icon from `Rocket` to `CloudUpload`
 
 ### 6. Update Batch Result Component
+
 **File:** `src/routes/dashboard/[module]/batch/-components/batch-result.tsx`
 
 **Changes needed:**
 
 1. **Add import:**
+
 ```typescript
 import { BatchDFOStatus } from '@/routes/dashboard/accounts-receivable/batch/-components/batch-dfo-status';
 ```
 
 2. **Add DFO status display:**
+
 ```typescript
 {batch && <BatchDFOStatus batch={batch} />}
 ```
@@ -250,13 +266,15 @@ import { BatchDFOStatus } from '@/routes/dashboard/accounts-receivable/batch/-co
 Add this after the existing `BatchResultAlert` component.
 
 3. **Update alert message:**
-Change the text from:
+   Change the text from:
+
 ```typescript
 <span className='font-medium px-1'>Submit</span>
 to send them to Dynamics.
 ```
 
 To:
+
 ```typescript
 <span className='font-medium px-1'>Post to D365FO</span>
 to send them to Dynamics 365 Finance & Operations.
@@ -279,6 +297,7 @@ These components are generic and work with any module's batch data.
 ## API Response Format
 
 ### Success Response (200)
+
 ```typescript
 {
   status: {
@@ -299,6 +318,7 @@ These components are generic and work with any module's batch data.
 ```
 
 ### Error Response (400 - Validation Failed)
+
 ```typescript
 {
   status: {
@@ -323,6 +343,7 @@ These components are generic and work with any module's batch data.
 ```
 
 ### Error Response (404 - Batch Not Found)
+
 ```typescript
 {
   status: {
@@ -348,10 +369,12 @@ The `validationErrors` object has the following structure:
 ```
 
 **Key Format:**
+
 - `Invoice[X].Header` - Header validation errors for invoice at index X
 - `Invoice[X].Line[Y]` - Line validation errors for line number Y in invoice at index X
 
 **Value Format:**
+
 - Array of strings with format: `"Missing required field: {FieldName}"`
 
 ## Testing Checklist
@@ -373,13 +396,13 @@ The `validationErrors` object has the following structure:
 
 When implementing for a new module, replace these placeholders:
 
-| Placeholder | Example (Account Receivable) | Example (Vendor) |
-|------------|------------------------------|------------------|
-| `[moduleService]` | `accountReceivable` | `vendor` |
-| `[MODULE]` | `ACCOUNTS_RECEIVABLE` | `VENDOR` |
-| `[module]` | `'accountReceivable'` | `'vendor'` |
-| Route path | `/dashboard/accounts-receivable/batch/$batchId` | `/dashboard/vendor/batch/$batchId` |
-| Endpoint | `/DataMigration/AccountReceivable/PostToDFO` | `/DataMigration/Vendor/PostToDFO` |
+| Placeholder       | Example (Account Receivable)                    | Example (Vendor)                   |
+| ----------------- | ----------------------------------------------- | ---------------------------------- |
+| `[moduleService]` | `accountReceivable`                             | `vendor`                           |
+| `[MODULE]`        | `ACCOUNTS_RECEIVABLE`                           | `VENDOR`                           |
+| `[module]`        | `'accountReceivable'`                           | `'vendor'`                         |
+| Route path        | `/dashboard/accounts-receivable/batch/$batchId` | `/dashboard/vendor/batch/$batchId` |
+| Endpoint          | `/DataMigration/AccountReceivable/PostToDFO`    | `/DataMigration/Vendor/PostToDFO`  |
 
 ## Notes
 

@@ -22,12 +22,11 @@ export const tryParse = <T>(value?: string): T | undefined => {
 
 export const enumToOptions = <
   T extends Record<string, string | number>,
-  v = number
+  v = number,
 >(
-  enumObj: T
+  enumObj: T,
 ): { label: string; value: v }[] => {
-  return Object.entries(enumObj)
-  .map(([key, value]) => ({
+  return Object.entries(enumObj).map(([key, value]) => ({
     label: key.replace(/([a-z])([A-Z])/g, '$1 $2'),
     value: value as v,
   }));

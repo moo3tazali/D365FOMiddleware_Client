@@ -86,7 +86,7 @@ const useModuleItems = () => {
         Icon: Settings,
       },
     ],
-    []
+    [],
   );
 
   return { modules };

@@ -10,8 +10,8 @@ export const Route = createFileRoute('/dashboard/accounts-receivable/')({
     queryClient.ensureQueryData(
       services.dataBatch.batchQueryOptions(
         'accountReceivable',
-        services.pagination.defaultValues
-      )
+        services.pagination.defaultValues,
+      ),
     );
   },
   pendingComponent: LoadingFallback,

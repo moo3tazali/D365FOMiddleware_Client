@@ -106,7 +106,7 @@ type IDataBatchMissingMasterData = {
 Update `DataBatchMissingMasterDataMongoRepository.getList()` and `findById()` to map:
 
 ```ts
-id: document._id.toString()
+id: document._id.toString();
 ```
 
 Do not expose or consume `_id` in the frontend.
@@ -144,8 +144,10 @@ type MissingMasterDataItem = {
 Use canonical API field names:
 
 ```ts
-missingField: 'CustomerAccount'
-formDefaults: { CustomerAccount: missingValue }
+missingField: 'CustomerAccount';
+formDefaults: {
+  CustomerAccount: missingValue;
+}
 ```
 
 Register once per enhanced record even when both Customer and SubCustomer contain the same missing account.
@@ -155,9 +157,11 @@ Register once per enhanced record even when both Customer and SubCustomer contai
 `AccountReceivableYardEntryProcessor.resolveCustomerAccount()` must register directly when lookup by normalized tax number fails:
 
 ```ts
-missingField: 'TaxExemptNumber'
-missingValue: normalizedTaxNumber
-formDefaults: { TaxExemptNumber: normalizedTaxNumber }
+missingField: 'TaxExemptNumber';
+missingValue: normalizedTaxNumber;
+formDefaults: {
+  TaxExemptNumber: normalizedTaxNumber;
+}
 ```
 
 Do not wait for shared dimension validation because Yard returns an empty customer account after the tax lookup fails.
@@ -274,7 +278,9 @@ It must update only:
 to:
 
 ```ts
-{ status: DataBatchStatus.Revalidating }
+{
+  status: DataBatchStatus.Revalidating;
+}
 ```
 
 If no document is updated, return HTTP 409. Do not allow a second call while already `Revalidating`.

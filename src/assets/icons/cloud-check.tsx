@@ -17,7 +17,7 @@ export const CloudCheck = ({
       strokeLinejoin='round'
       className={cn(
         'lucide lucide-cloud-check-icon lucide-cloud-check',
-        className
+        className,
       )}
       {...props}
     >

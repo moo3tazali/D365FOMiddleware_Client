@@ -159,11 +159,12 @@ const badgeVariants = cva(
       size: 'default',
       color: 'primary',
     },
-  }
+  },
 );
 
 export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends
+    React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof badgeVariants> {
   color?:
     | 'primary'
@@ -190,7 +191,7 @@ const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 
 Badge.displayName = 'Badge';

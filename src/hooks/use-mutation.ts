@@ -13,7 +13,7 @@ import type { ErrorRes } from '@/interfaces/api-res';
 interface Props<
   TData = unknown,
   TVariables = unknown,
-  TFieldValues extends FieldValues = FieldValues
+  TFieldValues extends FieldValues = FieldValues,
 > extends Omit<MutationObserverOptions<TData, unknown, TVariables>, 'onError'> {
   operationName: string;
   refetchQueries?: unknown[][];
@@ -28,14 +28,14 @@ interface Props<
   onError?: (
     error: ErrorRes,
     variables: TVariables,
-    context: unknown
+    context: unknown,
   ) => Promise<unknown> | unknown;
 }
 
 export const useMutation = <
   TData = unknown,
   TVariables = unknown,
-  TFieldValues extends FieldValues = FieldValues
+  TFieldValues extends FieldValues = FieldValues,
 >({
   onSuccess,
   onMutate,
@@ -73,7 +73,7 @@ export const useMutation = <
         if (!disableToast) {
           // show loading toast
           const loading = toast.loading(
-            toastMsgs?.loading ?? `${operation.current} in progress...`
+            toastMsgs?.loading ?? `${operation.current} in progress...`,
           );
 
           // set loading ref
@@ -123,7 +123,7 @@ export const useMutation = <
 
           // show error toast
           toast.error(
-            toastMsgs?.error ?? responseError ?? `${operation.current} failed!`
+            toastMsgs?.error ?? responseError ?? `${operation.current} failed!`,
           );
         }
 

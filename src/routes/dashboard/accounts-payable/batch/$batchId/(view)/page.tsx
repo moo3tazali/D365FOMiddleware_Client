@@ -7,14 +7,14 @@ import { NotFoundFallback } from '@/components/fallback';
 import { useBatchQueryData } from '../../-hooks/use-batch-query-data';
 
 export const Route = createFileRoute(
-  '/dashboard/accounts-payable/batch/$batchId/(view)/'
+  '/dashboard/accounts-payable/batch/$batchId/(view)/',
 )({
   component: ViewBatchPage,
   loader: ({ params, context }) => {
     const batchId = params.batchId;
     const { queryClient, services } = context;
     queryClient.ensureQueryData(
-      services.dataBatch.batchByIdQueryOptions(batchId)
+      services.dataBatch.batchByIdQueryOptions(batchId),
     );
   },
 });

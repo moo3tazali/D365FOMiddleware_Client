@@ -12,9 +12,10 @@ import type { ErrorRes } from '@/interfaces/api-res';
 export const useSubmitBatch = () => {
   const { refetch } = useInvalidate();
   const { dataBatch, vendor } = useServices();
-  const [validationErrors, setValidationErrors] = useState<
-    Record<string, string[]> | null
-  >(null);
+  const [validationErrors, setValidationErrors] = useState<Record<
+    string,
+    string[]
+  > | null>(null);
 
   const batchNumber = useParams({
     from: '/dashboard/vendor/batch/$batchId',
@@ -37,7 +38,10 @@ export const useSubmitBatch = () => {
     onSuccess: (submissionResult) => {
       refetch(dataBatch.queryKey);
       toast.dismiss();
-      const submitResponse = submissionResult as { jobId: string; message: string };
+      const submitResponse = submissionResult as {
+        jobId: string;
+        message: string;
+      };
       toast.success(submitResponse.message, {
         duration: 5000,
       });
@@ -53,7 +57,7 @@ export const useSubmitBatch = () => {
     (batch: TDataBatch) => {
       mutate(batch.id);
     },
-    [mutate]
+    [mutate],
   );
 
   const closeValidationModal = useCallback(() => {

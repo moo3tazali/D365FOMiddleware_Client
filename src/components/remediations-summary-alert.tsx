@@ -38,7 +38,10 @@ export function RemediationsSummaryAlert({
   if (!summary || summary.total === 0) return null;
 
   const typeSummary = summary.types
-    .map((t) => `${t.count.toLocaleString('en-US')} ${t.type}${t.count !== 1 ? 's' : ''} can be created`)
+    .map(
+      (t) =>
+        `${t.count.toLocaleString('en-US')} ${t.type}${t.count !== 1 ? 's' : ''} can be created`,
+    )
     .join(', ');
 
   return (

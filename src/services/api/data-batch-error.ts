@@ -28,13 +28,13 @@ export class DataBatchError {
   }
 
   public errorList(
-    query?: TDataBatchErrorQuery
+    query?: TDataBatchErrorQuery,
   ): Promise<PaginationRes<TDataBatchError>> {
     return this.syncService.fetch<PaginationRes<TDataBatchError>>(
       API_ROUTES.DATA_MIGRATION.DATA_BATCH.ERROR_LIST,
       {
         query: query && { ...query },
-      }
+      },
     );
   }
 

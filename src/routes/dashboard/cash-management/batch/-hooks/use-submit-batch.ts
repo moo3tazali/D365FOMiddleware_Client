@@ -36,7 +36,7 @@ export const useSubmitBatch = () => {
         skipErrors: true,
       });
     },
-    [mutate]
+    [mutate],
   );
 
   return { onSubmit, isPending };

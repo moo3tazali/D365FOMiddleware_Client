@@ -27,27 +27,19 @@ export function ForgetPwForm({
 
   return (
     <div
-      className={cn(
-        'flex flex-col gap-6 w-full max-w-md',
-        className
-      )}
+      className={cn('flex flex-col gap-6 w-full max-w-md', className)}
       {...props}
     >
       <Card>
         <CardHeader>
-          <CardTitle className='text-2xl'>
-            Reset Password
-          </CardTitle>
+          <CardTitle className='text-2xl'>Reset Password</CardTitle>
           <CardDescription>
             Enter your email to reset your password.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form
-              onSubmit={form.onSubmit}
-              className='flex flex-col gap-5'
-            >
+            <form onSubmit={form.onSubmit} className='flex flex-col gap-5'>
               <FormField
                 control={form.control}
                 name='email'

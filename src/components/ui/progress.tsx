@@ -9,10 +9,7 @@ interface Props {
   size: 'xs' | 'sm' | 'md' | 'lg';
 }
 
-export const Progress: React.FC<Props> = ({
-  progress,
-  size = 'md',
-}) => {
+export const Progress: React.FC<Props> = ({ progress, size = 'md' }) => {
   const sizes = {
     xs: 'h-0.5',
     sm: 'h-1',
@@ -37,15 +34,13 @@ export const Progress: React.FC<Props> = ({
       <ProgressPrimitive.Root
         className={cn(
           'relative h-0.5 w-full overflow-hidden rounded-full bg-primary/20',
-          sizes[size]
+          sizes[size],
         )}
       >
         <ProgressPrimitive.Indicator
           className='relative h-full w-full flex-1 bg-primary transition-all'
           style={{
-            transform: `translateX(-${
-              100 - (progress || 0)
-            }%)`,
+            transform: `translateX(-${100 - (progress || 0)}%)`,
           }}
         >
           <div className='absolute left-0 w-6 h-full bg-primary-foreground blur-[10px] inset-y-0 progress' />

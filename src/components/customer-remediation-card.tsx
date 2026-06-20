@@ -31,14 +31,30 @@ function CreationStatusBadge({
   status: TDataBatchMissingMasterData['creationStatus'];
 }) {
   const map: Record<string, { label: string; color: string }> = {
-    missing: { label: 'Missing', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' },
-    creating: { label: 'Creating…', color: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300' },
-    created: { label: 'Created', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' },
-    create_failed: { label: 'Failed', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' },
+    missing: {
+      label: 'Missing',
+      color:
+        'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+    },
+    creating: {
+      label: 'Creating…',
+      color: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300',
+    },
+    created: {
+      label: 'Created',
+      color:
+        'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
+    },
+    create_failed: {
+      label: 'Failed',
+      color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
+    },
   };
   const { label, color } = map[status] ?? { label: status, color: '' };
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${color}`}>
+    <span
+      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${color}`}
+    >
       {label}
     </span>
   );
@@ -51,14 +67,29 @@ function ReprocessStatusBadge({
 }) {
   if (status === 'not_started') return null;
   const map: Record<string, { label: string; color: string }> = {
-    pending: { label: 'Pending', color: 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300' },
-    processing: { label: 'Processing…', color: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300' },
-    succeeded: { label: 'Reprocessed ✓', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' },
-    failed: { label: 'Reprocess Failed', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' },
+    pending: {
+      label: 'Pending',
+      color: 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300',
+    },
+    processing: {
+      label: 'Processing…',
+      color: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300',
+    },
+    succeeded: {
+      label: 'Reprocessed ✓',
+      color:
+        'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
+    },
+    failed: {
+      label: 'Reprocess Failed',
+      color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
+    },
   };
   const { label, color } = map[status] ?? { label: status, color: '' };
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${color}`}>
+    <span
+      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${color}`}
+    >
       {label}
     </span>
   );
@@ -132,7 +163,9 @@ function MissingMasterDataRow({
             className='h-8 gap-1.5 text-xs font-semibold px-3'
           >
             <RefreshCw className='h-3.5 w-3.5' />
-            {record.reprocessStatus === 'failed' ? 'Retry reprocess' : 'Reprocess'}
+            {record.reprocessStatus === 'failed'
+              ? 'Retry reprocess'
+              : 'Reprocess'}
           </Button>
         ) : (
           <Button
@@ -206,8 +239,7 @@ export function CustomerRemediationCard({
 
   const total = data?.pages[0]?.pagination.total ?? initialTotal ?? 0;
   const totalAffectedRows =
-    initialAffectedRows ??
-    records.reduce((sum, r) => sum + r.affectedCount, 0);
+    initialAffectedRows ?? records.reduce((sum, r) => sum + r.affectedCount, 0);
 
   const handleCreateClick = (record: TDataBatchMissingMasterData) => {
     setSelectedRecord(record);

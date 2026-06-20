@@ -42,7 +42,7 @@ interface TableContextValue<TData, TValue> {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const DataTableContext = createContext<TableContextValue<any, any> | null>(
-  null
+  null,
 );
 
 function useDataTableContext<TData, TValue>() {
@@ -138,7 +138,7 @@ const DesktopTableView = React.memo(() => {
                     ? null
                     : flexRender(
                         header.column.columnDef.header,
-                        header.getContext()
+                        header.getContext(),
                       )}
                 </TableHead>
               ))}
@@ -220,7 +220,7 @@ const MobileTableView = React.memo(() => {
                     {header &&
                       flexRender(
                         header.column.columnDef.header,
-                        header.getContext()
+                        header.getContext(),
                       )}
                   </span>
                   <span className='text-sm col-span-2 pe-3'>

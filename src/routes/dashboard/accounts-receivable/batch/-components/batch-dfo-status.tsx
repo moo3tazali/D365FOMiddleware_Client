@@ -42,8 +42,8 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
                 Operations.
               </p>
               <p>
-                {expectedGroupCount} {groupLabels.countLabel} will be created
-                in D365FO
+                {expectedGroupCount} {groupLabels.countLabel} will be created in
+                D365FO
               </p>
             </div>
           )}
@@ -78,7 +78,10 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
   // Posting succeeded
   if (hasDfoIds) {
     return (
-      <Alert variant='default' className='bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800'>
+      <Alert
+        variant='default'
+        className='bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800'
+      >
         <CheckCircle2Icon className='text-emerald-600 dark:text-emerald-400' />
         <AlertTitle className='text-emerald-900 dark:text-emerald-100'>
           Successfully Posted to D365FO
@@ -133,7 +136,9 @@ const TraceLink = ({ batchId }: { batchId: string }) => (
   </a>
 );
 
-const getDfoGroupLabels = (entryProcessorType: TDataBatch['entryProcessorType']) => {
+const getDfoGroupLabels = (
+  entryProcessorType: TDataBatch['entryProcessorType'],
+) => {
   if (getExpectedGroupCountLabel(entryProcessorType) === 'invoice(s)') {
     return {
       countLabel: 'invoice(s)',

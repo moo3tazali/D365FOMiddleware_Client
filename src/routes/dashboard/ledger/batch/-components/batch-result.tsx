@@ -117,39 +117,34 @@ const ErrorIcon = () => (
 
 const useResultItems = (entries?: TDataBatch | null) => {
   const defaultTotal = '--';
-  return useMemo(
-    () => {
-      return [
-        {
-          label: 'Total Uploaded',
-          total:
-            entries?.totalUploadedCount?.toLocaleString('en-US') ||
-            defaultTotal,
-          Icon: UploadedIcon,
-        },
-        {
-          label: 'Total Formatted',
-          total:
-            entries?.totalFormattedCount?.toLocaleString('en-US') ||
-            defaultTotal,
-          Icon: FormattedIcon,
-        },
-        {
-          label: 'Success Count',
-          total: entries?.successCount?.toLocaleString('en-US') || defaultTotal,
-          Icon: SuccessIcon,
-        },
-        {
-          label: 'Error Count',
-          total: entries?.errorCount?.toLocaleString('en-US') || defaultTotal,
-          Icon: ErrorIcon,
-        },
-      ] satisfies {
-        label: string;
-        total: string;
-        Icon: React.ElementType;
-      }[];
-    },
-    [entries]
-  );
+  return useMemo(() => {
+    return [
+      {
+        label: 'Total Uploaded',
+        total:
+          entries?.totalUploadedCount?.toLocaleString('en-US') || defaultTotal,
+        Icon: UploadedIcon,
+      },
+      {
+        label: 'Total Formatted',
+        total:
+          entries?.totalFormattedCount?.toLocaleString('en-US') || defaultTotal,
+        Icon: FormattedIcon,
+      },
+      {
+        label: 'Success Count',
+        total: entries?.successCount?.toLocaleString('en-US') || defaultTotal,
+        Icon: SuccessIcon,
+      },
+      {
+        label: 'Error Count',
+        total: entries?.errorCount?.toLocaleString('en-US') || defaultTotal,
+        Icon: ErrorIcon,
+      },
+    ] satisfies {
+      label: string;
+      total: string;
+      Icon: React.ElementType;
+    }[];
+  }, [entries]);
 };

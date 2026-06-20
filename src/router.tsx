@@ -53,8 +53,7 @@ export const ROUTES = {
         NEW: '/dashboard/cash-management/batch/new',
         VIEW: '/dashboard/cash-management/batch/$batchId',
         ERRORS: '/dashboard/cash-management/batch/$batchId/errors',
-        REMEDIATIONS:
-          '/dashboard/cash-management/batch/$batchId/remediations',
+        REMEDIATIONS: '/dashboard/cash-management/batch/$batchId/remediations',
       },
     },
     LEDGER: {
@@ -98,6 +97,10 @@ export const ROUTES = {
     },
     OBSERVABILITY: {
       HOME: '/dashboard/observability',
+    },
+    QUEUES: {
+      HOME: '/dashboard/queues',
+      VIEW: '/dashboard/queues/$queueName',
     },
   },
   AUTH: {

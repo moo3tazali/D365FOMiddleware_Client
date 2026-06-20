@@ -6,7 +6,7 @@ import { BatchResult } from '../-components/batch-result';
 import { BatchFooter } from '../-components/batch-footer';
 
 export const Route = createFileRoute(
-  '/dashboard/accounts-receivable/batch/new/'
+  '/dashboard/accounts-receivable/batch/new/',
 )({
   component: NewBatchPage,
 });

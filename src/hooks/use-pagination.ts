@@ -18,7 +18,7 @@ export const usePagination = () => {
   // Get current values from URL params with defaults
   const currentPage = useMemo(
     () => Math.floor(skipCount / maxCount) + 1 || 1,
-    [maxCount, skipCount]
+    [maxCount, skipCount],
   );
 
   const updateUrlAndTriggerChange = useCallback(
@@ -30,10 +30,10 @@ export const usePagination = () => {
             ...prev,
             maxCount,
             skipCount,
-          } as never),
+          }) as never,
       });
     },
-    [navigate]
+    [navigate],
   );
 
   const handlePageSizeChange = useCallback(
@@ -44,7 +44,7 @@ export const usePagination = () => {
         maxAge: PAGE_SIZE_COOKIE_MAX_AGE,
       });
     },
-    [updateUrlAndTriggerChange, setCookie]
+    [updateUrlAndTriggerChange, setCookie],
   );
 
   const handlePreviousPage = useCallback(() => {
@@ -62,7 +62,7 @@ export const usePagination = () => {
         updateUrlAndTriggerChange(maxCount, newSkipCount);
       }
     },
-    [currentPage, maxCount, updateUrlAndTriggerChange]
+    [currentPage, maxCount, updateUrlAndTriggerChange],
   );
 
   const getNextPage = useCallback(
@@ -77,7 +77,7 @@ export const usePagination = () => {
       }
       return null;
     },
-    [currentPage, maxCount]
+    [currentPage, maxCount],
   );
 
   return {

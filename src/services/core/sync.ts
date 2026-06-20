@@ -77,7 +77,7 @@ export class Sync {
 
   public async fetch<TRes>(
     url: TUrl,
-    config?: GetRequestConfig
+    config?: GetRequestConfig,
   ): Promise<TRes> {
     const builtUrl = this._apiRoutes.build(url, {
       params: config?.params,
@@ -89,7 +89,7 @@ export class Sync {
 
   public async download<TBody = unknown>(
     url: TUrl,
-    config?: DownloadConfig<TBody>
+    config?: DownloadConfig<TBody>,
   ): Promise<{ blob: Blob; fileName: string }> {
     const builtUrl = this._apiRoutes.build(url, {
       params: config?.params,
@@ -118,7 +118,7 @@ export class Sync {
 
       const fileName = await this._downloadFileFromResponse(
         res,
-        config?.defaultFileName
+        config?.defaultFileName,
       );
 
       return {
@@ -133,7 +133,7 @@ export class Sync {
   public async save<TRes, TData = unknown>(
     url: TUrl,
     data?: TData,
-    config?: PostRequestConfig
+    config?: PostRequestConfig,
   ): Promise<TRes> {
     const builtUrl = this._apiRoutes.build(url, {
       params: config?.params,
@@ -152,18 +152,18 @@ export class Sync {
 
     if (!method) {
       return this._handle<TRes>(() =>
-        this._axiosInstance.post(builtUrl, payload, config)
+        this._axiosInstance.post(builtUrl, payload, config),
       );
     }
 
     return this._handle<TRes>(() =>
-      this._axiosInstance[method](builtUrl, payload, config)
+      this._axiosInstance[method](builtUrl, payload, config),
     );
   }
 
   public async del<TRes = void>(
     url: TUrl,
-    config?: GetRequestConfig
+    config?: GetRequestConfig,
   ): Promise<TRes> {
     const builtUrl = this._apiRoutes.build(url, {
       params: config?.params,
@@ -171,7 +171,7 @@ export class Sync {
     });
 
     return this._handle<TRes>(() =>
-      this._axiosInstance.delete(builtUrl, config)
+      this._axiosInstance.delete(builtUrl, config),
     );
   }
 
@@ -186,7 +186,7 @@ export class Sync {
 
   private async _downloadFileFromResponse(
     response: AxiosResponse,
-    defaultFileName?: string
+    defaultFileName?: string,
   ): Promise<string> {
     let fileName: string = defaultFileName ?? 'downloaded-file';
     const headers = response.headers;
@@ -242,7 +242,7 @@ export class Sync {
       },
       (error) => {
         return Promise.reject(error);
-      }
+      },
     );
 
     // Response interceptor to handle 401 errors and token refresh
@@ -277,7 +277,7 @@ export class Sync {
                 headers: {
                   'X-Refresh-Token': refreshToken,
                 },
-              }
+              },
             );
 
             // Update tokens
@@ -302,7 +302,7 @@ export class Sync {
         }
 
         return Promise.reject(error);
-      }
+      },
     );
   }
 

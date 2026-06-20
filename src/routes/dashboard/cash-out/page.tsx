@@ -10,8 +10,8 @@ export const Route = createFileRoute('/dashboard/cash-out/')({
     queryClient.ensureQueryData(
       services.dataBatch.batchQueryOptions(
         'cashOut',
-        services.pagination.defaultValues
-      )
+        services.pagination.defaultValues,
+      ),
     );
   },
   pendingComponent: LoadingFallback,

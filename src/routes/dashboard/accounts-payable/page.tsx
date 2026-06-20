@@ -10,8 +10,8 @@ export const Route = createFileRoute('/dashboard/accounts-payable/')({
     queryClient.ensureQueryData(
       services.dataBatch.batchQueryOptions(
         'accountPayable',
-        services.pagination.defaultValues
-      )
+        services.pagination.defaultValues,
+      ),
     );
   },
   pendingComponent: LoadingFallback,

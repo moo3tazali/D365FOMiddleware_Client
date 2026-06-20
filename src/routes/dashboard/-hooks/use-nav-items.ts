@@ -8,6 +8,7 @@ import Users from 'lucide-react/dist/esm/icons/users';
 import CashIn from 'lucide-react/dist/esm/icons/banknote-arrow-down';
 import CashOut from 'lucide-react/dist/esm/icons/banknote-arrow-up';
 import Activity from 'lucide-react/dist/esm/icons/activity';
+import Server from 'lucide-react/dist/esm/icons/server';
 
 import { ROUTES } from '@/router';
 import { useAuth } from '@/hooks/use-auth';
@@ -29,7 +30,7 @@ export const useNavItems = () => {
         url: ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.HOME,
         icon: HandCoins,
         isActive: pathname.startsWith(
-          ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.HOME
+          ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.HOME,
         ),
       },
       {
@@ -65,17 +66,23 @@ export const useNavItems = () => {
       ...(user?.role === 'ADMIN'
         ? [
             {
+              title: 'Queues',
+              url: ROUTES.DASHBOARD.QUEUES.HOME,
+              icon: Server,
+              isActive: pathname.startsWith(ROUTES.DASHBOARD.QUEUES.HOME),
+            },
+            {
               title: 'Observability',
               url: ROUTES.DASHBOARD.OBSERVABILITY.HOME,
               icon: Activity,
               isActive: pathname.startsWith(
-                ROUTES.DASHBOARD.OBSERVABILITY.HOME
+                ROUTES.DASHBOARD.OBSERVABILITY.HOME,
               ),
             },
           ]
         : []),
     ],
-    [pathname, user?.role]
+    [pathname, user?.role],
   );
 
   return { items };

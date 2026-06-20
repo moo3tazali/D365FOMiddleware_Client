@@ -32,13 +32,16 @@ export class Env {
   public get<K extends keyof typeof this._env>(
     ...keys: K[]
   ): { [P in K]: string } | string {
-    const obj = keys.reduce((acc, key) => {
-      const envKey = this._env[key];
-      return {
-        ...acc,
-        [key]: this._getEnvValue(envKey),
-      };
-    }, {} as { [P in K]: string });
+    const obj = keys.reduce(
+      (acc, key) => {
+        const envKey = this._env[key];
+        return {
+          ...acc,
+          [key]: this._getEnvValue(envKey),
+        };
+      },
+      {} as { [P in K]: string },
+    );
 
     return keys.length === 1 ? obj[keys[0]] : obj;
   }

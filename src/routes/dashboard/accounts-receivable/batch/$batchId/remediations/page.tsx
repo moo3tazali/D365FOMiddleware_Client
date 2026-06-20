@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { RemediationsPage } from '@/components/remediations-page';
 
 export const Route = createFileRoute(
-  '/dashboard/accounts-receivable/batch/$batchId/remediations/'
+  '/dashboard/accounts-receivable/batch/$batchId/remediations/',
 )({
   component: BatchRemediationsPage,
   loader: ({ params, context }) => {
@@ -12,7 +12,7 @@ export const Route = createFileRoute(
 
     // Prefetch summary so the page has it immediately
     queryClient.ensureQueryData(
-      services.dataBatch.remediationSummaryQueryOptions(batchId)
+      services.dataBatch.remediationSummaryQueryOptions(batchId),
     );
   },
 });

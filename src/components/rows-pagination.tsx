@@ -49,7 +49,7 @@ export const RowsPagination = memo(
     const startItem = (currentPage - 1) * currentSize + 1;
     const endItem = Math.min(
       currentPage * currentSize,
-      paginationData?.totalCount || 0
+      paginationData?.totalCount || 0,
     );
     const maxPage = Math.ceil((paginationData?.totalCount || 0) / currentSize);
 
@@ -106,7 +106,7 @@ export const RowsPagination = memo(
                   onMouseEnter={() => {
                     if (!onNextPageHover) return;
                     const nextPage = getNextPage(
-                      paginationData?.totalCount || 0
+                      paginationData?.totalCount || 0,
                     );
                     if (!nextPage) return;
                     onNextPageHover(nextPage);
@@ -120,7 +120,7 @@ export const RowsPagination = memo(
         </div>
       </div>
     );
-  }
+  },
 );
 
 RowsPagination.displayName = 'RowsPagination';

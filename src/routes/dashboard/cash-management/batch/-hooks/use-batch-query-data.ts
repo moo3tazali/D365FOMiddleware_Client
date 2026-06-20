@@ -8,7 +8,7 @@ import type { TDataBatch } from '@/interfaces/data-batch';
 
 export const useBatchQueryData = (): [
   value: TDataBatch | undefined,
-  setValue: (newBatch: TDataBatch) => void
+  setValue: (newBatch: TDataBatch) => void,
 ] => {
   const queryClient = useQueryClient();
 
@@ -22,7 +22,7 @@ export const useBatchQueryData = (): [
 
   const value = useMemo(
     () => data?.items.find((item) => item.id === batchId),
-    [data?.items, batchId]
+    [data?.items, batchId],
   );
 
   const setValue = useCallback(
@@ -39,7 +39,7 @@ export const useBatchQueryData = (): [
         items: [newBatch],
       });
     },
-    [dataBatch.queryKey, queryClient]
+    [dataBatch.queryKey, queryClient],
   );
 
   if (!data || !batchId) return [undefined, setValue];

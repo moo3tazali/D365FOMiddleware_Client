@@ -74,7 +74,7 @@ export class ErrorHandler {
       // ✅ 4. fallback to generic message based on status
       return this._defaultError(
         `Unexpected Response Error: ${error.message}.`,
-        status
+        status,
       );
     }
 
@@ -92,27 +92,27 @@ export class ErrorHandler {
       case 403:
         return this._defaultError(
           'Forbidden: You do not have permission to access this resource.',
-          403
+          403,
         );
       case 404:
         return this._defaultError(
           'Not Found: The requested resource could not be found.',
-          404
+          404,
         );
       case 500:
         return this._defaultError(
           'Something went wrong on our side. Please try again later.',
-          500
+          500,
         );
       case 429:
         return this._defaultError(
           'Too many requests. Please try again later.',
-          429
+          429,
         );
       case 503:
         return this._defaultError(
           'Service is temporarily unavailable. Please try again later.',
-          503
+          503,
         );
       default:
         return null;

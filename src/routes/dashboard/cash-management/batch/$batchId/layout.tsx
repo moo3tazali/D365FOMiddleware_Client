@@ -8,7 +8,7 @@ const batchIdSchema = z.string().regex(/^[a-fA-F0-9]{24}$/, {
 });
 
 export const Route = createFileRoute(
-  '/dashboard/cash-management/batch/$batchId'
+  '/dashboard/cash-management/batch/$batchId',
 )({
   component: ViewBatchLayout,
   loader: ({ params }) => {

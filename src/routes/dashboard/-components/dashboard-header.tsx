@@ -65,7 +65,7 @@ const CrumbItem = memo(
         <BreadcrumbSeparator />
       </>
     );
-  }
+  },
 );
 
 CrumbItem.displayName = 'CrumbItem';
@@ -116,7 +116,7 @@ const useGenerateBreadCrumbs = (excludedSegments: string[] = []) => {
     {
       breadcrumbs: [] as { name: string; to: string; isLast: boolean }[],
       currentPath: '',
-    }
+    },
   );
 
   // fix isLast flag properly

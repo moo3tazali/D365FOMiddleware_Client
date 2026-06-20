@@ -26,7 +26,7 @@ export const NotFoundFallback = ({
       {...props}
       className={cn(
         'flex flex-col gap-2 h-full w-full items-center justify-center',
-        className
+        className,
       )}
     >
       <SearchIcon className='size-28 sm:size-40 text-primary' strokeWidth={1} />

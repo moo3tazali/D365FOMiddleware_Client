@@ -8,31 +8,31 @@ import type { QueryValue } from '@/interfaces/search-query';
 // 🔁 Function overloads
 export function useSearchQuery<T extends ZodObject<ZodRawShape>>(
   schema: T,
-  options: { withPagination: true }
+  options: { withPagination: true },
 ): [
   values: z.infer<T> & { maxCount: number; skipCount: number },
   setSearchParam: (
     key: keyof (z.infer<T> & { maxCount?: number; skipCount?: number }),
-    value: QueryValue
+    value: QueryValue,
   ) => void,
   removeSearchParam: (key: keyof z.infer<T>) => void,
-  resetSearch: () => void
+  resetSearch: () => void,
 ];
 
 export function useSearchQuery<T extends ZodObject<ZodRawShape>>(
   schema: T,
-  options?: { withPagination?: false }
+  options?: { withPagination?: false },
 ): [
   values: z.infer<T>,
   setSearchParam: (key: keyof z.infer<T>, value: QueryValue) => void,
   removeSearchParam: (key: keyof z.infer<T>) => void,
-  resetSearch: () => void
+  resetSearch: () => void,
 ];
 
 // ✅ Implementation
 export function useSearchQuery<T extends ZodObject<ZodRawShape>>(
   schema: T,
-  options?: { withPagination?: boolean }
+  options?: { withPagination?: boolean },
 ) {
   const navigate = useNavigate();
   const search = useSearch({ strict: false, structuralSharing: true });
@@ -84,10 +84,10 @@ export function useSearchQuery<T extends ZodObject<ZodRawShape>>(
             ...prev,
             ...('skipCount' in prev ? { skipCount: 0 } : {}),
             [key]: JSON.stringify(value),
-          } as never),
+          }) as never,
       });
     },
-    [navigate]
+    [navigate],
   );
 
   const removeSearchParam = useCallback(
@@ -106,7 +106,7 @@ export function useSearchQuery<T extends ZodObject<ZodRawShape>>(
 
       navigate({ search: updatedSearch as never });
     },
-    [navigate, currentSearchMap, withPagination]
+    [navigate, currentSearchMap, withPagination],
   );
 
   const resetSearch = useCallback(() => {

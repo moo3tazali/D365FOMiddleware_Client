@@ -37,7 +37,7 @@ export const useAppSettings = () => {
         value: data.newValue,
       });
     },
-    [mutate, setOperationName]
+    [mutate, setOperationName],
   );
 
   return { onSubmit, isPending };

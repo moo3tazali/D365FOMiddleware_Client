@@ -1,6 +1,6 @@
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
-import { ROUTES } from '@/router'
+import { ROUTES } from '@/router';
 
 export const Route = createFileRoute('/_public')({
   component: PublicLayout,
@@ -8,10 +8,10 @@ export const Route = createFileRoute('/_public')({
     throw redirect({
       to: ROUTES.DASHBOARD.HOME,
       replace: true,
-    })
+    });
   },
-})
+});
 
 function PublicLayout() {
-  return <Outlet />
+  return <Outlet />;
 }

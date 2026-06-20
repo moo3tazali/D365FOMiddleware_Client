@@ -12,7 +12,7 @@ export const useInvalidate = () => {
         predicate: (query) => query.queryKey[0] === queryKey[0],
       });
     },
-    [queryClient]
+    [queryClient],
   );
 
   const refetch = useCallback(
@@ -22,7 +22,7 @@ export const useInvalidate = () => {
         predicate: (query) => query.queryKey[0] === queryKey[0],
       });
     },
-    [queryClient]
+    [queryClient],
   );
 
   return { invalidate, refetch };

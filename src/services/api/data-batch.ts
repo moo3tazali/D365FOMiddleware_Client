@@ -8,7 +8,11 @@ import {
   type TMissingMasterDataPage,
   type TRemediationSummary,
 } from '@/interfaces/data-batch';
-import { infiniteQueryOptions, keepPreviousData, queryOptions } from '@tanstack/react-query';
+import {
+  infiniteQueryOptions,
+  keepPreviousData,
+  queryOptions,
+} from '@tanstack/react-query';
 import type { TPagination } from '@/interfaces/pagination';
 
 interface DataBatchQuery extends TPagination {
@@ -290,8 +294,7 @@ export class DataBatch {
   public missingMasterDataQueryOptions = (batchId: string) => {
     return queryOptions({
       queryKey: [...this.queryKey, 'missing-master-data', batchId],
-      queryFn: () =>
-        this.getMissingMasterData(batchId).then((res) => res.data),
+      queryFn: () => this.getMissingMasterData(batchId).then((res) => res.data),
     });
   };
 }

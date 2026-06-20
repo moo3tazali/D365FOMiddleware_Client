@@ -36,7 +36,7 @@ const SettingsRows = () => {
   const isSyncing = data.some(
     (item) =>
       item.status === SyncJobStatus.PROCESSING ||
-      item.status === SyncJobStatus.PENDING
+      item.status === SyncJobStatus.PENDING,
   );
 
   useEffect(() => {

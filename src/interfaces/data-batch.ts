@@ -108,4 +108,3 @@ export interface TRemediationSummary {
   total: number;
   types: TRemediationTypeSummary[];
 }
-

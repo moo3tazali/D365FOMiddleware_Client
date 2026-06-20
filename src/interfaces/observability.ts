@@ -24,6 +24,7 @@ export interface QueueStats {
   completed: number;
   failed: number;
   delayed: number;
+  isPaused?: boolean;
 }
 
 export interface DurableQueueJob {
@@ -36,6 +37,8 @@ export interface DurableQueueJob {
   completedGroups: number;
   retryCount: number;
   heartbeatAt?: string;
+  completedAt?: string;
+  failedAt?: string;
   error?: string;
   createdAt: string;
 }
