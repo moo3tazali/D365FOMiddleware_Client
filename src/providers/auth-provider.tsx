@@ -10,6 +10,9 @@ export type TAuth = {
   isLoginModalOpen: boolean;
   user: TUser | null;
   login: (data: LoginPayload) => Promise<void>;
+  startMicrosoftLogin: (returnPath?: string) => void;
+  exchangeMicrosoftCode: (code: string) => Promise<TUser>;
+  refreshAccessStatus: () => Promise<TUser | null>;
   logout: () => Promise<void>;
   closeLoginModal: () => void;
 };
@@ -31,6 +34,21 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       login: async (data: LoginPayload) => {
         const user = await authService.login(data);
         setState({ isAuthenticated: true, user });
+      },
+      startMicrosoftLogin: (returnPath = '/') => {
+        authService.startMicrosoftLogin(returnPath);
+      },
+      exchangeMicrosoftCode: async (code: string) => {
+        const user = await authService.exchangeMicrosoftCode(code);
+        setState({ isAuthenticated: true, user });
+        return user;
+      },
+      refreshAccessStatus: async () => {
+        await authService.getAccessStatus();
+        await authService.refreshToken();
+        const user = authService.getCurrentUser();
+        setState({ isAuthenticated: Boolean(user), user });
+        return user;
       },
       logout: async () => {
         await authService.logout();

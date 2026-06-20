@@ -10,7 +10,7 @@ export class User {
   private constructor() {
     this._cookies = new Cookies(null, {
       path: '/',
-      secure: true,
+      secure: window.location.protocol === 'https:',
       httpOnly: false,
       sameSite: 'strict',
       maxAge: 60 * 60 * 24 * 365 * 1, // 1 year
@@ -25,13 +25,21 @@ export class User {
     return User._instance;
   }
 
-  public set(user: { email: string }, accessToken: string) {
+  public set(accessToken: string) {
     const tokenPayload = this.decodeAccessToken(accessToken);
     this._user = {
-      email: user.email,
-      username: user.email.split('@')[0],
+      email: tokenPayload.email ?? '',
+      username:
+        [tokenPayload.firstName, tokenPayload.lastName]
+          .filter(Boolean)
+          .join(' ') || (tokenPayload.email ?? '').split('@')[0],
       avatarPath: tokenPayload.avatarPath ?? '',
-      role: tokenPayload.role === 'ADMIN' ? 'ADMIN' : 'OPS',
+      role: tokenPayload.role,
+      identityProvider: tokenPayload.identityProvider ?? 'ENTRA',
+      accessStatus: tokenPayload.accessStatus,
+      mustChangePassword: tokenPayload.mustChangePassword ?? false,
+      firstName: tokenPayload.firstName,
+      lastName: tokenPayload.lastName,
     };
     this._cookies.set(this._cookieId, this._user);
   }
@@ -57,6 +65,12 @@ export class User {
   private decodeAccessToken(accessToken: string): {
     role?: 'ADMIN' | 'OPS';
     avatarPath?: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    identityProvider?: 'LOCAL' | 'ENTRA';
+    accessStatus?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'REVOKED';
+    mustChangePassword?: boolean;
   } {
     try {
       const encoded = accessToken.split('.')[1];

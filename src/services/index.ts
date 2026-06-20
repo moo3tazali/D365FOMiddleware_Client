@@ -10,6 +10,8 @@ import { Vendor } from './api/vendor';
 import { CashIn } from './api/cash-in';
 import { CashOut } from './api/cash-out';
 import { Observability } from './api/observability';
+import { Users } from './api/users';
+import { AccessAdmin } from './api/access-admin';
 
 export const services = {
   authService: Auth.getInstance(),
@@ -24,6 +26,8 @@ export const services = {
   masterData: MasterData.getInstance(),
   vendor: Vendor.getInstance(),
   observability: new Observability(),
+  users: new Users(),
+  accessAdmin: new AccessAdmin(),
 } as const;
 
 export type TServices = typeof services;

@@ -23,7 +23,7 @@ export class Token {
   private constructor() {
     this._cookies = new Cookies(null, {
       path: '/',
-      secure: true,
+      secure: window.location.protocol === 'https:',
       httpOnly: false,
       sameSite: 'strict',
     });

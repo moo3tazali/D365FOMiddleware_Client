@@ -102,10 +102,22 @@ export const ROUTES = {
       HOME: '/dashboard/queues',
       VIEW: '/dashboard/queues/$queueName',
     },
+    ACCESS: {
+      HOME: '/dashboard/access',
+    },
+    PROFILE: {
+      HOME: '/dashboard/profile',
+    },
   },
   AUTH: {
     LOGIN: '/login',
-    FORGET_PW: '/forget-password',
+    MICROSOFT_CALLBACK: '/microsoft-callback',
+    CHANGE_PASSWORD: '/change-password',
+  },
+  ACCESS: {
+    PENDING: '/access/pending',
+    REJECTED: '/access/rejected',
+    REVOKED: '/access/revoked',
   },
 } as const;
 

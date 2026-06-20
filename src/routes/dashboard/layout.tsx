@@ -23,6 +23,20 @@ export const Route = createFileRoute('/dashboard')({
         to: ROUTES.AUTH.LOGIN,
         search: { redirect: location.pathname },
       });
+
+    const user = auth.user;
+    if (user?.mustChangePassword) {
+      throw redirect({ to: ROUTES.AUTH.CHANGE_PASSWORD });
+    }
+    if (user?.accessStatus === 'PENDING') {
+      throw redirect({ to: ROUTES.ACCESS.PENDING });
+    }
+    if (user?.accessStatus === 'REJECTED') {
+      throw redirect({ to: ROUTES.ACCESS.REJECTED });
+    }
+    if (user?.accessStatus === 'REVOKED') {
+      throw redirect({ to: ROUTES.ACCESS.REVOKED });
+    }
   },
   notFoundComponent: NotFoundFallback,
   errorComponent: ErrorFallback,

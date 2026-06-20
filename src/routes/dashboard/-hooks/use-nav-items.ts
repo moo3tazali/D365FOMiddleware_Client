@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from '@tanstack/react-router';
 import Home from 'lucide-react/dist/esm/icons/home';
 import HandCoins from 'lucide-react/dist/esm/icons/hand-coins';
@@ -9,13 +9,26 @@ import CashIn from 'lucide-react/dist/esm/icons/banknote-arrow-down';
 import CashOut from 'lucide-react/dist/esm/icons/banknote-arrow-up';
 import Activity from 'lucide-react/dist/esm/icons/activity';
 import Server from 'lucide-react/dist/esm/icons/server';
+import UserCheck from 'lucide-react/dist/esm/icons/user-check';
+import CircleUser from 'lucide-react/dist/esm/icons/circle-user';
 
 import { ROUTES } from '@/router';
 import { useAuth } from '@/hooks/use-auth';
+import { useServices } from '@/hooks/use-services';
 
 export const useNavItems = () => {
   const { pathname } = useLocation();
   const user = useAuth((state) => state.user);
+  const { accessAdmin } = useServices();
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    if (user?.role !== 'ADMIN') return;
+    accessAdmin
+      .list('PENDING')
+      .then((response) => setPendingCount(response.items.length))
+      .catch(() => setPendingCount(0));
+  }, [accessAdmin, user?.role]);
 
   const items = useMemo(
     () => [
@@ -58,6 +71,12 @@ export const useNavItems = () => {
         isActive: pathname.startsWith(ROUTES.DASHBOARD.VENDOR.HOME),
       },
       {
+        title: 'Profile',
+        url: ROUTES.DASHBOARD.PROFILE.HOME,
+        icon: CircleUser,
+        isActive: pathname.startsWith(ROUTES.DASHBOARD.PROFILE.HOME),
+      },
+      {
         title: 'Settings',
         url: ROUTES.DASHBOARD.SETTINGS.HOME,
         icon: Settings,
@@ -65,6 +84,12 @@ export const useNavItems = () => {
       },
       ...(user?.role === 'ADMIN'
         ? [
+            {
+              title: `Access requests${pendingCount ? ` (${pendingCount})` : ''}`,
+              url: ROUTES.DASHBOARD.ACCESS.HOME,
+              icon: UserCheck,
+              isActive: pathname.startsWith(ROUTES.DASHBOARD.ACCESS.HOME),
+            },
             {
               title: 'Queues',
               url: ROUTES.DASHBOARD.QUEUES.HOME,
@@ -82,7 +107,7 @@ export const useNavItems = () => {
           ]
         : []),
     ],
-    [pathname, user?.role],
+    [pathname, pendingCount, user?.role],
   );
 
   return { items };

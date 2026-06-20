@@ -2,6 +2,14 @@ import type { FlattenObj } from '@/lib/utils';
 
 export const API_ROUTES = {
   ADMIN: {
+    ACCESS: {
+      LIST: '/admin/access-requests',
+      ONE: '/admin/access-requests/:userId',
+      APPROVE: '/admin/access-requests/:userId/approve',
+      REJECT: '/admin/access-requests/:userId/reject',
+      REVOKE: '/admin/access-requests/:userId/revoke',
+      RECONSIDER: '/admin/access-requests/:userId/reconsider',
+    },
     OBSERVABILITY: {
       LOGS: '/admin/logs',
       LOG: '/admin/logs/:eventId',
@@ -83,11 +91,17 @@ export const API_ROUTES = {
   },
   PUBLIC: {
     AUTH: {
-      REGISTER: '/auth/register',
       LOGIN: '/auth/login',
+      MICROSOFT: '/auth/microsoft',
+      MICROSOFT_EXCHANGE: '/auth/microsoft/exchange',
+      ACCESS_STATUS: '/auth/access-status',
       REFRESH: '/auth/refresh',
       LOGOUT: '/auth/logout',
       LOGOUT_ALL: '/auth/logout-all',
+    },
+    USER: {
+      ME: '/users/me',
+      CHANGE_PASSWORD: '/users/me/change-password',
     },
   },
   DATA_MIGRATION: {

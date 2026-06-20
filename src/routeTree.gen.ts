@@ -9,13 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MicrosoftCallbackRouteImport } from './routes/microsoft-callback'
+import { Route as ChangePasswordRouteImport } from './routes/change-password'
 import { Route as DashboardLayoutRouteImport } from './routes/dashboard/layout'
 import { Route as PublicLayoutRouteImport } from './routes/_public/layout'
 import { Route as AuthLayoutRouteImport } from './routes/_auth/layout'
-import { Route as AuthForgetPasswordRouteImport } from './routes/_auth/forget-password'
+import { Route as AccessRevokedRouteImport } from './routes/access/revoked'
+import { Route as AccessRejectedRouteImport } from './routes/access/rejected'
+import { Route as AccessPendingRouteImport } from './routes/access/pending'
 import { Route as DashboardVendorPageRouteImport } from './routes/dashboard/vendor/page'
 import { Route as DashboardSettingsPageRouteImport } from './routes/dashboard/settings/page'
 import { Route as DashboardQueuesPageRouteImport } from './routes/dashboard/queues/page'
+import { Route as DashboardProfilePageRouteImport } from './routes/dashboard/profile/page'
 import { Route as DashboardObservabilityPageRouteImport } from './routes/dashboard/observability/page'
 import { Route as DashboardLedgerPageRouteImport } from './routes/dashboard/ledger/page'
 import { Route as DashboardCashOutPageRouteImport } from './routes/dashboard/cash-out/page'
@@ -23,6 +28,7 @@ import { Route as DashboardCashManagementPageRouteImport } from './routes/dashbo
 import { Route as DashboardCashInPageRouteImport } from './routes/dashboard/cash-in/page'
 import { Route as DashboardAccountsReceivablePageRouteImport } from './routes/dashboard/accounts-receivable/page'
 import { Route as DashboardAccountsPayablePageRouteImport } from './routes/dashboard/accounts-payable/page'
+import { Route as DashboardAccessPageRouteImport } from './routes/dashboard/access/page'
 import { Route as DashboardhomePageRouteImport } from './routes/dashboard/(home)/page'
 import { Route as PublichomePageRouteImport } from './routes/_public/(home)/page'
 import { Route as AuthLoginPageRouteImport } from './routes/_auth/login/page'
@@ -76,6 +82,16 @@ import { Route as DashboardAccountsPayableBatchBatchIdRemediationsPageRouteImpor
 import { Route as DashboardAccountsPayableBatchBatchIdErrorsPageRouteImport } from './routes/dashboard/accounts-payable/batch/$batchId/errors/page'
 import { Route as DashboardAccountsPayableBatchBatchIdviewPageRouteImport } from './routes/dashboard/accounts-payable/batch/$batchId/(view)/page'
 
+const MicrosoftCallbackRoute = MicrosoftCallbackRouteImport.update({
+  id: '/microsoft-callback',
+  path: '/microsoft-callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChangePasswordRoute = ChangePasswordRouteImport.update({
+  id: '/change-password',
+  path: '/change-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardLayoutRoute = DashboardLayoutRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -89,10 +105,20 @@ const AuthLayoutRoute = AuthLayoutRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthForgetPasswordRoute = AuthForgetPasswordRouteImport.update({
-  id: '/forget-password',
-  path: '/forget-password',
-  getParentRoute: () => AuthLayoutRoute,
+const AccessRevokedRoute = AccessRevokedRouteImport.update({
+  id: '/access/revoked',
+  path: '/access/revoked',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccessRejectedRoute = AccessRejectedRouteImport.update({
+  id: '/access/rejected',
+  path: '/access/rejected',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccessPendingRoute = AccessPendingRouteImport.update({
+  id: '/access/pending',
+  path: '/access/pending',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardVendorPageRoute = DashboardVendorPageRouteImport.update({
   id: '/vendor/',
@@ -107,6 +133,11 @@ const DashboardSettingsPageRoute = DashboardSettingsPageRouteImport.update({
 const DashboardQueuesPageRoute = DashboardQueuesPageRouteImport.update({
   id: '/queues/',
   path: '/queues/',
+  getParentRoute: () => DashboardLayoutRoute,
+} as any)
+const DashboardProfilePageRoute = DashboardProfilePageRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
   getParentRoute: () => DashboardLayoutRoute,
 } as any)
 const DashboardObservabilityPageRoute =
@@ -148,6 +179,11 @@ const DashboardAccountsPayablePageRoute =
     path: '/accounts-payable/',
     getParentRoute: () => DashboardLayoutRoute,
   } as any)
+const DashboardAccessPageRoute = DashboardAccessPageRouteImport.update({
+  id: '/access/',
+  path: '/access/',
+  getParentRoute: () => DashboardLayoutRoute,
+} as any)
 const DashboardhomePageRoute = DashboardhomePageRouteImport.update({
   id: '/(home)/',
   path: '/',
@@ -460,7 +496,11 @@ const DashboardAccountsPayableBatchBatchIdviewPageRoute =
 
 export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardLayoutRouteWithChildren
-  '/forget-password': typeof AuthForgetPasswordRoute
+  '/change-password': typeof ChangePasswordRoute
+  '/microsoft-callback': typeof MicrosoftCallbackRoute
+  '/access/pending': typeof AccessPendingRoute
+  '/access/rejected': typeof AccessRejectedRoute
+  '/access/revoked': typeof AccessRevokedRoute
   '/dashboard/accounts-payable/batch': typeof DashboardAccountsPayableBatchLayoutRouteWithChildren
   '/dashboard/accounts-receivable/batch': typeof DashboardAccountsReceivableBatchLayoutRouteWithChildren
   '/dashboard/cash-in/batch': typeof DashboardCashInBatchLayoutRouteWithChildren
@@ -471,6 +511,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof AuthLoginPageRoute
   '/': typeof PublichomePageRoute
   '/dashboard/': typeof DashboardhomePageRoute
+  '/dashboard/access': typeof DashboardAccessPageRoute
   '/dashboard/accounts-payable': typeof DashboardAccountsPayablePageRoute
   '/dashboard/accounts-receivable': typeof DashboardAccountsReceivablePageRoute
   '/dashboard/cash-in': typeof DashboardCashInPageRoute
@@ -478,6 +519,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/cash-out': typeof DashboardCashOutPageRoute
   '/dashboard/ledger': typeof DashboardLedgerPageRoute
   '/dashboard/observability': typeof DashboardObservabilityPageRoute
+  '/dashboard/profile': typeof DashboardProfilePageRoute
   '/dashboard/queues': typeof DashboardQueuesPageRoute
   '/dashboard/settings': typeof DashboardSettingsPageRoute
   '/dashboard/vendor': typeof DashboardVendorPageRoute
@@ -525,11 +567,16 @@ export interface FileRoutesByFullPath {
   '/dashboard/vendor/batch/$batchId/remediations': typeof DashboardVendorBatchBatchIdRemediationsPageRoute
 }
 export interface FileRoutesByTo {
-  '/forget-password': typeof AuthForgetPasswordRoute
+  '/change-password': typeof ChangePasswordRoute
+  '/microsoft-callback': typeof MicrosoftCallbackRoute
+  '/access/pending': typeof AccessPendingRoute
+  '/access/rejected': typeof AccessRejectedRoute
+  '/access/revoked': typeof AccessRevokedRoute
   '/dashboard/vendor/batch': typeof DashboardVendorBatchLayoutRouteWithChildren
   '/login': typeof AuthLoginPageRoute
   '/': typeof PublichomePageRoute
   '/dashboard': typeof DashboardhomePageRoute
+  '/dashboard/access': typeof DashboardAccessPageRoute
   '/dashboard/accounts-payable': typeof DashboardAccountsPayablePageRoute
   '/dashboard/accounts-receivable': typeof DashboardAccountsReceivablePageRoute
   '/dashboard/cash-in': typeof DashboardCashInPageRoute
@@ -537,6 +584,7 @@ export interface FileRoutesByTo {
   '/dashboard/cash-out': typeof DashboardCashOutPageRoute
   '/dashboard/ledger': typeof DashboardLedgerPageRoute
   '/dashboard/observability': typeof DashboardObservabilityPageRoute
+  '/dashboard/profile': typeof DashboardProfilePageRoute
   '/dashboard/queues': typeof DashboardQueuesPageRoute
   '/dashboard/settings': typeof DashboardSettingsPageRoute
   '/dashboard/vendor': typeof DashboardVendorPageRoute
@@ -581,7 +629,11 @@ export interface FileRoutesById {
   '/_auth': typeof AuthLayoutRouteWithChildren
   '/_public': typeof PublicLayoutRouteWithChildren
   '/dashboard': typeof DashboardLayoutRouteWithChildren
-  '/_auth/forget-password': typeof AuthForgetPasswordRoute
+  '/change-password': typeof ChangePasswordRoute
+  '/microsoft-callback': typeof MicrosoftCallbackRoute
+  '/access/pending': typeof AccessPendingRoute
+  '/access/rejected': typeof AccessRejectedRoute
+  '/access/revoked': typeof AccessRevokedRoute
   '/dashboard/accounts-payable/batch': typeof DashboardAccountsPayableBatchLayoutRouteWithChildren
   '/dashboard/accounts-receivable/batch': typeof DashboardAccountsReceivableBatchLayoutRouteWithChildren
   '/dashboard/cash-in/batch': typeof DashboardCashInBatchLayoutRouteWithChildren
@@ -592,6 +644,7 @@ export interface FileRoutesById {
   '/_auth/login/': typeof AuthLoginPageRoute
   '/_public/(home)/': typeof PublichomePageRoute
   '/dashboard/(home)/': typeof DashboardhomePageRoute
+  '/dashboard/access/': typeof DashboardAccessPageRoute
   '/dashboard/accounts-payable/': typeof DashboardAccountsPayablePageRoute
   '/dashboard/accounts-receivable/': typeof DashboardAccountsReceivablePageRoute
   '/dashboard/cash-in/': typeof DashboardCashInPageRoute
@@ -599,6 +652,7 @@ export interface FileRoutesById {
   '/dashboard/cash-out/': typeof DashboardCashOutPageRoute
   '/dashboard/ledger/': typeof DashboardLedgerPageRoute
   '/dashboard/observability/': typeof DashboardObservabilityPageRoute
+  '/dashboard/profile/': typeof DashboardProfilePageRoute
   '/dashboard/queues/': typeof DashboardQueuesPageRoute
   '/dashboard/settings/': typeof DashboardSettingsPageRoute
   '/dashboard/vendor/': typeof DashboardVendorPageRoute
@@ -649,7 +703,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/dashboard'
-    | '/forget-password'
+    | '/change-password'
+    | '/microsoft-callback'
+    | '/access/pending'
+    | '/access/rejected'
+    | '/access/revoked'
     | '/dashboard/accounts-payable/batch'
     | '/dashboard/accounts-receivable/batch'
     | '/dashboard/cash-in/batch'
@@ -660,6 +718,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/'
     | '/dashboard/'
+    | '/dashboard/access'
     | '/dashboard/accounts-payable'
     | '/dashboard/accounts-receivable'
     | '/dashboard/cash-in'
@@ -667,6 +726,7 @@ export interface FileRouteTypes {
     | '/dashboard/cash-out'
     | '/dashboard/ledger'
     | '/dashboard/observability'
+    | '/dashboard/profile'
     | '/dashboard/queues'
     | '/dashboard/settings'
     | '/dashboard/vendor'
@@ -714,11 +774,16 @@ export interface FileRouteTypes {
     | '/dashboard/vendor/batch/$batchId/remediations'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/forget-password'
+    | '/change-password'
+    | '/microsoft-callback'
+    | '/access/pending'
+    | '/access/rejected'
+    | '/access/revoked'
     | '/dashboard/vendor/batch'
     | '/login'
     | '/'
     | '/dashboard'
+    | '/dashboard/access'
     | '/dashboard/accounts-payable'
     | '/dashboard/accounts-receivable'
     | '/dashboard/cash-in'
@@ -726,6 +791,7 @@ export interface FileRouteTypes {
     | '/dashboard/cash-out'
     | '/dashboard/ledger'
     | '/dashboard/observability'
+    | '/dashboard/profile'
     | '/dashboard/queues'
     | '/dashboard/settings'
     | '/dashboard/vendor'
@@ -769,7 +835,11 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/_public'
     | '/dashboard'
-    | '/_auth/forget-password'
+    | '/change-password'
+    | '/microsoft-callback'
+    | '/access/pending'
+    | '/access/rejected'
+    | '/access/revoked'
     | '/dashboard/accounts-payable/batch'
     | '/dashboard/accounts-receivable/batch'
     | '/dashboard/cash-in/batch'
@@ -780,6 +850,7 @@ export interface FileRouteTypes {
     | '/_auth/login/'
     | '/_public/(home)/'
     | '/dashboard/(home)/'
+    | '/dashboard/access/'
     | '/dashboard/accounts-payable/'
     | '/dashboard/accounts-receivable/'
     | '/dashboard/cash-in/'
@@ -787,6 +858,7 @@ export interface FileRouteTypes {
     | '/dashboard/cash-out/'
     | '/dashboard/ledger/'
     | '/dashboard/observability/'
+    | '/dashboard/profile/'
     | '/dashboard/queues/'
     | '/dashboard/settings/'
     | '/dashboard/vendor/'
@@ -838,10 +910,29 @@ export interface RootRouteChildren {
   AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
   PublicLayoutRoute: typeof PublicLayoutRouteWithChildren
   DashboardLayoutRoute: typeof DashboardLayoutRouteWithChildren
+  ChangePasswordRoute: typeof ChangePasswordRoute
+  MicrosoftCallbackRoute: typeof MicrosoftCallbackRoute
+  AccessPendingRoute: typeof AccessPendingRoute
+  AccessRejectedRoute: typeof AccessRejectedRoute
+  AccessRevokedRoute: typeof AccessRevokedRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/microsoft-callback': {
+      id: '/microsoft-callback'
+      path: '/microsoft-callback'
+      fullPath: '/microsoft-callback'
+      preLoaderRoute: typeof MicrosoftCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/change-password': {
+      id: '/change-password'
+      path: '/change-password'
+      fullPath: '/change-password'
+      preLoaderRoute: typeof ChangePasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -863,12 +954,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_auth/forget-password': {
-      id: '/_auth/forget-password'
-      path: '/forget-password'
-      fullPath: '/forget-password'
-      preLoaderRoute: typeof AuthForgetPasswordRouteImport
-      parentRoute: typeof AuthLayoutRoute
+    '/access/revoked': {
+      id: '/access/revoked'
+      path: '/access/revoked'
+      fullPath: '/access/revoked'
+      preLoaderRoute: typeof AccessRevokedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/access/rejected': {
+      id: '/access/rejected'
+      path: '/access/rejected'
+      fullPath: '/access/rejected'
+      preLoaderRoute: typeof AccessRejectedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/access/pending': {
+      id: '/access/pending'
+      path: '/access/pending'
+      fullPath: '/access/pending'
+      preLoaderRoute: typeof AccessPendingRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/dashboard/vendor/': {
       id: '/dashboard/vendor/'
@@ -889,6 +994,13 @@ declare module '@tanstack/react-router' {
       path: '/queues'
       fullPath: '/dashboard/queues'
       preLoaderRoute: typeof DashboardQueuesPageRouteImport
+      parentRoute: typeof DashboardLayoutRoute
+    }
+    '/dashboard/profile/': {
+      id: '/dashboard/profile/'
+      path: '/profile'
+      fullPath: '/dashboard/profile'
+      preLoaderRoute: typeof DashboardProfilePageRouteImport
       parentRoute: typeof DashboardLayoutRoute
     }
     '/dashboard/observability/': {
@@ -938,6 +1050,13 @@ declare module '@tanstack/react-router' {
       path: '/accounts-payable'
       fullPath: '/dashboard/accounts-payable'
       preLoaderRoute: typeof DashboardAccountsPayablePageRouteImport
+      parentRoute: typeof DashboardLayoutRoute
+    }
+    '/dashboard/access/': {
+      id: '/dashboard/access/'
+      path: '/access'
+      fullPath: '/dashboard/access'
+      preLoaderRoute: typeof DashboardAccessPageRouteImport
       parentRoute: typeof DashboardLayoutRoute
     }
     '/dashboard/(home)/': {
@@ -1308,12 +1427,10 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthLayoutRouteChildren {
-  AuthForgetPasswordRoute: typeof AuthForgetPasswordRoute
   AuthLoginPageRoute: typeof AuthLoginPageRoute
 }
 
 const AuthLayoutRouteChildren: AuthLayoutRouteChildren = {
-  AuthForgetPasswordRoute: AuthForgetPasswordRoute,
   AuthLoginPageRoute: AuthLoginPageRoute,
 }
 
@@ -1626,6 +1743,7 @@ interface DashboardLayoutRouteChildren {
   DashboardLedgerBatchLayoutRoute: typeof DashboardLedgerBatchLayoutRouteWithChildren
   DashboardVendorBatchLayoutRoute: typeof DashboardVendorBatchLayoutRouteWithChildren
   DashboardhomePageRoute: typeof DashboardhomePageRoute
+  DashboardAccessPageRoute: typeof DashboardAccessPageRoute
   DashboardAccountsPayablePageRoute: typeof DashboardAccountsPayablePageRoute
   DashboardAccountsReceivablePageRoute: typeof DashboardAccountsReceivablePageRoute
   DashboardCashInPageRoute: typeof DashboardCashInPageRoute
@@ -1633,6 +1751,7 @@ interface DashboardLayoutRouteChildren {
   DashboardCashOutPageRoute: typeof DashboardCashOutPageRoute
   DashboardLedgerPageRoute: typeof DashboardLedgerPageRoute
   DashboardObservabilityPageRoute: typeof DashboardObservabilityPageRoute
+  DashboardProfilePageRoute: typeof DashboardProfilePageRoute
   DashboardQueuesPageRoute: typeof DashboardQueuesPageRoute
   DashboardSettingsPageRoute: typeof DashboardSettingsPageRoute
   DashboardVendorPageRoute: typeof DashboardVendorPageRoute
@@ -1652,6 +1771,7 @@ const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
   DashboardLedgerBatchLayoutRoute: DashboardLedgerBatchLayoutRouteWithChildren,
   DashboardVendorBatchLayoutRoute: DashboardVendorBatchLayoutRouteWithChildren,
   DashboardhomePageRoute: DashboardhomePageRoute,
+  DashboardAccessPageRoute: DashboardAccessPageRoute,
   DashboardAccountsPayablePageRoute: DashboardAccountsPayablePageRoute,
   DashboardAccountsReceivablePageRoute: DashboardAccountsReceivablePageRoute,
   DashboardCashInPageRoute: DashboardCashInPageRoute,
@@ -1659,6 +1779,7 @@ const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
   DashboardCashOutPageRoute: DashboardCashOutPageRoute,
   DashboardLedgerPageRoute: DashboardLedgerPageRoute,
   DashboardObservabilityPageRoute: DashboardObservabilityPageRoute,
+  DashboardProfilePageRoute: DashboardProfilePageRoute,
   DashboardQueuesPageRoute: DashboardQueuesPageRoute,
   DashboardSettingsPageRoute: DashboardSettingsPageRoute,
   DashboardVendorPageRoute: DashboardVendorPageRoute,
@@ -1673,6 +1794,11 @@ const rootRouteChildren: RootRouteChildren = {
   AuthLayoutRoute: AuthLayoutRouteWithChildren,
   PublicLayoutRoute: PublicLayoutRouteWithChildren,
   DashboardLayoutRoute: DashboardLayoutRouteWithChildren,
+  ChangePasswordRoute: ChangePasswordRoute,
+  MicrosoftCallbackRoute: MicrosoftCallbackRoute,
+  AccessPendingRoute: AccessPendingRoute,
+  AccessRejectedRoute: AccessRejectedRoute,
+  AccessRevokedRoute: AccessRevokedRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -13,8 +13,6 @@ import { Button } from '@/components/ui/button';
 import { PasswordInput } from '@/components/ui/password-input';
 import { FormErrorMessage } from '@/components/ui/form-error-message';
 import { useLogin } from '../-hooks/use-login';
-import { Link } from '@tanstack/react-router';
-import { ROUTES } from '@/router';
 
 export function LoginForm({
   className,
@@ -53,18 +51,7 @@ export function LoginForm({
           name='password'
           render={({ field }) => (
             <FormItem>
-              <div className='flex items-center gap-3 justify-between'>
-                <FormLabel>Password</FormLabel>
-                <Button
-                  variant='link'
-                  asChild
-                  className='p-0 text-sm m-0 h-auto'
-                  type='button'
-                  disabled={form.isPending}
-                >
-                  <Link to={ROUTES.AUTH.FORGET_PW}>Forgot your password?</Link>
-                </Button>
-              </div>
+              <FormLabel>Password</FormLabel>
               <FormControl>
                 <PasswordInput
                   {...field}
