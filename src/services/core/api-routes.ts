@@ -96,6 +96,8 @@ export const API_ROUTES = {
       INSERT: '/DataMigration/DataBatch/insert',
       MISSING_MASTER_DATA:
         '/DataMigration/DataBatch/:batchId/missing-master-data',
+      REMEDIATION_SUMMARY:
+        '/DataMigration/DataBatch/:batchId/remediation-summary',
       REPROCESS: '/DataMigration/DataBatch/:batchId/reprocess',
     },
     ACCOUNT_RECEIVABLE: {

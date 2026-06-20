@@ -12,8 +12,10 @@ import { CloudCheck } from '@/assets/icons/cloud-check';
 import { useBatchQueryData } from '../-hooks/use-batch-query-data';
 import { Description } from '@/components/ui/description';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/router';
 import { BatchDFOStatus } from './batch-dfo-status';
+import { RemediationsSummaryAlert } from '@/components/remediations-summary-alert';
 
 export const BatchResult = () => {
   const [batch] = useBatchQueryData();
@@ -45,6 +47,15 @@ export const BatchResult = () => {
         <BatchResultAlert errorCount={batch.errorCount} batchId={batch.id} />
       )}
 
+      {batch && !!batch.totalUploadedCount && (
+        <RemediationsSummaryAlert
+          batchId={batch.id}
+          remediationsRoute={
+            ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.REMEDIATIONS
+          }
+        />
+      )}
+
       {batch && <BatchDFOStatus batch={batch} />}
     </div>
   );
@@ -66,7 +77,7 @@ const BatchResultAlert = ({
           <p>
             All entries have been formatted. Click
             <span className='font-medium px-1'>Post to D365FO</span>
-            to send them to Dynamics 365 Finance & Operations.
+            to send them to Dynamics 365 Finance &amp; Operations.
           </p>
         </AlertDescription>
       </Alert>
@@ -79,13 +90,24 @@ const BatchResultAlert = ({
         {errorCount} errors found while processing this batch
       </AlertTitle>
       <AlertDescription>
-        <Link
-          className='underline text-sm text-destructive hover:opacity-80'
-          to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.ERRORS}
-          params={{ batchId }}
-        >
-          Click here to review error details
-        </Link>
+        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-1'>
+          <p className='text-sm'>
+            Review and resolve these errors before posting to D365FO.
+          </p>
+          <Button
+            size='sm'
+            variant='outline'
+            asChild
+            className='border-destructive/40 text-destructive hover:bg-destructive/10 shrink-0'
+          >
+            <Link
+              to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.ERRORS}
+              params={{ batchId }}
+            >
+              View errors
+            </Link>
+          </Button>
+        </div>
       </AlertDescription>
     </Alert>
   );
@@ -118,8 +140,8 @@ const ErrorIcon = () => (
 const useResultItems = (entries?: TDataBatch | null) => {
   const defaultTotal = '--';
   return useMemo(
-    () => {
-      return [
+    () =>
+      [
         {
           label: 'Total Uploaded',
           total:
@@ -148,8 +170,7 @@ const useResultItems = (entries?: TDataBatch | null) => {
         label: string;
         total: string;
         Icon: React.ElementType;
-      }[];
-    },
-    [entries]
+      }[],
+    [entries],
   );
 };

@@ -52,18 +52,25 @@ import { Route as DashboardCashManagementBatchNewPageRouteImport } from './route
 import { Route as DashboardCashInBatchNewPageRouteImport } from './routes/dashboard/cash-in/batch/new/page'
 import { Route as DashboardAccountsReceivableBatchNewPageRouteImport } from './routes/dashboard/accounts-receivable/batch/new/page'
 import { Route as DashboardAccountsPayableBatchNewPageRouteImport } from './routes/dashboard/accounts-payable/batch/new/page'
+import { Route as DashboardVendorBatchBatchIdRemediationsPageRouteImport } from './routes/dashboard/vendor/batch/$batchId/remediations/page'
 import { Route as DashboardVendorBatchBatchIdErrorsPageRouteImport } from './routes/dashboard/vendor/batch/$batchId/errors/page'
 import { Route as DashboardVendorBatchBatchIdviewPageRouteImport } from './routes/dashboard/vendor/batch/$batchId/(view)/page'
+import { Route as DashboardLedgerBatchBatchIdRemediationsPageRouteImport } from './routes/dashboard/ledger/batch/$batchId/remediations/page'
 import { Route as DashboardLedgerBatchBatchIdErrorsPageRouteImport } from './routes/dashboard/ledger/batch/$batchId/errors/page'
 import { Route as DashboardLedgerBatchBatchIdviewPageRouteImport } from './routes/dashboard/ledger/batch/$batchId/(view)/page'
+import { Route as DashboardCashOutBatchBatchIdRemediationsPageRouteImport } from './routes/dashboard/cash-out/batch/$batchId/remediations/page'
 import { Route as DashboardCashOutBatchBatchIdErrorsPageRouteImport } from './routes/dashboard/cash-out/batch/$batchId/errors/page'
 import { Route as DashboardCashOutBatchBatchIdviewPageRouteImport } from './routes/dashboard/cash-out/batch/$batchId/(view)/page'
+import { Route as DashboardCashManagementBatchBatchIdRemediationsPageRouteImport } from './routes/dashboard/cash-management/batch/$batchId/remediations/page'
 import { Route as DashboardCashManagementBatchBatchIdErrorsPageRouteImport } from './routes/dashboard/cash-management/batch/$batchId/errors/page'
 import { Route as DashboardCashManagementBatchBatchIdviewPageRouteImport } from './routes/dashboard/cash-management/batch/$batchId/(view)/page'
+import { Route as DashboardCashInBatchBatchIdRemediationsPageRouteImport } from './routes/dashboard/cash-in/batch/$batchId/remediations/page'
 import { Route as DashboardCashInBatchBatchIdErrorsPageRouteImport } from './routes/dashboard/cash-in/batch/$batchId/errors/page'
 import { Route as DashboardCashInBatchBatchIdviewPageRouteImport } from './routes/dashboard/cash-in/batch/$batchId/(view)/page'
+import { Route as DashboardAccountsReceivableBatchBatchIdRemediationsPageRouteImport } from './routes/dashboard/accounts-receivable/batch/$batchId/remediations/page'
 import { Route as DashboardAccountsReceivableBatchBatchIdErrorsPageRouteImport } from './routes/dashboard/accounts-receivable/batch/$batchId/errors/page'
 import { Route as DashboardAccountsReceivableBatchBatchIdviewPageRouteImport } from './routes/dashboard/accounts-receivable/batch/$batchId/(view)/page'
+import { Route as DashboardAccountsPayableBatchBatchIdRemediationsPageRouteImport } from './routes/dashboard/accounts-payable/batch/$batchId/remediations/page'
 import { Route as DashboardAccountsPayableBatchBatchIdErrorsPageRouteImport } from './routes/dashboard/accounts-payable/batch/$batchId/errors/page'
 import { Route as DashboardAccountsPayableBatchBatchIdviewPageRouteImport } from './routes/dashboard/accounts-payable/batch/$batchId/(view)/page'
 
@@ -311,6 +318,12 @@ const DashboardAccountsPayableBatchNewPageRoute =
     path: '/new/',
     getParentRoute: () => DashboardAccountsPayableBatchLayoutRoute,
   } as any)
+const DashboardVendorBatchBatchIdRemediationsPageRoute =
+  DashboardVendorBatchBatchIdRemediationsPageRouteImport.update({
+    id: '/remediations/',
+    path: '/remediations/',
+    getParentRoute: () => DashboardVendorBatchBatchIdLayoutRoute,
+  } as any)
 const DashboardVendorBatchBatchIdErrorsPageRoute =
   DashboardVendorBatchBatchIdErrorsPageRouteImport.update({
     id: '/errors/',
@@ -322,6 +335,12 @@ const DashboardVendorBatchBatchIdviewPageRoute =
     id: '/(view)/',
     path: '/',
     getParentRoute: () => DashboardVendorBatchBatchIdLayoutRoute,
+  } as any)
+const DashboardLedgerBatchBatchIdRemediationsPageRoute =
+  DashboardLedgerBatchBatchIdRemediationsPageRouteImport.update({
+    id: '/remediations/',
+    path: '/remediations/',
+    getParentRoute: () => DashboardLedgerBatchBatchIdLayoutRoute,
   } as any)
 const DashboardLedgerBatchBatchIdErrorsPageRoute =
   DashboardLedgerBatchBatchIdErrorsPageRouteImport.update({
@@ -335,6 +354,12 @@ const DashboardLedgerBatchBatchIdviewPageRoute =
     path: '/',
     getParentRoute: () => DashboardLedgerBatchBatchIdLayoutRoute,
   } as any)
+const DashboardCashOutBatchBatchIdRemediationsPageRoute =
+  DashboardCashOutBatchBatchIdRemediationsPageRouteImport.update({
+    id: '/remediations/',
+    path: '/remediations/',
+    getParentRoute: () => DashboardCashOutBatchBatchIdLayoutRoute,
+  } as any)
 const DashboardCashOutBatchBatchIdErrorsPageRoute =
   DashboardCashOutBatchBatchIdErrorsPageRouteImport.update({
     id: '/errors/',
@@ -346,6 +371,12 @@ const DashboardCashOutBatchBatchIdviewPageRoute =
     id: '/(view)/',
     path: '/',
     getParentRoute: () => DashboardCashOutBatchBatchIdLayoutRoute,
+  } as any)
+const DashboardCashManagementBatchBatchIdRemediationsPageRoute =
+  DashboardCashManagementBatchBatchIdRemediationsPageRouteImport.update({
+    id: '/remediations/',
+    path: '/remediations/',
+    getParentRoute: () => DashboardCashManagementBatchBatchIdLayoutRoute,
   } as any)
 const DashboardCashManagementBatchBatchIdErrorsPageRoute =
   DashboardCashManagementBatchBatchIdErrorsPageRouteImport.update({
@@ -359,6 +390,12 @@ const DashboardCashManagementBatchBatchIdviewPageRoute =
     path: '/',
     getParentRoute: () => DashboardCashManagementBatchBatchIdLayoutRoute,
   } as any)
+const DashboardCashInBatchBatchIdRemediationsPageRoute =
+  DashboardCashInBatchBatchIdRemediationsPageRouteImport.update({
+    id: '/remediations/',
+    path: '/remediations/',
+    getParentRoute: () => DashboardCashInBatchBatchIdLayoutRoute,
+  } as any)
 const DashboardCashInBatchBatchIdErrorsPageRoute =
   DashboardCashInBatchBatchIdErrorsPageRouteImport.update({
     id: '/errors/',
@@ -371,6 +408,12 @@ const DashboardCashInBatchBatchIdviewPageRoute =
     path: '/',
     getParentRoute: () => DashboardCashInBatchBatchIdLayoutRoute,
   } as any)
+const DashboardAccountsReceivableBatchBatchIdRemediationsPageRoute =
+  DashboardAccountsReceivableBatchBatchIdRemediationsPageRouteImport.update({
+    id: '/remediations/',
+    path: '/remediations/',
+    getParentRoute: () => DashboardAccountsReceivableBatchBatchIdLayoutRoute,
+  } as any)
 const DashboardAccountsReceivableBatchBatchIdErrorsPageRoute =
   DashboardAccountsReceivableBatchBatchIdErrorsPageRouteImport.update({
     id: '/errors/',
@@ -382,6 +425,12 @@ const DashboardAccountsReceivableBatchBatchIdviewPageRoute =
     id: '/(view)/',
     path: '/',
     getParentRoute: () => DashboardAccountsReceivableBatchBatchIdLayoutRoute,
+  } as any)
+const DashboardAccountsPayableBatchBatchIdRemediationsPageRoute =
+  DashboardAccountsPayableBatchBatchIdRemediationsPageRouteImport.update({
+    id: '/remediations/',
+    path: '/remediations/',
+    getParentRoute: () => DashboardAccountsPayableBatchBatchIdLayoutRoute,
   } as any)
 const DashboardAccountsPayableBatchBatchIdErrorsPageRoute =
   DashboardAccountsPayableBatchBatchIdErrorsPageRouteImport.update({
@@ -440,18 +489,25 @@ export interface FileRoutesByFullPath {
   '/dashboard/vendor/batch/new': typeof DashboardVendorBatchNewPageRoute
   '/dashboard/accounts-payable/batch/$batchId/': typeof DashboardAccountsPayableBatchBatchIdviewPageRoute
   '/dashboard/accounts-payable/batch/$batchId/errors': typeof DashboardAccountsPayableBatchBatchIdErrorsPageRoute
+  '/dashboard/accounts-payable/batch/$batchId/remediations': typeof DashboardAccountsPayableBatchBatchIdRemediationsPageRoute
   '/dashboard/accounts-receivable/batch/$batchId/': typeof DashboardAccountsReceivableBatchBatchIdviewPageRoute
   '/dashboard/accounts-receivable/batch/$batchId/errors': typeof DashboardAccountsReceivableBatchBatchIdErrorsPageRoute
+  '/dashboard/accounts-receivable/batch/$batchId/remediations': typeof DashboardAccountsReceivableBatchBatchIdRemediationsPageRoute
   '/dashboard/cash-in/batch/$batchId/': typeof DashboardCashInBatchBatchIdviewPageRoute
   '/dashboard/cash-in/batch/$batchId/errors': typeof DashboardCashInBatchBatchIdErrorsPageRoute
+  '/dashboard/cash-in/batch/$batchId/remediations': typeof DashboardCashInBatchBatchIdRemediationsPageRoute
   '/dashboard/cash-management/batch/$batchId/': typeof DashboardCashManagementBatchBatchIdviewPageRoute
   '/dashboard/cash-management/batch/$batchId/errors': typeof DashboardCashManagementBatchBatchIdErrorsPageRoute
+  '/dashboard/cash-management/batch/$batchId/remediations': typeof DashboardCashManagementBatchBatchIdRemediationsPageRoute
   '/dashboard/cash-out/batch/$batchId/': typeof DashboardCashOutBatchBatchIdviewPageRoute
   '/dashboard/cash-out/batch/$batchId/errors': typeof DashboardCashOutBatchBatchIdErrorsPageRoute
+  '/dashboard/cash-out/batch/$batchId/remediations': typeof DashboardCashOutBatchBatchIdRemediationsPageRoute
   '/dashboard/ledger/batch/$batchId/': typeof DashboardLedgerBatchBatchIdviewPageRoute
   '/dashboard/ledger/batch/$batchId/errors': typeof DashboardLedgerBatchBatchIdErrorsPageRoute
+  '/dashboard/ledger/batch/$batchId/remediations': typeof DashboardLedgerBatchBatchIdRemediationsPageRoute
   '/dashboard/vendor/batch/$batchId/': typeof DashboardVendorBatchBatchIdviewPageRoute
   '/dashboard/vendor/batch/$batchId/errors': typeof DashboardVendorBatchBatchIdErrorsPageRoute
+  '/dashboard/vendor/batch/$batchId/remediations': typeof DashboardVendorBatchBatchIdRemediationsPageRoute
 }
 export interface FileRoutesByTo {
   '/forget-password': typeof AuthForgetPasswordRoute
@@ -483,18 +539,25 @@ export interface FileRoutesByTo {
   '/dashboard/vendor/batch/new': typeof DashboardVendorBatchNewPageRoute
   '/dashboard/accounts-payable/batch/$batchId': typeof DashboardAccountsPayableBatchBatchIdviewPageRoute
   '/dashboard/accounts-payable/batch/$batchId/errors': typeof DashboardAccountsPayableBatchBatchIdErrorsPageRoute
+  '/dashboard/accounts-payable/batch/$batchId/remediations': typeof DashboardAccountsPayableBatchBatchIdRemediationsPageRoute
   '/dashboard/accounts-receivable/batch/$batchId': typeof DashboardAccountsReceivableBatchBatchIdviewPageRoute
   '/dashboard/accounts-receivable/batch/$batchId/errors': typeof DashboardAccountsReceivableBatchBatchIdErrorsPageRoute
+  '/dashboard/accounts-receivable/batch/$batchId/remediations': typeof DashboardAccountsReceivableBatchBatchIdRemediationsPageRoute
   '/dashboard/cash-in/batch/$batchId': typeof DashboardCashInBatchBatchIdviewPageRoute
   '/dashboard/cash-in/batch/$batchId/errors': typeof DashboardCashInBatchBatchIdErrorsPageRoute
+  '/dashboard/cash-in/batch/$batchId/remediations': typeof DashboardCashInBatchBatchIdRemediationsPageRoute
   '/dashboard/cash-management/batch/$batchId': typeof DashboardCashManagementBatchBatchIdviewPageRoute
   '/dashboard/cash-management/batch/$batchId/errors': typeof DashboardCashManagementBatchBatchIdErrorsPageRoute
+  '/dashboard/cash-management/batch/$batchId/remediations': typeof DashboardCashManagementBatchBatchIdRemediationsPageRoute
   '/dashboard/cash-out/batch/$batchId': typeof DashboardCashOutBatchBatchIdviewPageRoute
   '/dashboard/cash-out/batch/$batchId/errors': typeof DashboardCashOutBatchBatchIdErrorsPageRoute
+  '/dashboard/cash-out/batch/$batchId/remediations': typeof DashboardCashOutBatchBatchIdRemediationsPageRoute
   '/dashboard/ledger/batch/$batchId': typeof DashboardLedgerBatchBatchIdviewPageRoute
   '/dashboard/ledger/batch/$batchId/errors': typeof DashboardLedgerBatchBatchIdErrorsPageRoute
+  '/dashboard/ledger/batch/$batchId/remediations': typeof DashboardLedgerBatchBatchIdRemediationsPageRoute
   '/dashboard/vendor/batch/$batchId': typeof DashboardVendorBatchBatchIdviewPageRoute
   '/dashboard/vendor/batch/$batchId/errors': typeof DashboardVendorBatchBatchIdErrorsPageRoute
+  '/dashboard/vendor/batch/$batchId/remediations': typeof DashboardVendorBatchBatchIdRemediationsPageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -543,18 +606,25 @@ export interface FileRoutesById {
   '/dashboard/vendor/batch/new/': typeof DashboardVendorBatchNewPageRoute
   '/dashboard/accounts-payable/batch/$batchId/(view)/': typeof DashboardAccountsPayableBatchBatchIdviewPageRoute
   '/dashboard/accounts-payable/batch/$batchId/errors/': typeof DashboardAccountsPayableBatchBatchIdErrorsPageRoute
+  '/dashboard/accounts-payable/batch/$batchId/remediations/': typeof DashboardAccountsPayableBatchBatchIdRemediationsPageRoute
   '/dashboard/accounts-receivable/batch/$batchId/(view)/': typeof DashboardAccountsReceivableBatchBatchIdviewPageRoute
   '/dashboard/accounts-receivable/batch/$batchId/errors/': typeof DashboardAccountsReceivableBatchBatchIdErrorsPageRoute
+  '/dashboard/accounts-receivable/batch/$batchId/remediations/': typeof DashboardAccountsReceivableBatchBatchIdRemediationsPageRoute
   '/dashboard/cash-in/batch/$batchId/(view)/': typeof DashboardCashInBatchBatchIdviewPageRoute
   '/dashboard/cash-in/batch/$batchId/errors/': typeof DashboardCashInBatchBatchIdErrorsPageRoute
+  '/dashboard/cash-in/batch/$batchId/remediations/': typeof DashboardCashInBatchBatchIdRemediationsPageRoute
   '/dashboard/cash-management/batch/$batchId/(view)/': typeof DashboardCashManagementBatchBatchIdviewPageRoute
   '/dashboard/cash-management/batch/$batchId/errors/': typeof DashboardCashManagementBatchBatchIdErrorsPageRoute
+  '/dashboard/cash-management/batch/$batchId/remediations/': typeof DashboardCashManagementBatchBatchIdRemediationsPageRoute
   '/dashboard/cash-out/batch/$batchId/(view)/': typeof DashboardCashOutBatchBatchIdviewPageRoute
   '/dashboard/cash-out/batch/$batchId/errors/': typeof DashboardCashOutBatchBatchIdErrorsPageRoute
+  '/dashboard/cash-out/batch/$batchId/remediations/': typeof DashboardCashOutBatchBatchIdRemediationsPageRoute
   '/dashboard/ledger/batch/$batchId/(view)/': typeof DashboardLedgerBatchBatchIdviewPageRoute
   '/dashboard/ledger/batch/$batchId/errors/': typeof DashboardLedgerBatchBatchIdErrorsPageRoute
+  '/dashboard/ledger/batch/$batchId/remediations/': typeof DashboardLedgerBatchBatchIdRemediationsPageRoute
   '/dashboard/vendor/batch/$batchId/(view)/': typeof DashboardVendorBatchBatchIdviewPageRoute
   '/dashboard/vendor/batch/$batchId/errors/': typeof DashboardVendorBatchBatchIdErrorsPageRoute
+  '/dashboard/vendor/batch/$batchId/remediations/': typeof DashboardVendorBatchBatchIdRemediationsPageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -602,18 +672,25 @@ export interface FileRouteTypes {
     | '/dashboard/vendor/batch/new'
     | '/dashboard/accounts-payable/batch/$batchId/'
     | '/dashboard/accounts-payable/batch/$batchId/errors'
+    | '/dashboard/accounts-payable/batch/$batchId/remediations'
     | '/dashboard/accounts-receivable/batch/$batchId/'
     | '/dashboard/accounts-receivable/batch/$batchId/errors'
+    | '/dashboard/accounts-receivable/batch/$batchId/remediations'
     | '/dashboard/cash-in/batch/$batchId/'
     | '/dashboard/cash-in/batch/$batchId/errors'
+    | '/dashboard/cash-in/batch/$batchId/remediations'
     | '/dashboard/cash-management/batch/$batchId/'
     | '/dashboard/cash-management/batch/$batchId/errors'
+    | '/dashboard/cash-management/batch/$batchId/remediations'
     | '/dashboard/cash-out/batch/$batchId/'
     | '/dashboard/cash-out/batch/$batchId/errors'
+    | '/dashboard/cash-out/batch/$batchId/remediations'
     | '/dashboard/ledger/batch/$batchId/'
     | '/dashboard/ledger/batch/$batchId/errors'
+    | '/dashboard/ledger/batch/$batchId/remediations'
     | '/dashboard/vendor/batch/$batchId/'
     | '/dashboard/vendor/batch/$batchId/errors'
+    | '/dashboard/vendor/batch/$batchId/remediations'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forget-password'
@@ -645,18 +722,25 @@ export interface FileRouteTypes {
     | '/dashboard/vendor/batch/new'
     | '/dashboard/accounts-payable/batch/$batchId'
     | '/dashboard/accounts-payable/batch/$batchId/errors'
+    | '/dashboard/accounts-payable/batch/$batchId/remediations'
     | '/dashboard/accounts-receivable/batch/$batchId'
     | '/dashboard/accounts-receivable/batch/$batchId/errors'
+    | '/dashboard/accounts-receivable/batch/$batchId/remediations'
     | '/dashboard/cash-in/batch/$batchId'
     | '/dashboard/cash-in/batch/$batchId/errors'
+    | '/dashboard/cash-in/batch/$batchId/remediations'
     | '/dashboard/cash-management/batch/$batchId'
     | '/dashboard/cash-management/batch/$batchId/errors'
+    | '/dashboard/cash-management/batch/$batchId/remediations'
     | '/dashboard/cash-out/batch/$batchId'
     | '/dashboard/cash-out/batch/$batchId/errors'
+    | '/dashboard/cash-out/batch/$batchId/remediations'
     | '/dashboard/ledger/batch/$batchId'
     | '/dashboard/ledger/batch/$batchId/errors'
+    | '/dashboard/ledger/batch/$batchId/remediations'
     | '/dashboard/vendor/batch/$batchId'
     | '/dashboard/vendor/batch/$batchId/errors'
+    | '/dashboard/vendor/batch/$batchId/remediations'
   id:
     | '__root__'
     | '/_auth'
@@ -704,18 +788,25 @@ export interface FileRouteTypes {
     | '/dashboard/vendor/batch/new/'
     | '/dashboard/accounts-payable/batch/$batchId/(view)/'
     | '/dashboard/accounts-payable/batch/$batchId/errors/'
+    | '/dashboard/accounts-payable/batch/$batchId/remediations/'
     | '/dashboard/accounts-receivable/batch/$batchId/(view)/'
     | '/dashboard/accounts-receivable/batch/$batchId/errors/'
+    | '/dashboard/accounts-receivable/batch/$batchId/remediations/'
     | '/dashboard/cash-in/batch/$batchId/(view)/'
     | '/dashboard/cash-in/batch/$batchId/errors/'
+    | '/dashboard/cash-in/batch/$batchId/remediations/'
     | '/dashboard/cash-management/batch/$batchId/(view)/'
     | '/dashboard/cash-management/batch/$batchId/errors/'
+    | '/dashboard/cash-management/batch/$batchId/remediations/'
     | '/dashboard/cash-out/batch/$batchId/(view)/'
     | '/dashboard/cash-out/batch/$batchId/errors/'
+    | '/dashboard/cash-out/batch/$batchId/remediations/'
     | '/dashboard/ledger/batch/$batchId/(view)/'
     | '/dashboard/ledger/batch/$batchId/errors/'
+    | '/dashboard/ledger/batch/$batchId/remediations/'
     | '/dashboard/vendor/batch/$batchId/(view)/'
     | '/dashboard/vendor/batch/$batchId/errors/'
+    | '/dashboard/vendor/batch/$batchId/remediations/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1027,6 +1118,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAccountsPayableBatchNewPageRouteImport
       parentRoute: typeof DashboardAccountsPayableBatchLayoutRoute
     }
+    '/dashboard/vendor/batch/$batchId/remediations/': {
+      id: '/dashboard/vendor/batch/$batchId/remediations/'
+      path: '/remediations'
+      fullPath: '/dashboard/vendor/batch/$batchId/remediations'
+      preLoaderRoute: typeof DashboardVendorBatchBatchIdRemediationsPageRouteImport
+      parentRoute: typeof DashboardVendorBatchBatchIdLayoutRoute
+    }
     '/dashboard/vendor/batch/$batchId/errors/': {
       id: '/dashboard/vendor/batch/$batchId/errors/'
       path: '/errors'
@@ -1040,6 +1138,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/vendor/batch/$batchId/'
       preLoaderRoute: typeof DashboardVendorBatchBatchIdviewPageRouteImport
       parentRoute: typeof DashboardVendorBatchBatchIdLayoutRoute
+    }
+    '/dashboard/ledger/batch/$batchId/remediations/': {
+      id: '/dashboard/ledger/batch/$batchId/remediations/'
+      path: '/remediations'
+      fullPath: '/dashboard/ledger/batch/$batchId/remediations'
+      preLoaderRoute: typeof DashboardLedgerBatchBatchIdRemediationsPageRouteImport
+      parentRoute: typeof DashboardLedgerBatchBatchIdLayoutRoute
     }
     '/dashboard/ledger/batch/$batchId/errors/': {
       id: '/dashboard/ledger/batch/$batchId/errors/'
@@ -1055,6 +1160,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardLedgerBatchBatchIdviewPageRouteImport
       parentRoute: typeof DashboardLedgerBatchBatchIdLayoutRoute
     }
+    '/dashboard/cash-out/batch/$batchId/remediations/': {
+      id: '/dashboard/cash-out/batch/$batchId/remediations/'
+      path: '/remediations'
+      fullPath: '/dashboard/cash-out/batch/$batchId/remediations'
+      preLoaderRoute: typeof DashboardCashOutBatchBatchIdRemediationsPageRouteImport
+      parentRoute: typeof DashboardCashOutBatchBatchIdLayoutRoute
+    }
     '/dashboard/cash-out/batch/$batchId/errors/': {
       id: '/dashboard/cash-out/batch/$batchId/errors/'
       path: '/errors'
@@ -1068,6 +1180,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/cash-out/batch/$batchId/'
       preLoaderRoute: typeof DashboardCashOutBatchBatchIdviewPageRouteImport
       parentRoute: typeof DashboardCashOutBatchBatchIdLayoutRoute
+    }
+    '/dashboard/cash-management/batch/$batchId/remediations/': {
+      id: '/dashboard/cash-management/batch/$batchId/remediations/'
+      path: '/remediations'
+      fullPath: '/dashboard/cash-management/batch/$batchId/remediations'
+      preLoaderRoute: typeof DashboardCashManagementBatchBatchIdRemediationsPageRouteImport
+      parentRoute: typeof DashboardCashManagementBatchBatchIdLayoutRoute
     }
     '/dashboard/cash-management/batch/$batchId/errors/': {
       id: '/dashboard/cash-management/batch/$batchId/errors/'
@@ -1083,6 +1202,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardCashManagementBatchBatchIdviewPageRouteImport
       parentRoute: typeof DashboardCashManagementBatchBatchIdLayoutRoute
     }
+    '/dashboard/cash-in/batch/$batchId/remediations/': {
+      id: '/dashboard/cash-in/batch/$batchId/remediations/'
+      path: '/remediations'
+      fullPath: '/dashboard/cash-in/batch/$batchId/remediations'
+      preLoaderRoute: typeof DashboardCashInBatchBatchIdRemediationsPageRouteImport
+      parentRoute: typeof DashboardCashInBatchBatchIdLayoutRoute
+    }
     '/dashboard/cash-in/batch/$batchId/errors/': {
       id: '/dashboard/cash-in/batch/$batchId/errors/'
       path: '/errors'
@@ -1097,6 +1223,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardCashInBatchBatchIdviewPageRouteImport
       parentRoute: typeof DashboardCashInBatchBatchIdLayoutRoute
     }
+    '/dashboard/accounts-receivable/batch/$batchId/remediations/': {
+      id: '/dashboard/accounts-receivable/batch/$batchId/remediations/'
+      path: '/remediations'
+      fullPath: '/dashboard/accounts-receivable/batch/$batchId/remediations'
+      preLoaderRoute: typeof DashboardAccountsReceivableBatchBatchIdRemediationsPageRouteImport
+      parentRoute: typeof DashboardAccountsReceivableBatchBatchIdLayoutRoute
+    }
     '/dashboard/accounts-receivable/batch/$batchId/errors/': {
       id: '/dashboard/accounts-receivable/batch/$batchId/errors/'
       path: '/errors'
@@ -1110,6 +1243,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/accounts-receivable/batch/$batchId/'
       preLoaderRoute: typeof DashboardAccountsReceivableBatchBatchIdviewPageRouteImport
       parentRoute: typeof DashboardAccountsReceivableBatchBatchIdLayoutRoute
+    }
+    '/dashboard/accounts-payable/batch/$batchId/remediations/': {
+      id: '/dashboard/accounts-payable/batch/$batchId/remediations/'
+      path: '/remediations'
+      fullPath: '/dashboard/accounts-payable/batch/$batchId/remediations'
+      preLoaderRoute: typeof DashboardAccountsPayableBatchBatchIdRemediationsPageRouteImport
+      parentRoute: typeof DashboardAccountsPayableBatchBatchIdLayoutRoute
     }
     '/dashboard/accounts-payable/batch/$batchId/errors/': {
       id: '/dashboard/accounts-payable/batch/$batchId/errors/'
@@ -1157,6 +1297,7 @@ const PublicLayoutRouteWithChildren = PublicLayoutRoute._addFileChildren(
 interface DashboardAccountsPayableBatchBatchIdLayoutRouteChildren {
   DashboardAccountsPayableBatchBatchIdviewPageRoute: typeof DashboardAccountsPayableBatchBatchIdviewPageRoute
   DashboardAccountsPayableBatchBatchIdErrorsPageRoute: typeof DashboardAccountsPayableBatchBatchIdErrorsPageRoute
+  DashboardAccountsPayableBatchBatchIdRemediationsPageRoute: typeof DashboardAccountsPayableBatchBatchIdRemediationsPageRoute
 }
 
 const DashboardAccountsPayableBatchBatchIdLayoutRouteChildren: DashboardAccountsPayableBatchBatchIdLayoutRouteChildren =
@@ -1165,6 +1306,8 @@ const DashboardAccountsPayableBatchBatchIdLayoutRouteChildren: DashboardAccounts
       DashboardAccountsPayableBatchBatchIdviewPageRoute,
     DashboardAccountsPayableBatchBatchIdErrorsPageRoute:
       DashboardAccountsPayableBatchBatchIdErrorsPageRoute,
+    DashboardAccountsPayableBatchBatchIdRemediationsPageRoute:
+      DashboardAccountsPayableBatchBatchIdRemediationsPageRoute,
   }
 
 const DashboardAccountsPayableBatchBatchIdLayoutRouteWithChildren =
@@ -1196,6 +1339,7 @@ const DashboardAccountsPayableBatchLayoutRouteWithChildren =
 interface DashboardAccountsReceivableBatchBatchIdLayoutRouteChildren {
   DashboardAccountsReceivableBatchBatchIdviewPageRoute: typeof DashboardAccountsReceivableBatchBatchIdviewPageRoute
   DashboardAccountsReceivableBatchBatchIdErrorsPageRoute: typeof DashboardAccountsReceivableBatchBatchIdErrorsPageRoute
+  DashboardAccountsReceivableBatchBatchIdRemediationsPageRoute: typeof DashboardAccountsReceivableBatchBatchIdRemediationsPageRoute
 }
 
 const DashboardAccountsReceivableBatchBatchIdLayoutRouteChildren: DashboardAccountsReceivableBatchBatchIdLayoutRouteChildren =
@@ -1204,6 +1348,8 @@ const DashboardAccountsReceivableBatchBatchIdLayoutRouteChildren: DashboardAccou
       DashboardAccountsReceivableBatchBatchIdviewPageRoute,
     DashboardAccountsReceivableBatchBatchIdErrorsPageRoute:
       DashboardAccountsReceivableBatchBatchIdErrorsPageRoute,
+    DashboardAccountsReceivableBatchBatchIdRemediationsPageRoute:
+      DashboardAccountsReceivableBatchBatchIdRemediationsPageRoute,
   }
 
 const DashboardAccountsReceivableBatchBatchIdLayoutRouteWithChildren =
@@ -1235,6 +1381,7 @@ const DashboardAccountsReceivableBatchLayoutRouteWithChildren =
 interface DashboardCashInBatchBatchIdLayoutRouteChildren {
   DashboardCashInBatchBatchIdviewPageRoute: typeof DashboardCashInBatchBatchIdviewPageRoute
   DashboardCashInBatchBatchIdErrorsPageRoute: typeof DashboardCashInBatchBatchIdErrorsPageRoute
+  DashboardCashInBatchBatchIdRemediationsPageRoute: typeof DashboardCashInBatchBatchIdRemediationsPageRoute
 }
 
 const DashboardCashInBatchBatchIdLayoutRouteChildren: DashboardCashInBatchBatchIdLayoutRouteChildren =
@@ -1243,6 +1390,8 @@ const DashboardCashInBatchBatchIdLayoutRouteChildren: DashboardCashInBatchBatchI
       DashboardCashInBatchBatchIdviewPageRoute,
     DashboardCashInBatchBatchIdErrorsPageRoute:
       DashboardCashInBatchBatchIdErrorsPageRoute,
+    DashboardCashInBatchBatchIdRemediationsPageRoute:
+      DashboardCashInBatchBatchIdRemediationsPageRoute,
   }
 
 const DashboardCashInBatchBatchIdLayoutRouteWithChildren =
@@ -1272,6 +1421,7 @@ const DashboardCashInBatchLayoutRouteWithChildren =
 interface DashboardCashManagementBatchBatchIdLayoutRouteChildren {
   DashboardCashManagementBatchBatchIdviewPageRoute: typeof DashboardCashManagementBatchBatchIdviewPageRoute
   DashboardCashManagementBatchBatchIdErrorsPageRoute: typeof DashboardCashManagementBatchBatchIdErrorsPageRoute
+  DashboardCashManagementBatchBatchIdRemediationsPageRoute: typeof DashboardCashManagementBatchBatchIdRemediationsPageRoute
 }
 
 const DashboardCashManagementBatchBatchIdLayoutRouteChildren: DashboardCashManagementBatchBatchIdLayoutRouteChildren =
@@ -1280,6 +1430,8 @@ const DashboardCashManagementBatchBatchIdLayoutRouteChildren: DashboardCashManag
       DashboardCashManagementBatchBatchIdviewPageRoute,
     DashboardCashManagementBatchBatchIdErrorsPageRoute:
       DashboardCashManagementBatchBatchIdErrorsPageRoute,
+    DashboardCashManagementBatchBatchIdRemediationsPageRoute:
+      DashboardCashManagementBatchBatchIdRemediationsPageRoute,
   }
 
 const DashboardCashManagementBatchBatchIdLayoutRouteWithChildren =
@@ -1311,6 +1463,7 @@ const DashboardCashManagementBatchLayoutRouteWithChildren =
 interface DashboardCashOutBatchBatchIdLayoutRouteChildren {
   DashboardCashOutBatchBatchIdviewPageRoute: typeof DashboardCashOutBatchBatchIdviewPageRoute
   DashboardCashOutBatchBatchIdErrorsPageRoute: typeof DashboardCashOutBatchBatchIdErrorsPageRoute
+  DashboardCashOutBatchBatchIdRemediationsPageRoute: typeof DashboardCashOutBatchBatchIdRemediationsPageRoute
 }
 
 const DashboardCashOutBatchBatchIdLayoutRouteChildren: DashboardCashOutBatchBatchIdLayoutRouteChildren =
@@ -1319,6 +1472,8 @@ const DashboardCashOutBatchBatchIdLayoutRouteChildren: DashboardCashOutBatchBatc
       DashboardCashOutBatchBatchIdviewPageRoute,
     DashboardCashOutBatchBatchIdErrorsPageRoute:
       DashboardCashOutBatchBatchIdErrorsPageRoute,
+    DashboardCashOutBatchBatchIdRemediationsPageRoute:
+      DashboardCashOutBatchBatchIdRemediationsPageRoute,
   }
 
 const DashboardCashOutBatchBatchIdLayoutRouteWithChildren =
@@ -1348,6 +1503,7 @@ const DashboardCashOutBatchLayoutRouteWithChildren =
 interface DashboardLedgerBatchBatchIdLayoutRouteChildren {
   DashboardLedgerBatchBatchIdviewPageRoute: typeof DashboardLedgerBatchBatchIdviewPageRoute
   DashboardLedgerBatchBatchIdErrorsPageRoute: typeof DashboardLedgerBatchBatchIdErrorsPageRoute
+  DashboardLedgerBatchBatchIdRemediationsPageRoute: typeof DashboardLedgerBatchBatchIdRemediationsPageRoute
 }
 
 const DashboardLedgerBatchBatchIdLayoutRouteChildren: DashboardLedgerBatchBatchIdLayoutRouteChildren =
@@ -1356,6 +1512,8 @@ const DashboardLedgerBatchBatchIdLayoutRouteChildren: DashboardLedgerBatchBatchI
       DashboardLedgerBatchBatchIdviewPageRoute,
     DashboardLedgerBatchBatchIdErrorsPageRoute:
       DashboardLedgerBatchBatchIdErrorsPageRoute,
+    DashboardLedgerBatchBatchIdRemediationsPageRoute:
+      DashboardLedgerBatchBatchIdRemediationsPageRoute,
   }
 
 const DashboardLedgerBatchBatchIdLayoutRouteWithChildren =
@@ -1385,6 +1543,7 @@ const DashboardLedgerBatchLayoutRouteWithChildren =
 interface DashboardVendorBatchBatchIdLayoutRouteChildren {
   DashboardVendorBatchBatchIdviewPageRoute: typeof DashboardVendorBatchBatchIdviewPageRoute
   DashboardVendorBatchBatchIdErrorsPageRoute: typeof DashboardVendorBatchBatchIdErrorsPageRoute
+  DashboardVendorBatchBatchIdRemediationsPageRoute: typeof DashboardVendorBatchBatchIdRemediationsPageRoute
 }
 
 const DashboardVendorBatchBatchIdLayoutRouteChildren: DashboardVendorBatchBatchIdLayoutRouteChildren =
@@ -1393,6 +1552,8 @@ const DashboardVendorBatchBatchIdLayoutRouteChildren: DashboardVendorBatchBatchI
       DashboardVendorBatchBatchIdviewPageRoute,
     DashboardVendorBatchBatchIdErrorsPageRoute:
       DashboardVendorBatchBatchIdErrorsPageRoute,
+    DashboardVendorBatchBatchIdRemediationsPageRoute:
+      DashboardVendorBatchBatchIdRemediationsPageRoute,
   }
 
 const DashboardVendorBatchBatchIdLayoutRouteWithChildren =

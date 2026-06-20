@@ -5,8 +5,10 @@ import {
   TEntryProcessorTypes,
   type TDataBatch,
   type TDataBatchMissingMasterData,
+  type TMissingMasterDataPage,
+  type TRemediationSummary,
 } from '@/interfaces/data-batch';
-import { keepPreviousData, queryOptions } from '@tanstack/react-query';
+import { infiniteQueryOptions, keepPreviousData, queryOptions } from '@tanstack/react-query';
 import type { TPagination } from '@/interfaces/pagination';
 
 interface DataBatchQuery extends TPagination {
@@ -17,6 +19,13 @@ interface DataBatchQuery extends TPagination {
 interface InsertBatchPayload {
   batchId: string;
   skipErrors: boolean;
+}
+
+export interface MissingMasterDataFilters {
+  type?: string;
+  search?: string;
+  creationStatus?: TDataBatchMissingMasterData['creationStatus'];
+  limit?: number;
 }
 
 type TModule =
@@ -215,16 +224,24 @@ export class DataBatch {
 
   public getMissingMasterData = async (
     batchId: string,
-    query?: {
-      type?: 'customer';
-      creationStatus?: TDataBatchMissingMasterData['creationStatus'];
-    },
-  ): Promise<TDataBatchMissingMasterData[]> => {
-    return this.syncService.fetch<TDataBatchMissingMasterData[]>(
+    filters?: MissingMasterDataFilters & { page?: number },
+  ): Promise<TMissingMasterDataPage> => {
+    return this.syncService.fetch<TMissingMasterDataPage>(
       API_ROUTES.DATA_MIGRATION.DATA_BATCH.MISSING_MASTER_DATA,
       {
         params: { batchId },
-        query,
+        query: filters && { ...filters },
+      },
+    );
+  };
+
+  public getRemediationSummary = async (
+    batchId: string,
+  ): Promise<TRemediationSummary> => {
+    return this.syncService.fetch<TRemediationSummary>(
+      API_ROUTES.DATA_MIGRATION.DATA_BATCH.REMEDIATION_SUMMARY,
+      {
+        params: { batchId },
       },
     );
   };
@@ -243,10 +260,38 @@ export class DataBatch {
     );
   };
 
+  public missingMasterDataInfiniteQueryOptions = (
+    batchId: string,
+    filters?: MissingMasterDataFilters,
+  ) => {
+    return infiniteQueryOptions({
+      queryKey: [...this.queryKey, 'missing-master-data', batchId, filters],
+      queryFn: ({ pageParam }) =>
+        this.getMissingMasterData(batchId, {
+          ...filters,
+          page: pageParam as number,
+        }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) =>
+        lastPage.pagination.hasNextPage
+          ? lastPage.pagination.page + 1
+          : undefined,
+    });
+  };
+
+  public remediationSummaryQueryOptions = (batchId: string) => {
+    return queryOptions({
+      queryKey: [...this.queryKey, 'remediation-summary', batchId],
+      queryFn: () => this.getRemediationSummary(batchId),
+    });
+  };
+
+  /** @deprecated Use missingMasterDataInfiniteQueryOptions instead */
   public missingMasterDataQueryOptions = (batchId: string) => {
     return queryOptions({
       queryKey: [...this.queryKey, 'missing-master-data', batchId],
-      queryFn: () => this.getMissingMasterData(batchId),
+      queryFn: () =>
+        this.getMissingMasterData(batchId).then((res) => res.data),
     });
   };
 }

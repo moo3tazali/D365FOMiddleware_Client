@@ -65,7 +65,7 @@ export interface TDataBatchMissingMasterData {
   batchId: string;
   company: string;
   entryProcessorType: number;
-  type: 'customer';
+  type: string;
   missingField: 'CustomerAccount' | 'TaxExemptNumber';
   missingValue: string;
   creationStatus: 'missing' | 'creating' | 'created' | 'create_failed';
@@ -83,3 +83,29 @@ export interface TDataBatchMissingMasterData {
   reprocessErrorMessage?: string;
   reprocessAttempts: number;
 }
+
+export interface TMissingMasterDataPaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface TMissingMasterDataPage {
+  data: TDataBatchMissingMasterData[];
+  pagination: TMissingMasterDataPaginationMeta;
+}
+
+export interface TRemediationTypeSummary {
+  type: string;
+  count: number;
+  affectedRows: number;
+}
+
+export interface TRemediationSummary {
+  total: number;
+  types: TRemediationTypeSummary[];
+}
+

@@ -12,7 +12,6 @@ import type {
 import { Badge } from '@/components/ui/badge';
 import { useParsedPagination } from '@/hooks/use-parsed-pagination';
 import type { PaginationRes } from '@/interfaces/api-res';
-import { RemediationPanel } from './remediation-panel';
 
 const MAX_SOURCE_IDS_VISIBLE = 8;
 
@@ -203,23 +202,20 @@ export function BatchErrorTable({ routeFrom }: BatchErrorTableProps) {
   }, [data]);
 
   return (
-    <>
-      <RemediationPanel batchId={batchId} />
-      <DataTable
-        data={groupedData}
-        columns={columns}
-        error={error?.message}
-        isPending={isPending}
-        isPlaceholderData={isPlaceholderData}
-        onNextPageHover={(nextPage) => {
-          queryClient.prefetchQuery(
-            dataBatchError.errorListQueryOptions({
-              ...nextPage,
-              batchId,
-            }),
-          );
-        }}
-      />
-    </>
+    <DataTable
+      data={groupedData}
+      columns={columns}
+      error={error?.message}
+      isPending={isPending}
+      isPlaceholderData={isPlaceholderData}
+      onNextPageHover={(nextPage) => {
+        queryClient.prefetchQuery(
+          dataBatchError.errorListQueryOptions({
+            ...nextPage,
+            batchId,
+          }),
+        );
+      }}
+    />
   );
 }

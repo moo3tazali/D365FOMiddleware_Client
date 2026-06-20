@@ -34,6 +34,7 @@ export const ROUTES = {
         NEW: '/dashboard/accounts-payable/batch/new',
         VIEW: '/dashboard/accounts-payable/batch/$batchId',
         ERRORS: '/dashboard/accounts-payable/batch/$batchId/errors',
+        REMEDIATIONS: '/dashboard/accounts-payable/batch/$batchId/remediations',
       },
     },
     ACCOUNTS_RECEIVABLE: {
@@ -42,6 +43,8 @@ export const ROUTES = {
         NEW: '/dashboard/accounts-receivable/batch/new',
         VIEW: '/dashboard/accounts-receivable/batch/$batchId',
         ERRORS: '/dashboard/accounts-receivable/batch/$batchId/errors',
+        REMEDIATIONS:
+          '/dashboard/accounts-receivable/batch/$batchId/remediations',
       },
     },
     CASH_MANAGEMENT: {
@@ -50,6 +53,8 @@ export const ROUTES = {
         NEW: '/dashboard/cash-management/batch/new',
         VIEW: '/dashboard/cash-management/batch/$batchId',
         ERRORS: '/dashboard/cash-management/batch/$batchId/errors',
+        REMEDIATIONS:
+          '/dashboard/cash-management/batch/$batchId/remediations',
       },
     },
     LEDGER: {
@@ -58,6 +63,7 @@ export const ROUTES = {
         NEW: '/dashboard/ledger/batch/new',
         VIEW: '/dashboard/ledger/batch/$batchId',
         ERRORS: '/dashboard/ledger/batch/$batchId/errors',
+        REMEDIATIONS: '/dashboard/ledger/batch/$batchId/remediations',
       },
     },
     CASH_IN: {
@@ -66,6 +72,7 @@ export const ROUTES = {
         NEW: '/dashboard/cash-in/batch/new',
         VIEW: '/dashboard/cash-in/batch/$batchId',
         ERRORS: '/dashboard/cash-in/batch/$batchId/errors',
+        REMEDIATIONS: '/dashboard/cash-in/batch/$batchId/remediations',
       },
     },
     CASH_OUT: {
@@ -74,6 +81,7 @@ export const ROUTES = {
         NEW: '/dashboard/cash-out/batch/new',
         VIEW: '/dashboard/cash-out/batch/$batchId',
         ERRORS: '/dashboard/cash-out/batch/$batchId/errors',
+        REMEDIATIONS: '/dashboard/cash-out/batch/$batchId/remediations',
       },
     },
     VENDOR: {
@@ -82,6 +90,7 @@ export const ROUTES = {
         NEW: '/dashboard/vendor/batch/new',
         VIEW: '/dashboard/vendor/batch/$batchId',
         ERRORS: '/dashboard/vendor/batch/$batchId/errors',
+        REMEDIATIONS: '/dashboard/vendor/batch/$batchId/remediations',
       },
     },
     SETTINGS: {
