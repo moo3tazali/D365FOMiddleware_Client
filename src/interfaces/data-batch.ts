@@ -58,6 +58,17 @@ export interface TDataBatch {
   expectedGroupCount?: number;
   dfoIds?: string[]; // Array of created D365FO group IDs
   dfoPostingErrors?: string[]; // Array of error messages from D365FO posting failures
+  createdByUserId?: string;
+  createdByName?: string;
+  createdByEmail?: string;
+  lastReprocessedAt?: string;
+  lastReprocessedByUserId?: string;
+  lastReprocessedByName?: string;
+  lastReprocessedByEmail?: string;
+  reprocessCount: number;
+  lastReprocessJobId?: string;
+  lastReprocessStatus?: 'queued' | 'active' | 'completed' | 'failed';
+  lastReprocessError?: string;
 }
 
 export interface TDataBatchMissingMasterData {

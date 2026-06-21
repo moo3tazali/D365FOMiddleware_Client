@@ -6,6 +6,7 @@ import CheckCircle2 from 'lucide-react/dist/esm/icons/check-circle-2';
 import { useServices } from '@/hooks/use-services';
 import { Description } from '@/components/ui/description';
 import { CustomerRemediationCard } from '@/components/customer-remediation-card';
+import { ReprocessBatchButton } from '@/components/reprocess-batch-button';
 
 interface RemediationsPageProps {
   batchId: string;
@@ -17,23 +18,29 @@ export function RemediationsPage({ batchId }: RemediationsPageProps) {
   const { data: summary, isPending } = useQuery(
     dataBatch.remediationSummaryQueryOptions(batchId),
   );
+  const { data: batchPage } = useQuery(
+    dataBatch.batchByIdQueryOptions(batchId),
+  );
+  const batch = batchPage?.items[0];
 
   const customerType = summary?.types.find((t) => t.type === 'customer');
 
   return (
     <div className='h-full flex flex-col gap-6'>
       {/* Page header */}
-      <div className='flex items-center gap-3'>
-        <div className='p-2.5 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg'>
-          <Wrench className='h-5 w-5 text-indigo-600 dark:text-indigo-400' />
+      <div className='flex flex-wrap items-center justify-between gap-3'>
+        <div className='flex items-center gap-3'>
+          <div className='p-2.5 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg'>
+            <Wrench className='h-5 w-5 text-indigo-600 dark:text-indigo-400' />
+          </div>
+          <div>
+            <h1 className='text-xl font-bold tracking-tight'>Remediations</h1>
+            <Description>
+              Create all missing master data, then reprocess the batch once.
+            </Description>
+          </div>
         </div>
-        <div>
-          <h1 className='text-xl font-bold tracking-tight'>Remediations</h1>
-          <Description>
-            Corrective actions available for this batch. Create missing master
-            data records to resolve blocked entries.
-          </Description>
-        </div>
+        <ReprocessBatchButton batch={batch} />
       </div>
 
       {/* Summary strip */}

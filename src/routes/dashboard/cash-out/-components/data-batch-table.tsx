@@ -162,6 +162,7 @@ const CellAction = ({ row }: { row: TDataBatch }) => {
     onDownloadError,
     onDownloadSourceFile,
     onDelete,
+    canDelete,
   } = useDataBatchAction(row);
   return (
     <TableActionCol>
@@ -178,7 +179,11 @@ const CellAction = ({ row }: { row: TDataBatch }) => {
       <TableActionCol.Download onClick={onDownloadSourceFile}>
         Download source file
       </TableActionCol.Download>
-      <TableActionCol.Delete variant='destructive' onClick={onDelete}>
+      <TableActionCol.Delete
+        variant='destructive'
+        onClick={onDelete}
+        disabled={!canDelete}
+      >
         Delete Batch
       </TableActionCol.Delete>
     </TableActionCol>

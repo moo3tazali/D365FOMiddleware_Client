@@ -1,18 +1,27 @@
-import { useState } from 'react';
-import { useServices } from '@/hooks/use-services';
-import { useInvalidate } from '@/hooks/use-invalidate';
+import AlertCircle from 'lucide-react/dist/esm/icons/alert-circle';
+import Loader2 from 'lucide-react/dist/esm/icons/loader-2';
+
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { FormErrorMessage } from '@/components/ui/form-error-message';
+import { Input } from '@/components/ui/input';
 import {
   ResponsiveModal,
+  ResponsiveModalClose,
   ResponsiveModalContent,
-  ResponsiveModalHeader,
-  ResponsiveModalTitle,
   ResponsiveModalDescription,
   ResponsiveModalFooter,
-  ResponsiveModalClose,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
 } from '@/components/ui/modal';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -20,8 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import AlertCircle from 'lucide-react/dist/esm/icons/alert-circle';
+import { useCreateCustomerForm } from '@/hooks/use-create-customer-form';
 import type { TDataBatchMissingMasterData } from '@/interfaces/data-batch';
 
 interface CreateCustomerModalProps {
@@ -31,354 +39,268 @@ interface CreateCustomerModalProps {
   onSuccess?: () => void;
 }
 
-function getStringDefault(
-  record: TDataBatchMissingMasterData,
-  ...keys: string[]
-): string {
-  for (const key of keys) {
-    const value = record.formDefaults?.[key];
-    if (typeof value === 'string') {
-      return value;
-    }
-  }
-  return '';
-}
-
 export function CreateCustomerModal({
   missingRecord,
   isOpen,
   onOpenChange,
   onSuccess,
 }: CreateCustomerModalProps) {
-  const { masterData, dataBatch, dataBatchError } = useServices();
-  const { invalidate } = useInvalidate();
-
-  const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  // Determine if we are resolving by tax number or customer account
-  const isTaxExemptMode = missingRecord.missingField === 'TaxExemptNumber';
   const customerAccountReadonly =
     missingRecord.readonlyFormFields.includes('CustomerAccount');
   const taxExemptNumberReadonly =
     missingRecord.readonlyFormFields.includes('TaxExemptNumber');
-
-  // Form states
-  const [customerAccount, setCustomerAccount] = useState(() => {
-    if (isTaxExemptMode) {
-      return getStringDefault(
-        missingRecord,
-        'CustomerAccount',
-        'customerAccount',
-      );
-    }
-    return missingRecord.missingValue;
-  });
-
-  const [taxExemptNumber, setTaxExemptNumber] = useState(() => {
-    if (isTaxExemptMode) {
-      return missingRecord.missingValue;
-    }
-    return getStringDefault(
-      missingRecord,
-      'TaxExemptNumber',
-      'taxExemptNumber',
-    );
-  });
-
-  const [name, setName] = useState(() =>
-    getStringDefault(missingRecord, 'Name', 'name'),
-  );
-  const [customerGroupId, setCustomerGroupId] = useState(
-    () =>
-      getStringDefault(missingRecord, 'CustomerGroupId', 'customerGroupId') ||
-      'Domestic',
-  );
-  const [salesTaxGroup, setSalesTaxGroup] = useState(
-    () =>
-      getStringDefault(missingRecord, 'SalesTaxGroup', 'salesTaxGroup') ||
-      'Taxable',
-  );
-  const [paymentTerms, setPaymentTerms] = useState(
-    () =>
-      getStringDefault(missingRecord, 'PaymentTerms', 'paymentTerms') ||
-      '30 Days',
-  );
-  const [partyType, setPartyType] = useState(
-    () =>
-      getStringDefault(missingRecord, 'PartyType', 'partyType') ||
-      'Organization',
-  );
-  const [isSalesTaxIncludedInPrices, setIsSalesTaxIncludedInPrices] = useState(
-    () =>
-      getStringDefault(
-        missingRecord,
-        'IsSalesTaxIncludedInPrices',
-        'isSalesTaxIncludedInPrices',
-      ) || 'No',
-  );
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!customerAccount.trim() || !name.trim()) {
-      setErrorMsg('Please fill in all required fields.');
-      return;
-    }
-
-    setLoading(true);
-    setErrorMsg(null);
-
-    try {
-      await masterData.createCustomerFromMissingData(missingRecord.id, {
-        customerAccount,
-        name,
-        customerGroupId,
-        salesTaxGroup,
-        paymentTerms,
-        partyType,
-        isSalesTaxIncludedInPrices,
-        addressCountryRegionId: 'EGY',
-        salesCurrencyCode: 'EGP',
-        taxExemptNumber,
-      });
-
-      // Invalidate queries to refresh lists
-      invalidate(dataBatch.queryKey);
-      invalidate(dataBatchError.queryKey);
-      invalidate(['data-batch']);
-
+  const creation = useCreateCustomerForm({
+    missingRecord,
+    onSuccess: () => {
       onOpenChange(false);
       onSuccess?.();
-    } catch (error: unknown) {
-      let message = 'An unexpected error occurred while creating the customer.';
-      if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
-        message = error.message;
-      } else if (error instanceof Error) {
-        message = error.message;
-      }
-      setErrorMsg(message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+  });
 
   return (
     <ResponsiveModal open={isOpen} onOpenChange={onOpenChange}>
-      <ResponsiveModalContent className='max-w-md w-full p-6 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-2xl'>
+      <ResponsiveModalContent className='max-w-md w-full p-6'>
         <ResponsiveModalHeader className='mb-4'>
-          <ResponsiveModalTitle className='text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50'>
-            Create Customer Inline
-          </ResponsiveModalTitle>
-          <ResponsiveModalDescription className='text-sm text-zinc-500 dark:text-zinc-400'>
-            Fill in the details below to create this customer in D365FO.
+          <ResponsiveModalTitle>Create Customer Inline</ResponsiveModalTitle>
+          <ResponsiveModalDescription>
+            Create the missing customer in D365FO. Tax number setup is checked
+            directly against D365FO before creation.
           </ResponsiveModalDescription>
         </ResponsiveModalHeader>
 
-        {errorMsg && (
-          <Alert variant='destructive' className='mb-4'>
-            <AlertCircle className='h-4 w-4' />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription className='text-xs'>{errorMsg}</AlertDescription>
-          </Alert>
-        )}
+        <CreationStatus stage={creation.stage} />
 
-        <form onSubmit={handleSubmit} className='space-y-4'>
-          <div className='grid grid-cols-2 gap-4'>
-            <div className='space-y-1 text-left'>
-              <Label
-                htmlFor='customerAccount'
-                className='text-xs font-semibold text-zinc-700 dark:text-zinc-300'
-              >
-                Customer Account *
-              </Label>
-              <Input
-                id='customerAccount'
-                placeholder='e.g. C000001'
-                required
-                disabled={customerAccountReadonly}
-                value={customerAccount}
-                onChange={(e) => setCustomerAccount(e.target.value)}
-                className={`h-9 text-sm ${
-                  customerAccountReadonly
-                    ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                    : ''
-                }`}
+        <Form {...creation.form}>
+          <form onSubmit={creation.onSubmit} className='space-y-4'>
+            <div className='grid grid-cols-2 gap-4'>
+              <TextField
+                control={creation.form.control}
+                name='customerAccount'
+                label='Customer Account *'
+                disabled={customerAccountReadonly || creation.isPending}
+              />
+              <TextField
+                control={creation.form.control}
+                name='taxExemptNumber'
+                label={
+                  taxExemptNumberReadonly ? 'Tax No (Read-only)' : 'Tax No'
+                }
+                disabled={taxExemptNumberReadonly || creation.isPending}
               />
             </div>
-            <div className='space-y-1 text-left'>
-              <Label
-                htmlFor='taxNo'
-                className='text-xs font-semibold text-zinc-700 dark:text-zinc-300'
-              >
-                {taxExemptNumberReadonly ? 'Tax No (Read-only)' : 'Tax No'}
-              </Label>
-              <Input
-                id='taxNo'
-                disabled={taxExemptNumberReadonly}
-                value={taxExemptNumber || ''}
-                onChange={(e) => setTaxExemptNumber(e.target.value)}
-                className={`h-9 text-sm ${
-                  taxExemptNumberReadonly
-                    ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                    : ''
-                }`}
-              />
-            </div>
-          </div>
 
-          <div className='space-y-1 text-left'>
-            <Label
-              htmlFor='name'
-              className='text-xs font-semibold text-zinc-700 dark:text-zinc-300'
-            >
-              Customer Name *
-            </Label>
-            <Input
-              id='name'
-              placeholder='e.g. Acme Corporation'
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className='h-9 text-sm'
+            <TextField
+              control={creation.form.control}
+              name='name'
+              label='Customer Name *'
+              disabled={creation.isPending}
             />
-          </div>
 
-          <div className='grid grid-cols-2 gap-4'>
-            <div className='space-y-1 text-left'>
-              <Label className='text-xs font-semibold text-zinc-700 dark:text-zinc-300'>
-                Customer Group
-              </Label>
-              <Select
-                value={customerGroupId}
-                onValueChange={setCustomerGroupId}
-              >
-                <SelectTrigger className='w-full h-9 text-sm'>
-                  <SelectValue placeholder='Select Group' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='Domestic'>Domestic</SelectItem>
-                  <SelectItem value='Foreign'>Foreign</SelectItem>
-                  <SelectItem value='RelatParty'>RelatParty</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className='grid grid-cols-2 gap-4'>
+              <SelectField
+                control={creation.form.control}
+                name='customerGroupId'
+                label='Customer Group'
+                options={['Domestic', 'Foreign', 'RelatParty']}
+                disabled={creation.isPending}
+              />
+              <SelectField
+                control={creation.form.control}
+                name='partyType'
+                label='Party Type'
+                options={['Organization', 'Personal']}
+                disabled={creation.isPending}
+              />
             </div>
 
-            <div className='space-y-1 text-left'>
-              <Label className='text-xs font-semibold text-zinc-700 dark:text-zinc-300'>
-                Party Type
-              </Label>
-              <Select value={partyType} onValueChange={setPartyType}>
-                <SelectTrigger className='w-full h-9 text-sm'>
-                  <SelectValue placeholder='Select Type' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='Organization'>Organization</SelectItem>
-                  <SelectItem value='Personal'>Personal</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className='grid grid-cols-2 gap-4'>
-            <div className='space-y-1 text-left'>
-              <Label className='text-xs font-semibold text-zinc-700 dark:text-zinc-300'>
-                Sales Tax Group
-              </Label>
-              <Select value={salesTaxGroup} onValueChange={setSalesTaxGroup}>
-                <SelectTrigger className='w-full h-9 text-sm'>
-                  <SelectValue placeholder='Select Tax Group' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='Taxable'>Taxable</SelectItem>
-                  <SelectItem value='Non-Taxabl'>Non-Taxabl</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className='grid grid-cols-2 gap-4'>
+              <SelectField
+                control={creation.form.control}
+                name='salesTaxGroup'
+                label='Sales Tax Group'
+                options={['Taxable', 'Non-Taxabl']}
+                disabled={creation.isPending}
+              />
+              <SelectField
+                control={creation.form.control}
+                name='isSalesTaxIncludedInPrices'
+                label='Tax Included In Prices'
+                options={['Yes', 'No']}
+                disabled={creation.isPending}
+              />
             </div>
 
-            <div className='space-y-1 text-left'>
-              <Label className='text-xs font-semibold text-zinc-700 dark:text-zinc-300'>
-                Tax Included In Prices
-              </Label>
-              <Select
-                value={isSalesTaxIncludedInPrices}
-                onValueChange={setIsSalesTaxIncludedInPrices}
-              >
-                <SelectTrigger className='w-full h-9 text-sm'>
-                  <SelectValue placeholder='Include Tax?' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='Yes'>Yes</SelectItem>
-                  <SelectItem value='No'>No</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className='grid grid-cols-2 gap-4'>
-            <div className='space-y-1 text-left'>
-              <Label className='text-xs font-semibold text-zinc-700 dark:text-zinc-300'>
-                Payment Terms
-              </Label>
-              <Select value={paymentTerms} onValueChange={setPaymentTerms}>
-                <SelectTrigger className='w-full h-9 text-sm'>
-                  <SelectValue placeholder='Select Terms' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='0 Days'>0 Days</SelectItem>
-                  <SelectItem value='3 Days'>3 Days</SelectItem>
-                  <SelectItem value='7 Days'>7 Days</SelectItem>
-                  <SelectItem value='15 Days'>15 Days</SelectItem>
-                  <SelectItem value='30 Days'>30 Days</SelectItem>
-                  <SelectItem value='45 Days'>45 Days</SelectItem>
-                  <SelectItem value='60 Days'>60 Days</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className='grid grid-cols-2 gap-2 text-left'>
-              <div className='space-y-1'>
-                <Label className='text-xs font-semibold text-zinc-400 dark:text-zinc-500'>
-                  Country
-                </Label>
-                <Input
+            <div className='grid grid-cols-2 gap-4'>
+              <SelectField
+                control={creation.form.control}
+                name='paymentTerms'
+                label='Payment Terms'
+                options={[
+                  '0 Days',
+                  '3 Days',
+                  '7 Days',
+                  '15 Days',
+                  '30 Days',
+                  '45 Days',
+                  '60 Days',
+                ]}
+                disabled={creation.isPending}
+              />
+              <div className='grid grid-cols-2 gap-2'>
+                <TextField
+                  control={creation.form.control}
+                  name='addressCountryRegionId'
+                  label='Country/Region'
                   disabled
-                  value='EGY'
-                  className='h-9 text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed'
                 />
-              </div>
-              <div className='space-y-1'>
-                <Label className='text-xs font-semibold text-zinc-400 dark:text-zinc-500'>
-                  Currency
-                </Label>
-                <Input
+                <TextField
+                  control={creation.form.control}
+                  name='salesCurrencyCode'
+                  label='Sales Currency'
                   disabled
-                  value='EGP'
-                  className='h-9 text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed'
                 />
               </div>
             </div>
-          </div>
 
-          <ResponsiveModalFooter className='pt-4 border-t border-zinc-100 dark:border-zinc-900 gap-2'>
-            <ResponsiveModalClose asChild>
-              <Button
-                type='button'
-                variant='outline'
-                className='h-9 text-sm border-zinc-300 dark:border-zinc-700'
-              >
-                Cancel
+            <FormErrorMessage>
+              {creation.form.formState.errors.root?.message}
+            </FormErrorMessage>
+
+            <ResponsiveModalFooter className='pt-4 border-t gap-2'>
+              <ResponsiveModalClose asChild>
+                <Button type='button' variant='outline'>
+                  Cancel
+                </Button>
+              </ResponsiveModalClose>
+              <Button type='submit' disabled={creation.isPending}>
+                {creation.isPending && <Loader2 className='animate-spin' />}
+                {creation.isPending ? 'Creating...' : 'Create Customer'}
               </Button>
-            </ResponsiveModalClose>
-            <Button
-              type='submit'
-              disabled={loading}
-              className='h-9 text-sm bg-primary text-primary-foreground font-semibold px-4 hover:opacity-90 transition-opacity'
-            >
-              {loading ? 'Creating...' : 'Create Customer'}
-            </Button>
-          </ResponsiveModalFooter>
-        </form>
+            </ResponsiveModalFooter>
+          </form>
+        </Form>
       </ResponsiveModalContent>
     </ResponsiveModal>
+  );
+}
+
+function CreationStatus({
+  stage,
+}: {
+  stage: ReturnType<typeof useCreateCustomerForm>['stage'];
+}) {
+  if (stage === 'idle') return null;
+  const messages = {
+    checking:
+      'Checking existing customer account, tax number, and VAT number setup...',
+    rollback_succeeded:
+      'Customer creation failed. The VAT number created by this operation was rolled back.',
+    rollback_failed:
+      'Customer creation failed, and the temporary VAT number could not be rolled back.',
+    failed: 'Customer creation did not complete.',
+  };
+  const isChecking = stage === 'checking';
+  return (
+    <Alert variant={isChecking ? 'default' : 'destructive'} className='mb-4'>
+      {isChecking ? (
+        <Loader2 className='h-4 w-4 animate-spin' />
+      ) : (
+        <AlertCircle className='h-4 w-4' />
+      )}
+      <AlertTitle>
+        {isChecking ? 'D365FO progress' : 'Creation failed'}
+      </AlertTitle>
+      <AlertDescription>{messages[stage]}</AlertDescription>
+    </Alert>
+  );
+}
+
+type CustomerControl = ReturnType<
+  typeof useCreateCustomerForm
+>['form']['control'];
+type CustomerFieldName =
+  | 'customerAccount'
+  | 'taxExemptNumber'
+  | 'name'
+  | 'addressCountryRegionId'
+  | 'salesCurrencyCode';
+
+function TextField({
+  control,
+  name,
+  label,
+  disabled,
+}: {
+  control: CustomerControl;
+  name: CustomerFieldName;
+  label: string;
+  disabled?: boolean;
+}) {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>{label}</FormLabel>
+          <FormControl>
+            <Input {...field} disabled={disabled} />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+type SelectFieldName =
+  | 'customerGroupId'
+  | 'salesTaxGroup'
+  | 'paymentTerms'
+  | 'partyType'
+  | 'isSalesTaxIncludedInPrices';
+
+function SelectField({
+  control,
+  name,
+  label,
+  options,
+  disabled,
+}: {
+  control: CustomerControl;
+  name: SelectFieldName;
+  label: string;
+  options: readonly string[];
+  disabled?: boolean;
+}) {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>{label}</FormLabel>
+          <Select
+            value={field.value}
+            onValueChange={field.onChange}
+            disabled={disabled}
+          >
+            <FormControl>
+              <SelectTrigger className='w-full'>
+                <SelectValue />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              {options.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 }

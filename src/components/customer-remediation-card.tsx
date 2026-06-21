@@ -250,7 +250,7 @@ export function CustomerRemediationCard({
     async (record: TDataBatchMissingMasterData) => {
       setReprocessingId(record.id);
       try {
-        await dataBatch.reprocess(batchId, record.id);
+        await dataBatch.reprocess(batchId);
         invalidate(dataBatch.queryKey);
         invalidate(dataBatchError.queryKey);
         invalidate(['data-batch']);

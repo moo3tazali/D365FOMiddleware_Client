@@ -31,6 +31,6 @@ export interface ICreateCustomerFromMissingDataResponse {
     name?: string;
   };
   creationStatus: 'created';
-  reprocessStatus: 'succeeded' | 'failed';
+  reprocessStatus: 'pending';
   reprocessErrorMessage?: string;
 }

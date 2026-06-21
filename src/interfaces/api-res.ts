@@ -2,6 +2,8 @@ export interface ErrorRes {
   code: number;
   message: string;
   validationErrors: Record<string, string[]>;
+  errorCode?: string;
+  details?: Record<string, unknown>;
 }
 
 export interface SuccessRes<T> {

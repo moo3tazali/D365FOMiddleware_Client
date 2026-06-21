@@ -6,9 +6,14 @@ import { useServices } from '@/hooks/use-services';
 import { useMutation } from '@/hooks/use-mutation';
 import { ROUTES } from '@/router';
 import { useCallback, useMemo } from 'react';
+import { useAuth } from '@/hooks/use-auth';
 
 export const useDataBatchAction = (data: TDataBatch) => {
   const { dataBatch } = useServices();
+  const user = useAuth((state) => state.user);
+  const canDelete =
+    user?.role === 'ADMIN' ||
+    (Boolean(user?.id) && data.createdByUserId === user?.id);
 
   const navigate = useNavigate();
 
@@ -48,5 +53,6 @@ export const useDataBatchAction = (data: TDataBatch) => {
     onDownloadError,
     onDownloadSourceFile,
     onDelete,
+    canDelete,
   };
 };

@@ -42,10 +42,6 @@ export class ErrorHandler {
       const status = error.response.status;
 
       // fallback to generic message based on status
-      const override = this._getDefaultErrorForStatus(status);
-
-      if (override) return override;
-
       // check for ErrorResOne / Two
       if (this._isErrorResOne(err)) {
         return {
@@ -66,10 +62,18 @@ export class ErrorHandler {
       if (this._isErrorResThree(err)) {
         return {
           code: err.status.code,
-          message: err.status.developerMessage,
+          message:
+            err.status.developerMessage ||
+            err.status.userMessage ||
+            'Request failed.',
           validationErrors: err.status?.validationErrors ?? {},
+          errorCode: err.status.errorCode,
+          details: err.status.details,
         };
       }
+
+      const override = this._getDefaultErrorForStatus(status);
+      if (override) return override;
 
       // ✅ 4. fallback to generic message based on status
       return this._defaultError(
@@ -175,6 +179,7 @@ export class ErrorHandler {
       developerMessage: string;
       errorCode: string;
       validationErrors?: Record<string, string[]>;
+      details?: Record<string, unknown>;
     };
     meta: {
       requestId: string;

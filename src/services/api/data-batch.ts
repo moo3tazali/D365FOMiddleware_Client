@@ -25,6 +25,12 @@ interface InsertBatchPayload {
   skipErrors: boolean;
 }
 
+export interface BatchReprocessSubmission {
+  jobId: string;
+  status: 'queued' | 'already-running';
+  message: string;
+}
+
 export interface MissingMasterDataFilters {
   type?: string;
   search?: string;
@@ -252,14 +258,12 @@ export class DataBatch {
 
   public reprocess = async (
     batchId: string,
-    missingDataId?: string,
-  ): Promise<void> => {
-    await this.syncService.save<void, void>(
+  ): Promise<BatchReprocessSubmission> => {
+    return this.syncService.save<BatchReprocessSubmission, void>(
       API_ROUTES.DATA_MIGRATION.DATA_BATCH.REPROCESS,
       undefined,
       {
         params: { batchId },
-        query: missingDataId ? { missingDataId } : undefined,
       },
     );
   };

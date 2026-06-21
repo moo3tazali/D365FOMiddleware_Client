@@ -28,6 +28,7 @@ export class User {
   public set(accessToken: string) {
     const tokenPayload = this.decodeAccessToken(accessToken);
     this._user = {
+      id: tokenPayload.sub ?? '',
       email: tokenPayload.email ?? '',
       username:
         [tokenPayload.firstName, tokenPayload.lastName]
@@ -63,6 +64,7 @@ export class User {
   }
 
   private decodeAccessToken(accessToken: string): {
+    sub?: string;
     role?: 'ADMIN' | 'OPS';
     avatarPath?: string;
     email?: string;
