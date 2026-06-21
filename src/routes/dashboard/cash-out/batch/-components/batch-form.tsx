@@ -61,36 +61,6 @@ export const BatchForm = () => {
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name='billingCodeId'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Billing Classification</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={form.isBillingCodeDisabled || form.isDisabled}
-                  name='billingCodeId'
-                  key={form.billingCodeKey}
-                >
-                  <FormControl>
-                    <SelectTrigger className='w-full'>
-                      <SelectValue placeholder='Select the target service billing classification in dynamics' />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <BillingCodeSelectItem
-                      isFreight={form.isFreight}
-                      isTrucking={form.isTrucking}
-                    />
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         </div>
 
         <FormField
@@ -201,41 +171,6 @@ const DropZoneContent = ({ isDisabled }: { isDisabled: boolean }) => (
     </div>
   </div>
 );
-
-const BillingCodeSelectItem = ({
-  isTrucking,
-  isFreight,
-}: {
-  isTrucking: boolean;
-  isFreight: boolean;
-}) => {
-  if (isFreight)
-    return (
-      <>
-        <SelectItem value='INV-FW'>Invoices</SelectItem>
-        <SelectItem value='OR-FW'>Official Receipts</SelectItem>
-        <SelectItem value='OF-FW'>Ocean Freight</SelectItem>
-      </>
-    );
-
-  if (isTrucking)
-    return (
-      <>
-        <SelectItem value='INV-TR'>Invoices</SelectItem>
-        <SelectItem value='OR-TR'>Official Receipts</SelectItem>
-      </>
-    );
-
-  return (
-    <SelectItem
-      disabled
-      value='null'
-      className='h-16 items-center justify-center'
-    >
-      Select target service first
-    </SelectItem>
-  );
-};
 
 const TargetServiceSelectItem = () =>
   ENTRY_PROCESSOR_OPTIONS.CASH_OUT.map(({ label, value }) => (
