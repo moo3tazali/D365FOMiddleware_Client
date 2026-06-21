@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useServices } from '@/hooks/use-services';
-import { useInvalidate } from '@/hooks/use-invalidate';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import AlertCircle from 'lucide-react/dist/esm/icons/alert-circle';
 import Wrench from 'lucide-react/dist/esm/icons/wrench';
-import RefreshCw from 'lucide-react/dist/esm/icons/refresh-cw';
 import Loader2 from 'lucide-react/dist/esm/icons/loader-2';
 import CheckCircle2 from 'lucide-react/dist/esm/icons/check-circle-2';
 import { CreateCustomerModal } from './create-customer-modal';
@@ -17,8 +15,7 @@ interface RemediationPanelProps {
 }
 
 export function RemediationPanel({ batchId }: RemediationPanelProps) {
-  const { dataBatch, dataBatchError } = useServices();
-  const { invalidate } = useInvalidate();
+  const { dataBatch } = useServices();
 
   const { data: missingRecords, isPending } = useQuery(
     dataBatch.missingMasterDataQueryOptions(batchId),
@@ -27,7 +24,6 @@ export function RemediationPanel({ batchId }: RemediationPanelProps) {
   const [selectedRecord, setSelectedRecord] =
     useState<TDataBatchMissingMasterData | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [reprocessingId, setReprocessingId] = useState<string | null>(null);
 
   if (isPending) {
     return (
@@ -47,20 +43,6 @@ export function RemediationPanel({ batchId }: RemediationPanelProps) {
   const handleResolveClick = (record: TDataBatchMissingMasterData) => {
     setSelectedRecord(record);
     setModalOpen(true);
-  };
-
-  const handleReprocess = async (record: TDataBatchMissingMasterData) => {
-    setReprocessingId(record.id);
-    try {
-      await dataBatch.reprocess(batchId);
-      invalidate(dataBatch.queryKey);
-      invalidate(dataBatchError.queryKey);
-      invalidate(['data-batch']);
-    } catch (err) {
-      console.error('Failed to reprocess batch:', err);
-    } finally {
-      setReprocessingId(null);
-    }
   };
 
   return (
@@ -89,9 +71,7 @@ export function RemediationPanel({ batchId }: RemediationPanelProps) {
           const isCreating = record.creationStatus === 'creating';
           const creationFailed = record.creationStatus === 'create_failed';
           const reprocessFailed = record.reprocessStatus === 'failed';
-          const isReprocessing =
-            record.reprocessStatus === 'processing' ||
-            reprocessingId === record.id;
+          const isReprocessing = record.reprocessStatus === 'processing';
           const isResolved = record.reprocessStatus === 'succeeded';
 
           return (
@@ -141,21 +121,7 @@ export function RemediationPanel({ batchId }: RemediationPanelProps) {
                         : 'Reprocessing batch...'}
                     </span>
                   </div>
-                ) : isCreated ? (
-                  <Button
-                    size='sm'
-                    variant='outline'
-                    onClick={() => handleReprocess(record)}
-                    className='h-8 gap-1.5 text-xs font-semibold px-3'
-                  >
-                    <RefreshCw className='h-3.5 w-3.5' />
-                    <span>
-                      {reprocessFailed
-                        ? 'Retry reprocessing'
-                        : 'Reprocess batch'}
-                    </span>
-                  </Button>
-                ) : (
+                ) : !isCreated ? (
                   <>
                     {creationFailed && (
                       <span className='text-xs font-bold text-destructive'>
@@ -171,7 +137,7 @@ export function RemediationPanel({ batchId }: RemediationPanelProps) {
                       <span>Create customer</span>
                     </Button>
                   </>
-                )}
+                ) : null}
               </div>
             </div>
           );

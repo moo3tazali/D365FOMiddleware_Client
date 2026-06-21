@@ -6,12 +6,10 @@ import UsersIcon from 'lucide-react/dist/esm/icons/users';
 import Loader2 from 'lucide-react/dist/esm/icons/loader-2';
 import AlertCircle from 'lucide-react/dist/esm/icons/alert-circle';
 import CheckCircle2 from 'lucide-react/dist/esm/icons/check-circle-2';
-import RefreshCw from 'lucide-react/dist/esm/icons/refresh-cw';
 import Wrench from 'lucide-react/dist/esm/icons/wrench';
 import XCircle from 'lucide-react/dist/esm/icons/x-circle';
 
 import { useServices } from '@/hooks/use-services';
-import { useInvalidate } from '@/hooks/use-invalidate';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -101,22 +99,17 @@ function ReprocessStatusBadge({
 
 interface MissingMasterDataRowProps {
   record: TDataBatchMissingMasterData;
-  reprocessingId: string | null;
   onCreateClick: (record: TDataBatchMissingMasterData) => void;
-  onReprocess: (record: TDataBatchMissingMasterData) => void;
 }
 
 function MissingMasterDataRow({
   record,
-  reprocessingId,
   onCreateClick,
-  onReprocess,
 }: MissingMasterDataRowProps) {
   const isCreated = record.creationStatus === 'created';
   const isCreating = record.creationStatus === 'creating';
   const creationFailed = record.creationStatus === 'create_failed';
-  const isReprocessing =
-    record.reprocessStatus === 'processing' || reprocessingId === record.id;
+  const isReprocessing = record.reprocessStatus === 'processing';
   const isResolved = record.reprocessStatus === 'succeeded';
 
   return (
@@ -155,19 +148,7 @@ function MissingMasterDataRow({
             <Loader2 className='h-4 w-4 animate-spin text-primary' />
             <span>{isCreating ? 'Creating…' : 'Reprocessing…'}</span>
           </div>
-        ) : isCreated ? (
-          <Button
-            size='sm'
-            variant='outline'
-            onClick={() => onReprocess(record)}
-            className='h-8 gap-1.5 text-xs font-semibold px-3'
-          >
-            <RefreshCw className='h-3.5 w-3.5' />
-            {record.reprocessStatus === 'failed'
-              ? 'Retry reprocess'
-              : 'Reprocess'}
-          </Button>
-        ) : (
+        ) : !isCreated ? (
           <Button
             size='sm'
             onClick={() => onCreateClick(record)}
@@ -176,7 +157,7 @@ function MissingMasterDataRow({
             <Wrench className='h-3.5 w-3.5' />
             Create customer
           </Button>
-        )}
+        ) : null}
       </div>
     </div>
   );
@@ -197,8 +178,7 @@ export function CustomerRemediationCard({
   initialTotal,
   initialAffectedRows,
 }: CustomerRemediationCardProps) {
-  const { dataBatch, dataBatchError } = useServices();
-  const { invalidate } = useInvalidate();
+  const { dataBatch } = useServices();
   const queryClient = useQueryClient();
 
   const [searchRaw, setSearchRaw] = useState('');
@@ -206,7 +186,6 @@ export function CustomerRemediationCard({
   const [selectedRecord, setSelectedRecord] =
     useState<TDataBatchMissingMasterData | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [reprocessingId, setReprocessingId] = useState<string | null>(null);
 
   const virtuosoRef = useRef<VirtuosoHandle>(null);
 
@@ -245,23 +224,6 @@ export function CustomerRemediationCard({
     setSelectedRecord(record);
     setModalOpen(true);
   };
-
-  const handleReprocess = useCallback(
-    async (record: TDataBatchMissingMasterData) => {
-      setReprocessingId(record.id);
-      try {
-        await dataBatch.reprocess(batchId);
-        invalidate(dataBatch.queryKey);
-        invalidate(dataBatchError.queryKey);
-        invalidate(['data-batch']);
-      } catch (err) {
-        console.error('Failed to reprocess batch:', err);
-      } finally {
-        setReprocessingId(null);
-      }
-    },
-    [batchId, dataBatch, dataBatchError, invalidate],
-  );
 
   const handleModalSuccess = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: dataBatch.queryKey });
@@ -366,9 +328,7 @@ export function CustomerRemediationCard({
               <MissingMasterDataRow
                 key={record.id}
                 record={record}
-                reprocessingId={reprocessingId}
                 onCreateClick={handleCreateClick}
-                onReprocess={handleReprocess}
               />
             )}
             components={{

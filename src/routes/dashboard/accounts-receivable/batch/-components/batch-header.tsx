@@ -29,9 +29,9 @@ interface BatchHeaderProps {
 
 export const BatchHeader = ({ batch }: BatchHeaderProps) => {
   return (
-    <div>
-      <div className='flex flex-wrap items-end gap-2 sm:gap-3'>
-        <div className='flex items-end gap-2'>
+    <div className='flex items-start justify-between gap-4'>
+      <div>
+        <div className='flex items-center gap-2'>
           <h1>Batch Entries</h1>
           {batch != null && (
             <Badge
@@ -46,10 +46,13 @@ export const BatchHeader = ({ batch }: BatchHeaderProps) => {
             </Badge>
           )}
         </div>
+        <Description>Batch entries to synchronize with Dynamics.</Description>
+      </div>
+
+      <div className='flex shrink-0 items-center gap-1'>
         <BatchRefreshBtn />
         <ReprocessBatchButton batch={batch} />
       </div>
-      <Description>Batch entries to synchronize with Dynamics.</Description>
     </div>
   );
 };
@@ -68,7 +71,7 @@ const BatchRefreshBtn = () => {
           <RefreshCw className='size-5 md:size-7' />
         </Button>
       </TooltipTrigger>
-      <TooltipContent side='right' className='hidden lg:block'>
+      <TooltipContent side='bottom' className='hidden lg:block'>
         Refresh Data
       </TooltipContent>
     </Tooltip>
