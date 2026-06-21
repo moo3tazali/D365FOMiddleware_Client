@@ -1,5 +1,6 @@
-import CloudUpload from 'lucide-react/dist/esm/icons/cloud-upload';
+﻿import CloudUpload from 'lucide-react/dist/esm/icons/cloud-upload';
 import Paperclip from 'lucide-react/dist/esm/icons/paperclip';
+import FileSpreadsheet from 'lucide-react/dist/esm/icons/file-spreadsheet';
 
 import {
   Form,
@@ -26,6 +27,7 @@ import {
 import { useBatchForm } from '../-hooks/use-batch-form';
 import { Progress } from '@/components/ui/progress';
 import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/data-batch';
+import { cn } from '@/lib/utils';
 
 export const BatchForm = () => {
   const { form } = useBatchForm();
@@ -59,7 +61,36 @@ export const BatchForm = () => {
               </FormItem>
             )}
           />
-          <div />
+
+          <FormField
+            control={form.control}
+            name='billingCodeId'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Billing Classification</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={form.isBillingCodeDisabled || form.isDisabled}
+                  name='billingCodeId'
+                  key={form.billingCodeKey}
+                >
+                  <FormControl>
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder='Select the target service billing classification in dynamics' />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <BillingCodeSelectItem
+                      isFreight={form.isFreight}
+                      isTrucking={form.isTrucking}
+                    />
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
         <FormField
@@ -83,38 +114,28 @@ export const BatchForm = () => {
                     maxFiles: 1,
                     maxSize: 1024 * 1024 * 250, // 250MB
                   }}
-                  className='relative bg-background rounded-lg p-2'
+                  className='relative bg-background rounded-xl'
                   disabled={form.isDisabled}
                 >
-                  <FileInput
-                    id='dataFile'
-                    className='outline-dashed outline-1 outline-slate-500'
-                  >
-                    <div className='flex items-center justify-center flex-col p-8 w-full '>
-                      <CloudUpload className='text-gray-500 w-10 h-10' />
-                      <p className='mb-1 text-sm text-gray-500 dark:text-gray-400'>
-                        <span className='font-semibold'>
-                          Click to select file
-                        </span>{' '}
-                        or drag and drop
-                      </p>
-                      <p className='text-xs text-gray-500 dark:text-gray-400'>
-                        .xlsx or .xls files only
-                      </p>
-                    </div>
+                  <FileInput id='dataFile'>
+                    <DropZoneContent isDisabled={form.isDisabled} />
                   </FileInput>
                   <FileUploaderContent>
                     {field.value &&
                       field.value.length > 0 &&
                       field.value.map((file, i) => (
                         <FileUploaderItem index={i} key={i}>
-                          <div className='flex items-center gap-1.5'>
-                            <Paperclip className='size-4 stroke-current' />
-                            <span className='block max-w-xs truncate sm:max-w-full'>
-                              {file.name}
-                            </span>
+                          <div className='flex items-center gap-2'>
+                            <div className='flex size-7 shrink-0 items-center justify-center rounded-md bg-primary/10'>
+                              <Paperclip className='size-3.5 text-primary' />
+                            </div>
+                            <div className='min-w-0 flex-1 space-y-1.5'>
+                              <span className='block max-w-xs truncate text-sm font-medium sm:max-w-full'>
+                                {file.name}
+                              </span>
+                              <Progress size='xs' progress={form.uploadProgress} />
+                            </div>
                           </div>
-                          <Progress size='xs' progress={form.uploadProgress} />
                         </FileUploaderItem>
                       ))}
                   </FileUploaderContent>
@@ -137,9 +158,86 @@ export const BatchForm = () => {
   );
 };
 
+const DropZoneContent = ({ isDisabled }: { isDisabled: boolean }) => (
+  <div
+    className={cn(
+      'group flex flex-col items-center justify-center gap-3 rounded-xl',
+      'border-2 border-dashed border-border',
+      'bg-muted/30 px-6 py-10',
+      'transition-colors duration-200',
+      !isDisabled && 'hover:border-primary/50 hover:bg-primary/5',
+      isDisabled && 'opacity-50',
+    )}
+  >
+    {/* Icon container */}
+    <div
+      className={cn(
+        'flex size-14 items-center justify-center rounded-2xl',
+        'bg-primary/10 ring-4 ring-primary/5',
+        'transition-transform duration-200',
+        !isDisabled && 'group-hover:scale-105',
+      )}
+    >
+      <CloudUpload
+        className={cn(
+          'size-7 text-primary/70 transition-colors duration-200',
+          !isDisabled && 'group-hover:text-primary',
+        )}
+      />
+    </div>
+
+    {/* Copy */}
+    <div className='space-y-1 text-center'>
+      <p className='text-sm font-semibold text-foreground'>
+        <span className='text-primary'>Click to select</span> or drag & drop
+      </p>
+      <p className='flex items-center justify-center gap-1 text-xs text-muted-foreground'>
+        <FileSpreadsheet className='size-3.5' />
+        .xlsx or .xls â€” up to 250 MB
+      </p>
+    </div>
+  </div>
+);
+
+const BillingCodeSelectItem = ({
+  isTrucking,
+  isFreight,
+}: {
+  isTrucking: boolean;
+  isFreight: boolean;
+}) => {
+  if (isFreight)
+    return (
+      <>
+        <SelectItem value='INV-FW'>Invoices</SelectItem>
+        <SelectItem value='OR-FW'>Official Receipts</SelectItem>
+        <SelectItem value='OF-FW'>Ocean Freight</SelectItem>
+      </>
+    );
+
+  if (isTrucking)
+    return (
+      <>
+        <SelectItem value='INV-TR'>Invoices</SelectItem>
+        <SelectItem value='OR-TR'>Official Receipts</SelectItem>
+      </>
+    );
+
+  return (
+    <SelectItem
+      disabled
+      value='null'
+      className='h-16 items-center justify-center'
+    >
+      Select target service first
+    </SelectItem>
+  );
+};
+
 const TargetServiceSelectItem = () =>
   ENTRY_PROCESSOR_OPTIONS.VENDOR.map(({ label, value }) => (
     <SelectItem key={value} value={String(value)}>
       {label}
     </SelectItem>
   ));
+

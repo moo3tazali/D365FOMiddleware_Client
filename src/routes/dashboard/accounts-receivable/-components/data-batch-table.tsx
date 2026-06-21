@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/data-batch';
 import { useSearchQuery } from '@/hooks/use-search-query';
 import { ClampText } from '@/components/ui/clamp-text';
+import { ReprocessBatchMenuItem } from '@/components/reprocess-batch-menu-item';
 
 export const DataBatchTable = () => {
   const { dataBatch } = useServices();
@@ -170,6 +171,7 @@ const CellAction = ({ row }: { row: TDataBatch }) => {
         Copy Batch Number
       </TableActionCol.Copy>
       <TableActionCol.View onClick={onView} />
+      <ReprocessBatchMenuItem batch={row} />
       <TableActionCol.Download variant='primary' onClick={onDownload}>
         Download Batch
       </TableActionCol.Download>

@@ -1,21 +1,17 @@
 import { useMemo } from 'react';
-import { Link } from '@tanstack/react-router';
 import UploadCloud from 'lucide-react/dist/esm/icons/upload-cloud';
 import SlidersHorizontal from 'lucide-react/dist/esm/icons/sliders-horizontal';
 import CloudAlert from 'lucide-react/dist/esm/icons/cloud-alert';
-import AlertCircleIcon from 'lucide-react/dist/esm/icons/alert-circle';
-import CheckCircle2Icon from 'lucide-react/dist/esm/icons/check-circle-2';
 
-import { Frame } from '@/components/ui/frame';
 import type { TDataBatch } from '@/interfaces/data-batch';
 import { CloudCheck } from '@/assets/icons/cloud-check';
 import { useBatchQueryData } from '../-hooks/use-batch-query-data';
 import { Description } from '@/components/ui/description';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/router';
 import { BatchDFOStatus } from './batch-dfo-status';
+import { BatchResultAlert } from '@/components/batch-result-alert';
 import { RemediationsSummaryAlert } from '@/components/remediations-summary-alert';
+import { cn } from '@/lib/utils';
 
 export const BatchResult = () => {
   const [batch] = useBatchQueryData();
@@ -24,27 +20,24 @@ export const BatchResult = () => {
 
   return (
     <div className='flex-1 space-y-5'>
-      <div>
-        <h3>Batch Results</h3>
-        <Description>{batch?.description}</Description>
+      <div className='flex items-center gap-3'>
+        <div>
+          <h3>Batch Results</h3>
+          <Description>{batch?.description}</Description>
+        </div>
       </div>
-      <div className='grid grid-cols-fit-175 sm:grid-cols-fit-250 gap-2.5'>
-        {items.map(({ Icon, total, label }) => (
-          <Frame
-            key={label}
-            className='flex-col gap-5 items-stretch p-5 md:p-10 justify-between'
-          >
-            <div className='flex items-center justify-between'>
-              <span className='text-[clamp(1rem,1.5vw,1.5rem)]'>{total}</span>
-              <Icon />
-            </div>
-            <span className='text-[clamp(1rem,1.5vw,1.5rem)]'>{label}</span>
-          </Frame>
+      <div className='grid grid-cols-2 sm:grid-cols-4 gap-3'>
+        {items.map(({ icon, color, total, label }) => (
+          <StatCard key={label} icon={icon} color={color} total={total} label={label} />
         ))}
       </div>
 
       {batch && !!batch.totalUploadedCount && (
-        <BatchResultAlert errorCount={batch.errorCount} batchId={batch.id} />
+        <BatchResultAlert
+          errorCount={batch.errorCount}
+          batchId={batch.id}
+          errorsRoute={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.ERRORS}
+        />
       )}
 
       {batch && !!batch.totalUploadedCount && (
@@ -61,81 +54,66 @@ export const BatchResult = () => {
   );
 };
 
-const BatchResultAlert = ({
-  errorCount,
-  batchId,
-}: {
-  errorCount: number;
-  batchId: string;
-}) => {
-  if (!errorCount)
-    return (
-      <Alert variant='default'>
-        <CheckCircle2Icon />
-        <AlertTitle>Entries processed successfully</AlertTitle>
-        <AlertDescription>
-          <p>
-            All entries have been formatted. Click
-            <span className='font-medium px-1'>Post to D365FO</span>
-            to send them to Dynamics 365 Finance &amp; Operations.
-          </p>
-        </AlertDescription>
-      </Alert>
-    );
+// ── Stat card ────────────────────────────────────────────────────────────────
 
-  return (
-    <Alert variant='destructive'>
-      <AlertCircleIcon />
-      <AlertTitle>
-        {errorCount} errors found while processing this batch
-      </AlertTitle>
-      <AlertDescription>
-        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-1'>
-          <p className='text-sm'>
-            Review and resolve these errors before posting to D365FO.
-          </p>
-          <Button
-            size='sm'
-            variant='outline'
-            asChild
-            className='border-destructive/40 text-destructive hover:bg-destructive/10 shrink-0'
-          >
-            <Link
-              to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.ERRORS}
-              params={{ batchId }}
-            >
-              View errors
-            </Link>
-          </Button>
-        </div>
-      </AlertDescription>
-    </Alert>
-  );
+interface StatCardProps {
+  icon: React.ReactNode;
+  color: 'sky' | 'indigo' | 'emerald' | 'red';
+  total: string;
+  label: string;
+}
+
+const colorMap: Record<
+  StatCardProps['color'],
+  { border: string; bg: string; pip: string }
+> = {
+  sky: {
+    border: 'border-sky-200 dark:border-sky-800/50',
+    bg: 'bg-sky-50 dark:bg-sky-950/20',
+    pip: 'bg-sky-400',
+  },
+  indigo: {
+    border: 'border-indigo-200 dark:border-indigo-800/50',
+    bg: 'bg-indigo-50 dark:bg-indigo-950/20',
+    pip: 'bg-indigo-400',
+  },
+  emerald: {
+    border: 'border-emerald-200 dark:border-emerald-800/50',
+    bg: 'bg-emerald-50 dark:bg-emerald-950/20',
+    pip: 'bg-emerald-400',
+  },
+  red: {
+    border: 'border-red-200 dark:border-red-800/50',
+    bg: 'bg-red-50 dark:bg-red-950/20',
+    pip: 'bg-red-400',
+  },
 };
 
-const UploadedIcon = () => (
-  <div className='bg-sky-100 dark:bg-sky-800/20 rounded-full p-2 md:p-4'>
-    <UploadCloud className='text-sky-500 dark:text-sky-400 size-[clamp(1.75rem,2vw,4rem)]' />
-  </div>
-);
-
-const FormattedIcon = () => (
-  <div className='bg-indigo-100 dark:bg-indigo-800/20 rounded-full p-2 md:p-4'>
-    <SlidersHorizontal className='text-indigo-500 dark:text-indigo-400 size-[clamp(1.75rem,2vw,4rem)]' />
-  </div>
-);
-
-const SuccessIcon = () => (
-  <div className='bg-emerald-100 dark:bg-emerald-800/20 rounded-full p-2 md:p-4'>
-    <CloudCheck className='text-emerald-500 dark:text-emerald-400 size-[clamp(1.75rem,2vw,4rem)]' />
-  </div>
-);
-
-const ErrorIcon = () => (
-  <div className='bg-red-100 dark:bg-red-800/20 rounded-full p-2 md:p-4'>
-    <CloudAlert className='text-red-500 dark:text-red-400 size-[clamp(1.75rem,2vw,4rem)]' />
-  </div>
-);
+const StatCard = ({ icon, color, total, label }: StatCardProps) => {
+  const c = colorMap[color];
+  return (
+    <div
+      className={cn(
+        'relative flex flex-col justify-between gap-4 overflow-hidden rounded-xl border p-4',
+        c.border,
+        c.bg,
+      )}
+    >
+      {/* top row: number + icon */}
+      <div className='flex items-start justify-between gap-2'>
+        <span className='text-2xl font-bold tabular-nums tracking-tight text-foreground'>
+          {total}
+        </span>
+        <div className='shrink-0'>{icon}</div>
+      </div>
+      {/* bottom row: label + pip */}
+      <div className='flex items-center gap-2'>
+        <span className={cn('h-1.5 w-1.5 rounded-full shrink-0', c.pip)} />
+        <span className='text-xs font-medium text-muted-foreground'>{label}</span>
+      </div>
+    </div>
+  );
+};
 
 const useResultItems = (entries?: TDataBatch | null) => {
   const defaultTotal = '--';
@@ -147,30 +125,30 @@ const useResultItems = (entries?: TDataBatch | null) => {
           total:
             entries?.totalUploadedCount?.toLocaleString('en-US') ||
             defaultTotal,
-          Icon: UploadedIcon,
+          color: 'sky' as const,
+          icon: <UploadCloud className='size-5 text-sky-500 dark:text-sky-400' />,
         },
         {
           label: 'Total Formatted',
           total:
             entries?.totalFormattedCount?.toLocaleString('en-US') ||
             defaultTotal,
-          Icon: FormattedIcon,
+          color: 'indigo' as const,
+          icon: <SlidersHorizontal className='size-5 text-indigo-500 dark:text-indigo-400' />,
         },
         {
           label: 'Success Count',
           total: entries?.successCount?.toLocaleString('en-US') || defaultTotal,
-          Icon: SuccessIcon,
+          color: 'emerald' as const,
+          icon: <CloudCheck className='size-5 text-emerald-500 dark:text-emerald-400' />,
         },
         {
           label: 'Error Count',
           total: entries?.errorCount?.toLocaleString('en-US') || defaultTotal,
-          Icon: ErrorIcon,
+          color: 'red' as const,
+          icon: <CloudAlert className='size-5 text-red-500 dark:text-red-400' />,
         },
-      ] satisfies {
-        label: string;
-        total: string;
-        Icon: React.ElementType;
-      }[],
+      ],
     [entries],
   );
 };

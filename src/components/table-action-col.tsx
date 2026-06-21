@@ -2,6 +2,7 @@ import toast from 'react-hot-toast';
 import ClipboardCopy from 'lucide-react/dist/esm/icons/clipboard-copy';
 import DownloadIcon from 'lucide-react/dist/esm/icons/download';
 import MoreVertical from 'lucide-react/dist/esm/icons/more-vertical';
+import RefreshCw from 'lucide-react/dist/esm/icons/refresh-cw';
 import Telescope from 'lucide-react/dist/esm/icons/telescope';
 import Trash2 from 'lucide-react/dist/esm/icons/trash-2';
 
@@ -78,6 +79,20 @@ const Download = ({
 };
 
 TableActionCol.Download = Download;
+
+const Reprocess = ({
+  children = 'Reprocess Batch',
+  ...props
+}: React.ComponentProps<typeof DropdownMenuItem>) => {
+  return (
+    <DropdownMenuItem {...props}>
+      <RefreshCw />
+      {children}
+    </DropdownMenuItem>
+  );
+};
+
+TableActionCol.Reprocess = Reprocess;
 
 const Delete = ({
   children = 'Delete',
