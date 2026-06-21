@@ -71,7 +71,9 @@ export function RemediationsSummaryAlert({
             </span>{' '}
             remediation{summary.total !== 1 ? 's' : ''} available
           </p>
-          <p className='text-xs text-muted-foreground truncate'>{typeSummary}</p>
+          <p className='text-xs text-muted-foreground truncate'>
+            {typeSummary}
+          </p>
         </div>
       </div>
 

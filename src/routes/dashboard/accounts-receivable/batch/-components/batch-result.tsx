@@ -28,7 +28,13 @@ export const BatchResult = () => {
       </div>
       <div className='grid grid-cols-2 sm:grid-cols-4 gap-3'>
         {items.map(({ icon, color, total, label }) => (
-          <StatCard key={label} icon={icon} color={color} total={total} label={label} />
+          <StatCard
+            key={label}
+            icon={icon}
+            color={color}
+            total={total}
+            label={label}
+          />
         ))}
       </div>
 
@@ -109,7 +115,9 @@ const StatCard = ({ icon, color, total, label }: StatCardProps) => {
       {/* bottom row: label + pip */}
       <div className='flex items-center gap-2'>
         <span className={cn('h-1.5 w-1.5 rounded-full shrink-0', c.pip)} />
-        <span className='text-xs font-medium text-muted-foreground'>{label}</span>
+        <span className='text-xs font-medium text-muted-foreground'>
+          {label}
+        </span>
       </div>
     </div>
   );
@@ -118,37 +126,38 @@ const StatCard = ({ icon, color, total, label }: StatCardProps) => {
 const useResultItems = (entries?: TDataBatch | null) => {
   const defaultTotal = '--';
   return useMemo(
-    () =>
-      [
-        {
-          label: 'Total Uploaded',
-          total:
-            entries?.totalUploadedCount?.toLocaleString('en-US') ||
-            defaultTotal,
-          color: 'sky' as const,
-          icon: <UploadCloud className='size-5 text-sky-500 dark:text-sky-400' />,
-        },
-        {
-          label: 'Total Formatted',
-          total:
-            entries?.totalFormattedCount?.toLocaleString('en-US') ||
-            defaultTotal,
-          color: 'indigo' as const,
-          icon: <SlidersHorizontal className='size-5 text-indigo-500 dark:text-indigo-400' />,
-        },
-        {
-          label: 'Success Count',
-          total: entries?.successCount?.toLocaleString('en-US') || defaultTotal,
-          color: 'emerald' as const,
-          icon: <CloudCheck className='size-5 text-emerald-500 dark:text-emerald-400' />,
-        },
-        {
-          label: 'Error Count',
-          total: entries?.errorCount?.toLocaleString('en-US') || defaultTotal,
-          color: 'red' as const,
-          icon: <CloudAlert className='size-5 text-red-500 dark:text-red-400' />,
-        },
-      ],
+    () => [
+      {
+        label: 'Total Uploaded',
+        total:
+          entries?.totalUploadedCount?.toLocaleString('en-US') || defaultTotal,
+        color: 'sky' as const,
+        icon: <UploadCloud className='size-5 text-sky-500 dark:text-sky-400' />,
+      },
+      {
+        label: 'Total Formatted',
+        total:
+          entries?.totalFormattedCount?.toLocaleString('en-US') || defaultTotal,
+        color: 'indigo' as const,
+        icon: (
+          <SlidersHorizontal className='size-5 text-indigo-500 dark:text-indigo-400' />
+        ),
+      },
+      {
+        label: 'Success Count',
+        total: entries?.successCount?.toLocaleString('en-US') || defaultTotal,
+        color: 'emerald' as const,
+        icon: (
+          <CloudCheck className='size-5 text-emerald-500 dark:text-emerald-400' />
+        ),
+      },
+      {
+        label: 'Error Count',
+        total: entries?.errorCount?.toLocaleString('en-US') || defaultTotal,
+        color: 'red' as const,
+        icon: <CloudAlert className='size-5 text-red-500 dark:text-red-400' />,
+      },
+    ],
     [entries],
   );
 };

@@ -94,14 +94,18 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
     return (
       <StatusCard
         variant='success'
-        icon={<CheckCircle2Icon className='size-4 text-emerald-600 dark:text-emerald-400' />}
+        icon={
+          <CheckCircle2Icon className='size-4 text-emerald-600 dark:text-emerald-400' />
+        }
         title='Successfully Posted to D365FO'
         iconBg='bg-emerald-100 dark:bg-emerald-900/40'
         accentColor='bg-gradient-to-b from-emerald-400/60 via-emerald-500 to-emerald-400/60'
       >
         <div className='space-y-3'>
           <p className='text-sm text-muted-foreground'>
-            <span className='font-semibold text-foreground'>{dfoIds.length}</span>{' '}
+            <span className='font-semibold text-foreground'>
+              {dfoIds.length}
+            </span>{' '}
             {groupLabels.countLabel} created successfully in D365FO.
           </p>
 
@@ -112,7 +116,9 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
               onClick={() => setIsExpanded((p) => !p)}
               className='flex w-full items-center justify-between px-4 py-2.5 text-sm font-medium text-emerald-800 dark:text-emerald-200 hover:bg-emerald-100/50 dark:hover:bg-emerald-900/20 transition-colors'
             >
-              <span>{isExpanded ? 'Hide' : 'View'} {groupLabels.detailsLabel}</span>
+              <span>
+                {isExpanded ? 'Hide' : 'View'} {groupLabels.detailsLabel}
+              </span>
               {isExpanded ? (
                 <ChevronUp className='size-4' />
               ) : (
@@ -166,8 +172,7 @@ function StatusCard({
     <div
       className={cn(
         'relative overflow-hidden rounded-xl border px-5 py-4 space-y-3',
-        variant === 'neutral' &&
-          'border-border bg-muted/30',
+        variant === 'neutral' && 'border-border bg-muted/30',
         variant === 'error' &&
           'border-destructive/20 dark:border-destructive/30 bg-destructive/5 dark:bg-destructive/10',
         variant === 'success' &&
@@ -199,8 +204,7 @@ function StatusCard({
             'text-sm font-semibold',
             variant === 'neutral' && 'text-foreground',
             variant === 'error' && 'text-foreground',
-            variant === 'success' &&
-              'text-emerald-900 dark:text-emerald-100',
+            variant === 'success' && 'text-emerald-900 dark:text-emerald-100',
           )}
         >
           {title}

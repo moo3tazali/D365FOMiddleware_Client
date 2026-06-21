@@ -133,7 +133,10 @@ export const BatchForm = () => {
                               <span className='block max-w-xs truncate text-sm font-medium sm:max-w-full'>
                                 {file.name}
                               </span>
-                              <Progress size='xs' progress={form.uploadProgress} />
+                              <Progress
+                                size='xs'
+                                progress={form.uploadProgress}
+                              />
                             </div>
                           </div>
                         </FileUploaderItem>
@@ -240,4 +243,3 @@ const TargetServiceSelectItem = () =>
       {label}
     </SelectItem>
   ));
-
