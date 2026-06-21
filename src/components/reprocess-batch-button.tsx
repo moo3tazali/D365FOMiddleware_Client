@@ -9,19 +9,19 @@ interface ReprocessBatchButtonProps {
 }
 
 export function ReprocessBatchButton({ batch }: ReprocessBatchButtonProps) {
-  const { canReprocess, isPending, reprocess } = useBatchReprocess(batch);
+  const { canReprocess, disabledReason, isPending, reprocess } =
+    useBatchReprocess(batch);
 
   const isDisabled = !batch || !canReprocess || isPending;
+  const title = isPending
+    ? 'Queuing batch reprocessing...'
+    : (disabledReason ?? 'Queue batch reprocessing');
 
   return (
     <button
       type='button'
       disabled={isDisabled}
-      title={
-        canReprocess
-          ? 'Queue batch reprocessing'
-          : 'Only the batch owner or an administrator can reprocess this batch.'
-      }
+      title={title}
       onClick={() => reprocess(undefined)}
       className={cn(
         // Base layout

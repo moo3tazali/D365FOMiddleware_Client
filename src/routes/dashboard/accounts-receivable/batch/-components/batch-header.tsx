@@ -45,14 +45,12 @@ export const BatchHeader = ({ batch }: BatchHeaderProps) => {
                 ?.label ?? ''}
             </Badge>
           )}
+          <BatchRefreshBtn />
         </div>
         <Description>Batch entries to synchronize with Dynamics.</Description>
       </div>
 
-      <div className='flex shrink-0 items-center gap-1'>
-        <BatchRefreshBtn />
-        <ReprocessBatchButton batch={batch} />
-      </div>
+      <ReprocessBatchButton batch={batch} />
     </div>
   );
 };
