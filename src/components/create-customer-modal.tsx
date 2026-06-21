@@ -150,11 +150,13 @@ export function CreateCustomerModal({
       onOpenChange(false);
       onSuccess?.();
     } catch (error: unknown) {
-      setErrorMsg(
-        error instanceof Error
-          ? error.message
-          : 'An unexpected error occurred while creating the customer.',
-      );
+      let message = 'An unexpected error occurred while creating the customer.';
+      if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
+        message = error.message;
+      } else if (error instanceof Error) {
+        message = error.message;
+      }
+      setErrorMsg(message);
     } finally {
       setLoading(false);
     }
