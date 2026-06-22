@@ -12,7 +12,7 @@ import { useServices } from '@/hooks/use-services';
 import { useInvalidate } from '@/hooks/use-invalidate';
 import { enumToOptions } from '@/lib/utils';
 import { TDataBatchStatus, type TDataBatch } from '@/interfaces/data-batch';
-import { ReprocessBatchButton } from '@/components/reprocess-batch-button';
+import { BatchActionsDropdown } from '@/components/batch/batch-actions-dropdown';
 
 const statusOptions = enumToOptions(TDataBatchStatus);
 const statusColorMap = {
@@ -50,7 +50,7 @@ export const SharedBatchHeader = ({ batch }: SharedBatchHeaderProps) => {
         <Description>Batch entries to synchronize with Dynamics.</Description>
       </div>
 
-      <ReprocessBatchButton batch={batch} />
+      <BatchActionsDropdown batch={batch} />
     </div>
   );
 };
