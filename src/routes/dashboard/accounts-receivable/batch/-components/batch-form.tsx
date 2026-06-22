@@ -154,6 +154,7 @@ export const BatchForm = () => {
           type='submit'
           id='upload_entries_btn'
           className='hidden absolute'
+          aria-label='Submit upload form'
           aria-disabled={form.isDisabled}
         />
       </form>

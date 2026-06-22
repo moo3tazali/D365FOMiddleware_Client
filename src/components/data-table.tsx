@@ -5,6 +5,8 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import PackageSearch from 'lucide-react/dist/esm/icons/package-search';
+import AlertTriangle from 'lucide-react/dist/esm/icons/triangle-alert';
 
 import { Card } from '@/components/ui/card';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -37,6 +39,7 @@ interface TableContextValue<TData, TValue> {
   data: TData[];
   message: string;
   isError: boolean;
+  isPending: boolean;
   isPlaceholderData: boolean;
 }
 
@@ -93,15 +96,18 @@ function DataTable<TData, TValue>({
         data: items,
         message,
         isError: !!error,
+        isPending: !!isPending,
         isPlaceholderData: isPlaceholderData || false,
       }}
     >
-      <div className='space-y-4'>
+      <div className='space-y-3'>
         {header && typeof header === 'function'
           ? React.createElement(header)
           : header}
 
-        {isMobile ? <MobileTableView /> : <DesktopTableView />}
+        <div className='rounded-xl border border-border bg-card shadow-sm overflow-hidden'>
+          {isMobile ? <MobileTableView /> : <DesktopTableView />}
+        </div>
 
         <RowsPagination
           paginationData={paginationData}
@@ -117,7 +123,7 @@ function DataTable<TData, TValue>({
 }
 
 const DesktopTableView = React.memo(() => {
-  const { columns, data, message, isError, isPlaceholderData } =
+  const { columns, data, message, isError, isPending, isPlaceholderData } =
     useDataTableContext();
 
   const table = useReactTable({
@@ -161,8 +167,37 @@ const DesktopTableView = React.memo(() => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className='h-24 text-center'>
-                {message}
+              <TableCell colSpan={columns.length} className='h-36 text-center'>
+                {isError ? (
+                  <div className='flex flex-col items-center justify-center gap-2 py-4'>
+                    <AlertTriangle
+                      className='size-8 text-destructive/60'
+                      strokeWidth={1.5}
+                    />
+                    <p className='text-sm font-medium text-foreground'>
+                      Failed to load data
+                    </p>
+                    <p className='text-xs text-muted-foreground'>{message}</p>
+                  </div>
+                ) : isPending ? (
+                  <div className='flex flex-col items-center justify-center gap-2 py-4'>
+                    <div className='size-6 border-2 border-primary border-t-transparent rounded-full animate-spin' />
+                    <p className='text-xs text-muted-foreground'>Loading…</p>
+                  </div>
+                ) : (
+                  <div className='flex flex-col items-center justify-center gap-2 py-4'>
+                    <PackageSearch
+                      className='size-8 text-muted-foreground/50'
+                      strokeWidth={1.5}
+                    />
+                    <p className='text-sm font-medium text-foreground'>
+                      No results found
+                    </p>
+                    <p className='text-xs text-muted-foreground'>
+                      Try adjusting your filters or uploading a new batch.
+                    </p>
+                  </div>
+                )}
               </TableCell>
             </TableRow>
           )}

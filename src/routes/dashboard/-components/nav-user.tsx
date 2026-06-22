@@ -6,6 +6,12 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useLogout } from '@/routes/_auth/-hooks/use-logout';
 import { useAuth } from '@/hooks/use-auth';
 
@@ -48,8 +54,20 @@ const LogoutButton = () => {
   const { onLogout, isPending } = useLogout();
 
   return (
-    <button onClick={onLogout} disabled={isPending}>
-      <LogOut />
-    </button>
+    <Tooltip delayDuration={300}>
+      <TooltipTrigger asChild>
+        <Button
+          variant='ghost'
+          size='icon'
+          aria-label='Log out'
+          onClick={onLogout}
+          disabled={isPending}
+          className='size-8 shrink-0 text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent'
+        >
+          <LogOut className='size-4' />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side='top'>Log out</TooltipContent>
+    </Tooltip>
   );
 };

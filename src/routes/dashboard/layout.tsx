@@ -50,7 +50,7 @@ function DashboardLayout() {
         <DashboardSidebar />
         <SidebarInset className='overflow-hidden'>
           <DashboardHeader />
-          <div className='flex-1 p-4 border-t'>
+          <div className='flex-1 p-4 md:p-6 overflow-y-auto'>
             <Outlet />
           </div>
         </SidebarInset>

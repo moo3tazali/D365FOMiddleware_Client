@@ -12,6 +12,7 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuItem,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 
 export const TableActionCol = ({ children }: { children: React.ReactNode }) => {
@@ -99,10 +100,16 @@ const Delete = ({
   ...props
 }: React.ComponentProps<typeof DropdownMenuItem>) => {
   return (
-    <DropdownMenuItem {...props}>
-      <Trash2 />
-      {children}
-    </DropdownMenuItem>
+    <>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem
+        className='text-destructive focus:text-destructive focus:bg-destructive/10'
+        {...props}
+      >
+        <Trash2 />
+        {children}
+      </DropdownMenuItem>
+    </>
   );
 };
 

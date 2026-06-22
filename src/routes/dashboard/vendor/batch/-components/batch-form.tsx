@@ -1,4 +1,4 @@
-﻿import CloudUpload from 'lucide-react/dist/esm/icons/cloud-upload';
+import CloudUpload from 'lucide-react/dist/esm/icons/cloud-upload';
 import Paperclip from 'lucide-react/dist/esm/icons/paperclip';
 import FileSpreadsheet from 'lucide-react/dist/esm/icons/file-spreadsheet';
 
@@ -124,6 +124,7 @@ export const BatchForm = () => {
           type='submit'
           id='upload_entries_btn'
           className='hidden absolute'
+          aria-label='Submit upload form'
           aria-disabled={form.isDisabled}
         />
       </form>

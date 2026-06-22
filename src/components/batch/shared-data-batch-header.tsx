@@ -21,8 +21,8 @@ export const SharedDataBatchHeader = ({
   newUploadLink,
 }: SharedDataBatchHeaderProps) => {
   return (
-    <div className='flex flex-col sm:flex-row sm:items-center gap-5 flex-wrap'>
-      <div className='flex gap-2.5 items-center'>
+    <div className='flex flex-col sm:flex-row sm:items-center gap-3 flex-wrap'>
+      <div className='flex gap-2 items-center'>
         <h1>{title}</h1>
         <RefreshBtn />
       </div>
@@ -54,9 +54,7 @@ const RefreshBtn = () => {
           <RefreshCw className='size-5 md:size-7' />
         </Button>
       </TooltipTrigger>
-      <TooltipContent side='right' className='hidden lg:block'>
-        Refresh Data
-      </TooltipContent>
+      <TooltipContent side='right'>Refresh Data</TooltipContent>
     </Tooltip>
   );
 };

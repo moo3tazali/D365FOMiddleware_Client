@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import FilterIcon from 'lucide-react/dist/esm/icons/list-filter';
 import { useMemo, useRef, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
@@ -43,8 +44,11 @@ export const DataBatchQuerySchema = z.object({
 
 export const DataBatchFilters = () => {
   return (
-    <div className='flex items-center gap-2.5 max-w-2xl'>
-      <span className='shrink-0 break-keep'>Filter by</span>
+    <div className='flex items-center gap-2.5 rounded-lg border border-border/60 bg-muted/30 px-3 py-2'>
+      <div className='flex items-center gap-1.5 shrink-0 text-muted-foreground'>
+        <FilterIcon className='size-3.5' />
+        <span className='text-xs font-medium break-keep'>Filters</span>
+      </div>
       <div className='grid grid-cols-2 gap-2.5 flex-1'>
         <EntryProcessorTypeFilter />
         <TargetBatchNumberFilter />
@@ -87,7 +91,7 @@ const TargetBatchNumberFilter = () => {
     <Input
       ref={inputRef}
       defaultValue={batchNumberIds?.join(',') ?? ''}
-      placeholder='Search by batch numbers joined by ,'
+      placeholder='Batch ID (comma-separated)'
       name='batchNumberIds'
     />
   );

@@ -114,6 +114,8 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
             <button
               type='button'
               onClick={() => setIsExpanded((p) => !p)}
+              aria-expanded={isExpanded}
+              aria-controls='dfo-ids-list'
               className='flex w-full items-center justify-between px-4 py-2.5 text-sm font-medium text-emerald-800 dark:text-emerald-200 hover:bg-emerald-100/50 dark:hover:bg-emerald-900/20 transition-colors'
             >
               <span>
@@ -126,7 +128,10 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
               )}
             </button>
             {isExpanded && (
-              <ul className='divide-y divide-emerald-200/60 dark:divide-emerald-800/40 border-t border-emerald-200 dark:border-emerald-800/50'>
+              <ul
+                id='dfo-ids-list'
+                className='divide-y divide-emerald-200/60 dark:divide-emerald-800/40 border-t border-emerald-200 dark:border-emerald-800/50'
+              >
                 {dfoIds.map((id, idx) => (
                   <li
                     key={idx}

@@ -32,17 +32,19 @@ const UploadBtn = () => {
   });
 
   return (
-    <Button
-      size='lg'
-      className='w-full flex sm:max-w-xs ms-auto'
-      onClick={() => {
-        document.getElementById('upload_entries_btn')?.click();
-      }}
-      disabled={isUploading > 0}
-    >
-      <Upload className='size-5' />
-      Upload
-    </Button>
+    <div className='pt-4 border-t border-border'>
+      <Button
+        size='lg'
+        className='w-full flex sm:max-w-xs ms-auto'
+        onClick={() => {
+          document.getElementById('upload_entries_btn')?.click();
+        }}
+        disabled={isUploading > 0}
+      >
+        <Upload className='size-5' />
+        Upload
+      </Button>
+    </div>
   );
 };
 
@@ -61,21 +63,23 @@ const SubmitBtn = ({ data }: { data: TDataBatch }) => {
 
   if (!showSubmit)
     return (
-      <Button
-        asChild
-        size='lg'
-        disabled={isPending}
-        className='sm:max-w-xs ms-auto w-full'
-      >
-        <Link to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.NEW}>
-          <Upload className='size-5' />
-          New Entry
-        </Link>
-      </Button>
+      <div className='pt-4 border-t border-border'>
+        <Button
+          asChild
+          size='lg'
+          disabled={isPending}
+          className='sm:max-w-xs ms-auto w-full'
+        >
+          <Link to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.NEW}>
+            <Upload className='size-5' />
+            New Entry
+          </Link>
+        </Button>
+      </div>
     );
   return (
     <>
-      <div className='flex sm:flex-row gap-2.5 w-full ms-auto sm:max-w-xl *:flex-1'>
+      <div className='flex sm:flex-row gap-2.5 w-full ms-auto sm:max-w-xl *:flex-1 pt-4 border-t border-border'>
         <Button
           asChild
           size='lg'

@@ -21,7 +21,7 @@ export const BatchFooter = () => {
     return <SubmitBtn data={batch} />;
   })();
 
-  return ActionBtn;
+  return <div className='pt-4 border-t border-border'>{ActionBtn}</div>;
 };
 
 const UploadBtn = () => {

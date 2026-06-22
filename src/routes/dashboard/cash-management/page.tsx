@@ -21,7 +21,7 @@ export const Route = createFileRoute('/dashboard/cash-management/')({
 
 function CashManagementPage() {
   return (
-    <div className='h-full space-y-10'>
+    <div className='h-full space-y-5'>
       <DataBatchHeader
         title='Cash Management'
         newUploadLink='/dashboard/cash-management/batch/new'

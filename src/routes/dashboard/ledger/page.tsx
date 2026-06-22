@@ -21,7 +21,7 @@ export const Route = createFileRoute('/dashboard/ledger/')({
 
 function LedgerPage() {
   return (
-    <div className='h-full space-y-10'>
+    <div className='h-full space-y-5'>
       <DataBatchHeader
         title='Ledger'
         newUploadLink='/dashboard/ledger/batch/new'

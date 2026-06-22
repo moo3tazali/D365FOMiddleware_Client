@@ -21,7 +21,7 @@ export const Route = createFileRoute('/dashboard/vendor/')({
 
 function VendorPage() {
   return (
-    <div className='h-full space-y-10'>
+    <div className='h-full space-y-5'>
       <DataBatchHeader
         title='Vendor'
         newUploadLink='/dashboard/vendor/batch/new'

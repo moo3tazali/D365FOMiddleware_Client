@@ -21,7 +21,7 @@ export const Route = createFileRoute('/dashboard/accounts-receivable/')({
 
 function AccountsReceivablePage() {
   return (
-    <div className='h-full space-y-10'>
+    <div className='h-full space-y-5'>
       <DataBatchHeader
         title='Accounts Receivable'
         newUploadLink='/dashboard/accounts-receivable/batch/new'

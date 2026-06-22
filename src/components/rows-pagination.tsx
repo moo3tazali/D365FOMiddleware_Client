@@ -54,7 +54,7 @@ export const RowsPagination = memo(
     const maxPage = Math.ceil((paginationData?.totalCount || 0) / currentSize);
 
     return (
-      <div className='w-full flex items-center justify-between gap-2'>
+      <div className='w-full flex items-center justify-between gap-2 pt-1'>
         <div className='flex items-center gap-2'>
           <Label htmlFor='rows-per-page' className='whitespace-nowrap'>
             Rows per page:
