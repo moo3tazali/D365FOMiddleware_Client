@@ -1,6 +1,6 @@
 import { Description } from '@/components/ui/description';
 
-export const BatchErrorHeader = () => {
+export const SharedBatchErrorHeader = () => {
   return (
     <div>
       <h1>Batch Errors</h1>

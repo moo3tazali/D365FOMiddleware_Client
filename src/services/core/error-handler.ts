@@ -2,17 +2,7 @@ import { AxiosError } from 'axios';
 import type { ErrorRes } from '@/interfaces/api-res';
 
 export class ErrorHandler {
-  private static _instance: ErrorHandler;
-
-  private constructor() {}
-
-  public static getInstance(): ErrorHandler {
-    if (!this._instance) {
-      this._instance = new ErrorHandler();
-    }
-
-    return this._instance;
-  }
+  constructor() {}
 
   public throwError(error: unknown): never {
     const appError = this._handleError(error);
@@ -201,3 +191,5 @@ export class ErrorHandler {
     );
   }
 }
+
+export const errorHandler = new ErrorHandler();

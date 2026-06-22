@@ -171,17 +171,7 @@ export interface BuildUrlOptions {
 }
 
 export class ApiRoutes {
-  private static _instance: ApiRoutes;
-
-  private constructor() {}
-
-  // singleton pattern
-  public static getInstance(): ApiRoutes {
-    if (!ApiRoutes._instance) {
-      ApiRoutes._instance = new ApiRoutes();
-    }
-    return ApiRoutes._instance;
-  }
+  constructor() {}
 
   public build(
     url: ApiRoutesValues,
@@ -227,3 +217,5 @@ type QueryValue =
   | boolean[]
   | null
   | undefined;
+
+export const apiRoutes = new ApiRoutes();

@@ -13,21 +13,36 @@ import { Observability } from './api/observability';
 import { Users } from './api/users';
 import { AccessAdmin } from './api/access-admin';
 
+export const authService = new Auth();
+export const accountReceivable = new AccountReceivable();
+export const dataBatch = new DataBatch();
+export const dataBatchError = new DataBatchError();
+export const ledger = new Ledger();
+export const cashIn = new CashIn();
+export const cashOut = new CashOut();
+export const appSetting = new AppSetting();
+export const pagination = new Pagination();
+export const masterData = new MasterData();
+export const vendor = new Vendor();
+export const observability = new Observability();
+export const users = new Users();
+export const accessAdmin = new AccessAdmin();
+
 export const services = {
-  authService: Auth.getInstance(),
-  accountReceivable: AccountReceivable.getInstance(),
-  dataBatch: DataBatch.getInstance(),
-  dataBatchError: DataBatchError.getInstance(),
-  ledger: Ledger.getInstance(),
-  cashIn: CashIn.getInstance(),
-  cashOut: CashOut.getInstance(),
-  appSetting: AppSetting.getInstance(),
-  pagination: Pagination.getInstance(),
-  masterData: MasterData.getInstance(),
-  vendor: Vendor.getInstance(),
-  observability: new Observability(),
-  users: new Users(),
-  accessAdmin: new AccessAdmin(),
+  authService,
+  accountReceivable,
+  dataBatch,
+  dataBatchError,
+  ledger,
+  cashIn,
+  cashOut,
+  appSetting,
+  pagination,
+  masterData,
+  vendor,
+  observability,
+  users,
+  accessAdmin,
 } as const;
 
 export type TServices = typeof services;

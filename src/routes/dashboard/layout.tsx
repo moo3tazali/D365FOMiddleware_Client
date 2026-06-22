@@ -5,11 +5,9 @@ import { ROUTES } from '@/router';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { DashboardSidebar } from './-components/dashboard-sidebar';
 import { DashboardHeader } from './-components/dashboard-header';
-import {
-  ErrorFallback,
-  LoadingFallback,
-  NotFoundFallback,
-} from '@/components/fallback';
+import { ErrorFallback } from '@/components/fallback/error-fallback';
+import { LoadingFallback } from '@/components/fallback/loading-fallback';
+import { NotFoundFallback } from '@/components/fallback/not-found-fallback';
 import { SIDEBAR_COOKIE_NAME } from '@/constants/cookies';
 import { LoginModal } from '../_auth/-components/login-modal';
 

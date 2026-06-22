@@ -1,8 +1,6 @@
-import { Sync } from '@/services/core/sync';
+import { sync } from '@/services/core/sync';
 import { API_ROUTES } from '@/services/core/api-routes';
 import type { TUser } from '@/interfaces/user';
-
-const sync = Sync.getInstance();
 
 export class Users {
   me(): Promise<TUser> {

@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { ModuleCards } from './-components/module-cards';
-import { ErrorFallback, LoadingFallback } from '@/components/fallback';
+import { ErrorFallback } from '@/components/fallback/error-fallback';
+import { LoadingFallback } from '@/components/fallback/loading-fallback';
 
 export const Route = createFileRoute('/dashboard/(home)/')({
   component: DashboardHomePage,

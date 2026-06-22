@@ -4,7 +4,7 @@ import type {
   IMasterDataSyncJobResponse,
 } from '@/interfaces/master-data';
 import { API_ROUTES } from '../core/api-routes';
-import { Sync } from '../core/sync';
+import { sync } from '../core/sync';
 import { queryOptions } from '@tanstack/react-query';
 
 export const SYNC_TYPES = {
@@ -30,22 +30,13 @@ export interface MasterDataPayload {
 }
 
 export class MasterData {
-  private static _instance: MasterData;
-  private readonly syncService = Sync.getInstance();
+  private readonly syncService = sync;
 
   public readonly queryKey = ['finance.master-data'];
 
   public readonly syncTypes = SYNC_TYPES;
 
-  private constructor() {}
-
-  public static getInstance(): MasterData {
-    if (!MasterData._instance) {
-      MasterData._instance = new MasterData();
-    }
-
-    return MasterData._instance;
-  }
+  constructor() {}
 
   public getSyncList = async (): Promise<IMasterDataSyncStatus[]> => {
     return this.syncService.fetch<IMasterDataSyncStatus[]>(

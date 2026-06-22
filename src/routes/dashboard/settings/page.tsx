@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { SettingsHeader } from './-components/settings-header';
-import { ErrorFallback, LoadingFallback } from '@/components/fallback';
+import { ErrorFallback } from '@/components/fallback/error-fallback';
+import { LoadingFallback } from '@/components/fallback/loading-fallback';
 import { RefreshMasterData } from './-components/refresh-master-data';
 
 export const Route = createFileRoute('/dashboard/settings/')({

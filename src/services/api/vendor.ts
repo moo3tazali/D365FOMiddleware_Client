@@ -1,4 +1,4 @@
-import { Sync } from '../core/sync';
+import { sync } from '../core/sync';
 import { API_ROUTES } from '../core/api-routes';
 import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
 
@@ -15,11 +15,9 @@ interface PostToDFOResponse {
   message: string;
 }
 
-const syncService = Sync.getInstance();
+const syncService = sync;
 
 export class Vendor {
-  private static _instance: Vendor;
-
   public readonly mutationKey = ['vendor-upload'];
   public readonly UPLOAD_TYPES = {
     FREIGHT_DOC: TEntryProcessorTypes.VendorFreight,
@@ -30,15 +28,7 @@ export class Vendor {
     PAYMENT_TRUCKING: TEntryProcessorTypes.VendorPaymentTrucking,
   };
 
-  private constructor() {}
-
-  public static getInstance(): Vendor {
-    if (!Vendor._instance) {
-      Vendor._instance = new Vendor();
-    }
-
-    return Vendor._instance;
-  }
+  constructor() {}
 
   public upload = async (options: {
     type: number | string;

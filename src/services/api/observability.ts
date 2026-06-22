@@ -6,7 +6,7 @@ import type {
   QueueStats,
 } from '@/interfaces/observability';
 import { API_ROUTES } from '@/services/core/api-routes';
-import { Sync } from '@/services/core/sync';
+import { sync } from '@/services/core/sync';
 
 export interface LogFilters {
   level?: string;
@@ -67,7 +67,7 @@ export interface ExplorerLogsResponse {
 }
 
 export class Observability {
-  private readonly sync = Sync.getInstance();
+  private readonly sync = sync;
 
   listLogs(filters: LogFilters = {}) {
     return this.sync.fetch<{

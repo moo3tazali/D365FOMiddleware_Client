@@ -1,4 +1,4 @@
-import { Sync } from '../core/sync';
+import { sync } from '../core/sync';
 import { API_ROUTES } from '../core/api-routes';
 import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
 
@@ -14,11 +14,9 @@ interface PostToDFOResponse {
   message: string;
 }
 
-const syncService = Sync.getInstance();
+const syncService = sync;
 
 export class Ledger {
-  private static _instance: Ledger;
-
   public readonly mutationKey = ['ledger-upload'];
   public readonly UPLOAD_TYPES = {
     FREIGHT_CLOSING_DOC: TEntryProcessorTypes.LedgerFreightClosingEntry,
@@ -28,15 +26,7 @@ export class Ledger {
     CUSTODY_SETTLEMENT: TEntryProcessorTypes.LedgerCustodySettlement,
   };
 
-  private constructor() {}
-
-  public static getInstance(): Ledger {
-    if (!Ledger._instance) {
-      Ledger._instance = new Ledger();
-    }
-
-    return Ledger._instance;
-  }
+  constructor() {}
 
   public upload = async (options: {
     type: number | string;

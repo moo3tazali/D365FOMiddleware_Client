@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 
 import { API_ROUTES } from '../core/api-routes';
-import { Sync } from '../core/sync';
+import { sync } from '../core/sync';
 import type { D365FOSetting } from '@/interfaces/d365fo-setting';
 
 interface AppSettingUpdatePayload {
@@ -10,20 +10,11 @@ interface AppSettingUpdatePayload {
 }
 
 export class AppSetting {
-  private static _instance: AppSetting;
-  private readonly syncService = Sync.getInstance();
+  private readonly syncService = sync;
 
   public readonly queryKey = ['admin.app-setting'];
 
-  private constructor() {}
-
-  public static getInstance(): AppSetting {
-    if (!AppSetting._instance) {
-      AppSetting._instance = new AppSetting();
-    }
-
-    return AppSetting._instance;
-  }
+  constructor() {}
 
   public list = async (): Promise<D365FOSetting[]> => {
     return this.syncService

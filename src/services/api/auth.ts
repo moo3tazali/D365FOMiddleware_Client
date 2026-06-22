@@ -1,8 +1,8 @@
-import { Token } from '../core/token';
-import { Sync } from '../core/sync';
+import { token } from '../core/token';
+import { sync, publicSync } from '../core/sync';
 import { API_ROUTES } from '../core/api-routes';
-import { User } from '../core/user';
-import { Env, ENV } from '../core/env';
+import { user } from '../core/user';
+import { env, ENV } from '../core/env';
 import type { TUser } from '@/interfaces/user';
 
 export interface LoginPayload {
@@ -23,22 +23,12 @@ export interface AccessStatusResponse {
   mustChangePassword: boolean;
 }
 
-const syncService = Sync.getInstance({ public: true });
-const tokenService = Token.getInstance();
-const userService = User.getInstance();
+const syncService = publicSync;
+const tokenService = token;
+const userService = user;
 
 export class Auth {
-  private static _instance: Auth;
-
-  private constructor() {}
-
-  public static getInstance(): Auth {
-    if (!Auth._instance) {
-      Auth._instance = new Auth();
-    }
-
-    return Auth._instance;
-  }
+  constructor() {}
 
   public async login(data: LoginPayload): Promise<TUser> {
     try {
@@ -59,7 +49,7 @@ export class Auth {
   }
 
   public startMicrosoftLogin(returnPath = '/'): void {
-    const apiUrl = Env.getInstance().get(ENV.NEST_SERVER_BASE_URL);
+    const apiUrl = env.get(ENV.NEST_SERVER_BASE_URL);
     const url = new URL(
       `${apiUrl}${API_ROUTES.PUBLIC.AUTH.MICROSOFT}`,
       window.location.origin,
@@ -79,7 +69,7 @@ export class Auth {
   }
 
   public async getAccessStatus(): Promise<AccessStatusResponse> {
-    return Sync.getInstance().fetch<AccessStatusResponse>(
+    return sync.fetch<AccessStatusResponse>(
       API_ROUTES.PUBLIC.AUTH.ACCESS_STATUS,
     );
   }

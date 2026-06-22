@@ -14,27 +14,18 @@ interface IRefreshTokenData {
 }
 
 export class Token {
-  private static _instance: Token;
   private readonly _cookies: Cookies;
   private readonly _refreshTokenId = 'refreshToken';
   private readonly _accessTokenCookieName = 'access_token';
   private readonly _tokenTypeCookieName = 'token_type';
 
-  private constructor() {
+  constructor() {
     this._cookies = new Cookies(null, {
       path: '/',
       secure: window.location.protocol === 'https:',
       httpOnly: false,
       sameSite: 'strict',
     });
-  }
-
-  // singleton pattern
-  public static getInstance(): Token {
-    if (!Token._instance) {
-      Token._instance = new Token();
-    }
-    return Token._instance;
   }
 
   // save tokens using dual storage strategy
@@ -157,3 +148,5 @@ export class Token {
     await del(this._refreshTokenId);
   }
 }
+
+export const token = new Token();

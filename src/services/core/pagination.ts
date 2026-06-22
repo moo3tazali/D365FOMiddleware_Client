@@ -18,23 +18,14 @@ interface TPagination {
 }
 
 export class Pagination {
-  private static _instance: Pagination;
   private readonly _cookies: Cookies;
   private readonly _cookieId = PAGE_SIZE_COOKIE_NAME;
   private readonly _rowsPerPage: number[] = ROWS_PER_PAGE;
 
-  private constructor() {
+  constructor() {
     this._cookies = new Cookies(null, {
       maxAge: PAGE_SIZE_COOKIE_MAX_AGE,
     });
-  }
-
-  // singleton pattern
-  public static getInstance(): Pagination {
-    if (!Pagination._instance) {
-      Pagination._instance = new Pagination();
-    }
-    return Pagination._instance;
   }
 
   public get defaultValues(): TPagination {
@@ -98,3 +89,5 @@ export class Pagination {
     }
   }
 }
+
+export const pagination = new Pagination();

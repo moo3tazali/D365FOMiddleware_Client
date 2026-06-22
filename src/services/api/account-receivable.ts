@@ -1,4 +1,4 @@
-import { Sync } from '../core/sync';
+import { sync } from '../core/sync';
 import { API_ROUTES } from '../core/api-routes';
 import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
 
@@ -15,11 +15,9 @@ interface PostToDFOResponse {
   message: string;
 }
 
-const syncService = Sync.getInstance();
+const syncService = sync;
 
 export class AccountReceivable {
-  private static _instance: AccountReceivable;
-
   public readonly mutationKey = ['account-receivable-upload'];
   public readonly UPLOAD_TYPES = {
     FREIGHT_DOC: TEntryProcessorTypes.AccountReceivableFreight,
@@ -31,15 +29,7 @@ export class AccountReceivable {
     YARD_DOC: TEntryProcessorTypes.AccountReceivableYard,
   };
 
-  private constructor() {}
-
-  public static getInstance(): AccountReceivable {
-    if (!AccountReceivable._instance) {
-      AccountReceivable._instance = new AccountReceivable();
-    }
-
-    return AccountReceivable._instance;
-  }
+  constructor() {}
 
   public upload = async (options: {
     type: number | string;

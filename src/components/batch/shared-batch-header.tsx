@@ -23,11 +23,11 @@ const statusColorMap = {
   [TDataBatchStatus.Revalidating]: 'info',
 } as const;
 
-interface BatchHeaderProps {
+interface SharedBatchHeaderProps {
   batch?: TDataBatch;
 }
 
-export const BatchHeader = ({ batch }: BatchHeaderProps) => {
+export const SharedBatchHeader = ({ batch }: SharedBatchHeaderProps) => {
   return (
     <div className='flex items-start justify-between gap-4'>
       <div>

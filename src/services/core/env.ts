@@ -5,23 +5,13 @@ export enum ENV {
 }
 
 export class Env {
-  private static _instance: Env;
-
   private readonly _env = {
     [ENV.SERVER_BASE_URL]: 'VITE_SERVER_BASE_URL',
     [ENV.NEST_SERVER_BASE_URL]: 'VITE_NEST_SERVER_BASE_URL',
     [ENV.Client_BASE_URL]: 'VITE_CLIENT_BASE_URL',
   } as const;
 
-  private constructor() {}
-
-  // singleton pattern
-  public static getInstance(): Env {
-    if (!Env._instance) {
-      Env._instance = new Env();
-    }
-    return Env._instance;
-  }
+  constructor() {}
 
   public get<K extends keyof typeof this._env>(key: K): string;
 
@@ -56,3 +46,5 @@ export class Env {
     return value;
   }
 }
+
+export const env = new Env();

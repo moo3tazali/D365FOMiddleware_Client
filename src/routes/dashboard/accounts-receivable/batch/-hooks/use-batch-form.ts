@@ -9,7 +9,7 @@ import { useServices } from '@/hooks/use-services';
 import { useMutation } from '@/hooks/use-mutation';
 import { useBatchQueryData } from './use-batch-query-data';
 import { ROUTES } from '@/router';
-import { AccountReceivable } from '@/services/api/account-receivable';
+import { accountReceivable } from '@/services';
 import { useParsedPagination } from '@/hooks/use-parsed-pagination';
 import { TEntryProcessorTypes } from '@/interfaces/data-batch';
 
@@ -44,8 +44,7 @@ const FormSchema = z
   .superRefine((data, ctx) => {
     const type = Number(data.type);
     const billingCode = data.billingCodeId;
-    const isBillingCodeRequired =
-      AccountReceivable.getInstance().isBillingCodeRequired(type);
+    const isBillingCodeRequired = accountReceivable.isBillingCodeRequired(type);
 
     if (isBillingCodeRequired && (!billingCode || billingCode.trim() === '')) {
       ctx.addIssue({

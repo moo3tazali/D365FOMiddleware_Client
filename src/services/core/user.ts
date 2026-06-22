@@ -2,12 +2,11 @@ import type { TUser } from '@/interfaces/user';
 import Cookies from 'universal-cookie';
 
 export class User {
-  private static _instance: User;
   private readonly _cookies: Cookies;
   private readonly _cookieId = 'dynamics_fo_user';
   private _user: TUser | null = null;
 
-  private constructor() {
+  constructor() {
     this._cookies = new Cookies(null, {
       path: '/',
       secure: window.location.protocol === 'https:',
@@ -15,14 +14,6 @@ export class User {
       sameSite: 'strict',
       maxAge: 60 * 60 * 24 * 365 * 1, // 1 year
     });
-  }
-
-  // singleton pattern
-  public static getInstance(): User {
-    if (!User._instance) {
-      User._instance = new User();
-    }
-    return User._instance;
   }
 
   public set(accessToken: string) {
@@ -91,3 +82,5 @@ export class User {
     }
   }
 }
+
+export const user = new User();

@@ -1,4 +1,4 @@
-import { Sync } from '../core/sync';
+import { sync } from '../core/sync';
 import { API_ROUTES } from '../core/api-routes';
 import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
 
@@ -14,26 +14,16 @@ interface PostToDFOResponse {
   message: string;
 }
 
-const syncService = Sync.getInstance();
+const syncService = sync;
 
 export class CashIn {
-  private static _instance: CashIn;
-
   public readonly mutationKey = ['cash-in-upload'];
   public readonly UPLOAD_TYPES = {
     FREIGHT_DOC: TEntryProcessorTypes.CashInFreight,
     TRUCKING_DOC: TEntryProcessorTypes.CashInTrucking,
   };
 
-  private constructor() {}
-
-  public static getInstance(): CashIn {
-    if (!CashIn._instance) {
-      CashIn._instance = new CashIn();
-    }
-
-    return CashIn._instance;
-  }
+  constructor() {}
 
   public upload = async (options: {
     type: number | string;

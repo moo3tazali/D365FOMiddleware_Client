@@ -1,6 +1,6 @@
 import type { PaginationRes } from '@/interfaces/api-res';
 import { API_ROUTES } from '../core/api-routes';
-import { Sync } from '../core/sync';
+import { sync } from '../core/sync';
 import {
   TEntryProcessorTypes,
   type TDataBatch,
@@ -48,20 +48,11 @@ type TModule =
   | 'vendor';
 
 export class DataBatch {
-  private static _instance: DataBatch;
-  private readonly syncService = Sync.getInstance();
+  private readonly syncService = sync;
 
   public readonly queryKey = ['data-batch'];
 
-  private constructor() {}
-
-  public static getInstance(): DataBatch {
-    if (!DataBatch._instance) {
-      DataBatch._instance = new DataBatch();
-    }
-
-    return DataBatch._instance;
-  }
+  constructor() {}
 
   public list = async (
     query?: DataBatchQuery,

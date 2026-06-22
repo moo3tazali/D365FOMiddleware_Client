@@ -1,4 +1,4 @@
-import { Sync } from '../core/sync';
+import { sync } from '../core/sync';
 import { API_ROUTES } from '../core/api-routes';
 import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
 
@@ -14,26 +14,16 @@ interface PostToDFOResponse {
   message: string;
 }
 
-const syncService = Sync.getInstance();
+const syncService = sync;
 
 export class CashOut {
-  private static _instance: CashOut;
-
   public readonly mutationKey = ['cash-out-upload'];
   public readonly UPLOAD_TYPES = {
     FREIGHT_DOC: TEntryProcessorTypes.CashOutFreight,
     TRUCKING_DOC: TEntryProcessorTypes.CashOutTrucking,
   };
 
-  private constructor() {}
-
-  public static getInstance(): CashOut {
-    if (!CashOut._instance) {
-      CashOut._instance = new CashOut();
-    }
-
-    return CashOut._instance;
-  }
+  constructor() {}
 
   public upload = async (options: {
     type: number | string;

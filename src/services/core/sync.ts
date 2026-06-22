@@ -5,16 +5,11 @@ import axios, {
 } from 'axios';
 import { serialize } from 'object-to-formdata';
 
-import { Env, ENV } from './env';
-import { Token, type IToken } from './token';
-import { ErrorHandler } from './error-handler';
-import { ApiRoutes, API_ROUTES, type BuildUrlOptions } from './api-routes';
+import { env, ENV } from './env';
+import { token, type IToken } from './token';
+import { errorHandler } from './error-handler';
+import { apiRoutes, API_ROUTES, type BuildUrlOptions } from './api-routes';
 import type { SuccessRes } from '@/interfaces/api-res';
-
-interface SyncOptions {
-  public?: boolean;
-}
-
 interface GetRequestConfig extends AxiosRequestConfig {
   params?: BuildUrlOptions['params'];
   query?: BuildUrlOptions['query'];
@@ -37,16 +32,14 @@ interface DownloadConfig<TBody = unknown> {
 type TUrl = BuildUrlOptions['url'];
 
 export class Sync {
-  private static _publicInstance: Sync;
-  private static _privateInstance: Sync;
   private readonly _axiosInstance: AxiosInstance;
   private readonly _withAuth: boolean;
-  private readonly _env = Env.getInstance();
-  private readonly _token = Token.getInstance();
-  private readonly _errorHandler = ErrorHandler.getInstance();
-  private readonly _apiRoutes = ApiRoutes.getInstance();
+  private readonly _env = env;
+  private readonly _token = token;
+  private readonly _errorHandler = errorHandler;
+  private readonly _apiRoutes = apiRoutes;
 
-  private constructor(isPublic: boolean) {
+  constructor(isPublic: boolean) {
     this._withAuth = !isPublic;
 
     this._axiosInstance = axios.create({
@@ -56,23 +49,6 @@ export class Sync {
     if (this._withAuth) {
       this._setupInterceptors();
     }
-  }
-
-  public static getInstance(opt?: SyncOptions): Sync {
-    const isPublic = opt?.public ?? false;
-
-    if (isPublic) {
-      if (!this._publicInstance) {
-        this._publicInstance = new Sync(true);
-      }
-      return this._publicInstance;
-    }
-
-    if (!this._privateInstance) {
-      this._privateInstance = new Sync(false);
-    }
-
-    return this._privateInstance;
   }
 
   public async fetch<TRes>(
@@ -266,9 +242,7 @@ export class Sync {
             }
 
             // Attempt token refresh using public sync instance
-            const publicSync = Sync.getInstance({
-              public: true,
-            });
+            const publicSync = new Sync(true);
 
             const refreshResponse = await publicSync.save<IToken>(
               API_ROUTES.PUBLIC.AUTH.REFRESH,
@@ -319,3 +293,6 @@ export class Sync {
     }
   }
 }
+
+export const sync = new Sync(false);
+export const publicSync = new Sync(true);

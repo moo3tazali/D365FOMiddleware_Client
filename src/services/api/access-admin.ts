@@ -1,4 +1,4 @@
-import { Sync } from '@/services/core/sync';
+import { sync } from '@/services/core/sync';
 import { API_ROUTES } from '@/services/core/api-routes';
 import type { TUser } from '@/interfaces/user';
 
@@ -18,8 +18,6 @@ export interface AccessDecisionRecord {
   reason?: string;
   createdAt: string;
 }
-
-const sync = Sync.getInstance();
 
 export class AccessAdmin {
   list(status?: TUser['accessStatus'], search?: string) {

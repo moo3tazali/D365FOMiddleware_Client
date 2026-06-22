@@ -1,7 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { DataBatchHeader } from './-components/data-batch-header';
+import { SharedDataBatchHeader as DataBatchHeader } from '@/components/batch/shared-data-batch-header';
 import { DataBatchTable } from './-components/data-batch-table';
-import { ErrorFallback, LoadingFallback } from '@/components/fallback';
+import { ErrorFallback } from '@/components/fallback/error-fallback';
+import { LoadingFallback } from '@/components/fallback/loading-fallback';
 
 export const Route = createFileRoute('/dashboard/accounts-payable/')({
   component: AccountsPayablePage,
@@ -21,7 +22,10 @@ export const Route = createFileRoute('/dashboard/accounts-payable/')({
 function AccountsPayablePage() {
   return (
     <div className='h-full space-y-10'>
-      <DataBatchHeader />
+      <DataBatchHeader
+        title='Accounts Payable'
+        newUploadLink='/dashboard/accounts-payable/batch/new'
+      />
       <DataBatchTable />
     </div>
   );

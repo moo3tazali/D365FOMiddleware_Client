@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 
-import { ErrorFallback } from '@/components/fallback';
+import { ErrorFallback } from '@/components/fallback/error-fallback';
 
 export const Route = createFileRoute('/dashboard/accounts-receivable/batch')({
   component: BatchLayoutComponent,

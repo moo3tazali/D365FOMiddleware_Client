@@ -2,7 +2,7 @@ import { keepPreviousData, queryOptions } from '@tanstack/react-query';
 
 import type { PaginationRes } from '@/interfaces/api-res';
 import { API_ROUTES } from '../core/api-routes';
-import { Sync } from '../core/sync';
+import { sync } from '../core/sync';
 import type { TDataBatchError } from '@/interfaces/data-batch-error';
 
 interface TDataBatchErrorQuery {
@@ -12,20 +12,11 @@ interface TDataBatchErrorQuery {
 }
 
 export class DataBatchError {
-  private static _instance: DataBatchError;
-  private readonly syncService = Sync.getInstance();
+  private readonly syncService = sync;
 
   public readonly queryKey = ['data-batch-error'];
 
-  private constructor() {}
-
-  public static getInstance(): DataBatchError {
-    if (!DataBatchError._instance) {
-      DataBatchError._instance = new DataBatchError();
-    }
-
-    return DataBatchError._instance;
-  }
+  constructor() {}
 
   public errorList(
     query?: TDataBatchErrorQuery,

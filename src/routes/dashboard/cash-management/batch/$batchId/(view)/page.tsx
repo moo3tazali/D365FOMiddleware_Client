@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { BatchHeader } from '../../-components/batch-header';
+import { SharedBatchHeader as BatchHeader } from '@/components/batch/shared-batch-header';
 import { BatchForm } from '../../-components/batch-form';
 import { BatchResult } from '../../-components/batch-result';
 import { BatchFooter } from '../../-components/batch-footer';
 import { useBatchQueryData } from '../../-hooks/use-batch-query-data';
-import { NotFoundFallback } from '@/components/fallback';
+import { NotFoundFallback } from '@/components/fallback/not-found-fallback';
 
 export const Route = createFileRoute(
   '/dashboard/cash-management/batch/$batchId/(view)/',

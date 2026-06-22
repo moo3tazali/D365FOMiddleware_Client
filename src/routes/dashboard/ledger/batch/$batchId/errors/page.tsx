@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { BatchErrorTable } from '../../-components/batch-error-table';
-import { BatchErrorHeader } from '../../-components/batch-error-header';
+import { BatchErrorTable } from '@/components/batch-error-table';
+import { SharedBatchErrorHeader as BatchErrorHeader } from '@/components/batch/shared-batch-error-header';
 
 export const Route = createFileRoute(
   '/dashboard/ledger/batch/$batchId/errors/',
@@ -24,7 +24,7 @@ function BatchErrorPage() {
   return (
     <div className='h-full flex flex-col gap-5'>
       <BatchErrorHeader />
-      <BatchErrorTable />
+      <BatchErrorTable routeFrom='/dashboard/ledger/batch/$batchId/errors/' />
     </div>
   );
 }
