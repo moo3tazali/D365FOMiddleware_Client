@@ -15,6 +15,11 @@ import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/data-batch';
 import { useSearchQuery } from '@/hooks/use-search-query';
 import { ClampText } from '@/components/ui/clamp-text';
 import { ReprocessBatchMenuItem } from '@/components/reprocess-batch-menu-item';
+import {
+  BatchCreatedBy,
+  formatBatchDate,
+  useRoleAwareBatchColumns,
+} from '@/components/batch/batch-audit';
 
 export const DataBatchTable = () => {
   const { dataBatch } = useServices();
@@ -28,12 +33,13 @@ export const DataBatchTable = () => {
   );
 
   const queryClient = useQueryClient();
+  const visibleColumns = useRoleAwareBatchColumns(columns);
 
   return (
     <DataTable
       header={DataBatchFilters}
       data={data}
-      columns={columns}
+      columns={visibleColumns}
       error={error?.message}
       isPending={isPending}
       isPlaceholderData={isPlaceholderData}
@@ -72,6 +78,7 @@ const columns: ColumnDef<TDataBatch>[] = [
     header: 'Uploaded',
   },
   {
+    id: 'admin-formatted',
     accessorKey: 'totalFormattedCount',
     header: 'Formatted',
   },
@@ -84,9 +91,19 @@ const columns: ColumnDef<TDataBatch>[] = [
     header: 'Error',
   },
   {
+    accessorKey: 'createdByName',
+    header: 'Created By',
+    cell: ({ row }) => <BatchCreatedBy batch={row.original} />,
+  },
+  {
     accessorKey: 'creationDate',
     header: 'Created At',
-    cell: ({ getValue }) => <CellCreatedAt value={getValue<string>()} />,
+    cell: ({ getValue }) => formatBatchDate(getValue<string>()),
+  },
+  {
+    id: 'admin-reprocess-count',
+    accessorKey: 'reprocessCount',
+    header: 'Reprocessed',
   },
   {
     accessorKey: 'status',
@@ -119,14 +136,6 @@ const CellId = ({ value }: { value: string }) => {
 
 const CellDescription = ({ value }: { value: string }) => {
   return <ClampText>{value}</ClampText>;
-};
-
-const CellCreatedAt = ({ value }: { value: string }) => {
-  return new Date(value).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
 };
 
 const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.ACCOUNT_RECEIVABLE;

@@ -13,6 +13,11 @@ import { useInvalidate } from '@/hooks/use-invalidate';
 import { enumToOptions } from '@/lib/utils';
 import { TDataBatchStatus, type TDataBatch } from '@/interfaces/data-batch';
 import { BatchActionsDropdown } from '@/components/batch/batch-actions-dropdown';
+import { useAuth } from '@/hooks/use-auth';
+import {
+  BatchCreatedBy,
+  formatBatchDate,
+} from '@/components/batch/batch-audit';
 
 const statusOptions = enumToOptions(TDataBatchStatus);
 const statusColorMap = {
@@ -28,11 +33,15 @@ interface SharedBatchHeaderProps {
 }
 
 export const SharedBatchHeader = ({ batch }: SharedBatchHeaderProps) => {
+  const isAdmin = useAuth((state) => state.user?.role === 'ADMIN');
+
   return (
-    <div className='flex items-start justify-between gap-4'>
-      <div>
+    <div className='flex flex-col items-start justify-between gap-4 sm:flex-row'>
+      <div className='min-w-0'>
         <div className='flex items-center gap-2'>
-          <h1>Batch Entries</h1>
+          <h1 className='truncate'>
+            {batch ? `Batch ${batch.id}` : 'Batch Entries'}
+          </h1>
           {batch != null && (
             <Badge
               dot
@@ -47,13 +56,54 @@ export const SharedBatchHeader = ({ batch }: SharedBatchHeaderProps) => {
           )}
           <BatchRefreshBtn />
         </div>
-        <Description>Batch entries to synchronize with Dynamics.</Description>
+        <Description>
+          {batch?.description || 'Batch entries to synchronize with Dynamics.'}
+        </Description>
+
+        {batch && (
+          <dl className='mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm'>
+            <BatchMetadata label='Created by'>
+              <BatchCreatedBy batch={batch} />
+            </BatchMetadata>
+            <BatchMetadata label='Created at'>
+              {formatBatchDate(batch.creationDate)}
+            </BatchMetadata>
+            {isAdmin && (
+              <>
+                <BatchMetadata label='Reprocessed'>
+                  {batch.reprocessCount.toLocaleString('en-US')} times
+                </BatchMetadata>
+                {batch.lastReprocessedAt && (
+                  <BatchMetadata label='Last reprocessed'>
+                    {formatBatchDate(batch.lastReprocessedAt)}
+                    {batch.lastReprocessedByName
+                      ? ` by ${batch.lastReprocessedByName}`
+                      : ''}
+                  </BatchMetadata>
+                )}
+              </>
+            )}
+          </dl>
+        )}
       </div>
 
       <BatchActionsDropdown batch={batch} />
     </div>
   );
 };
+
+const BatchMetadata = ({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) => (
+  <div className='min-w-0'>
+    <dt className='text-xs font-medium text-muted-foreground'>{label}</dt>
+    <dd className='mt-0.5 text-foreground'>{children}</dd>
+  </div>
+);
 
 const BatchRefreshBtn = () => {
   const { dataBatch } = useServices();
