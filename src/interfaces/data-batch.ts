@@ -28,6 +28,7 @@ export enum TEntryProcessorTypes {
   CashInTrucking = 27,
   CashOutTrucking = 28,
   AccountReceivableYard = 29,
+  AccountReceivableShippingLines = 30,
 }
 
 export enum TDataBatchStatus {

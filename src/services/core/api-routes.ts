@@ -130,6 +130,8 @@ export const API_ROUTES = {
       TRUCKING_CREDIT_NOTE_DOCUMENT:
         '/DataMigration/AccountReceivable/Trucking-CreditNote-Document',
       YARD_DOCUMENT: '/DataMigration/AccountReceivable/Yard-Document',
+      SHIPPING_LINES_DOCUMENT:
+        '/DataMigration/AccountReceivable/Shipping-Lines-Document',
       POST_TO_DFO: '/DataMigration/AccountReceivable/PostToDFO',
     },
     CLOSING: {

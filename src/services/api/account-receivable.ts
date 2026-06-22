@@ -27,6 +27,7 @@ export class AccountReceivable {
     TRUCKING_CREDIT_NOTE_DOC:
       TEntryProcessorTypes.AccountReceivableTruckingCreditNote,
     YARD_DOC: TEntryProcessorTypes.AccountReceivableYard,
+    SHIPPING_LINES_DOC: TEntryProcessorTypes.AccountReceivableShippingLines,
   };
 
   constructor() {}
@@ -91,6 +92,9 @@ export class AccountReceivable {
           .TRUCKING_CREDIT_NOTE_DOCUMENT;
       case this.UPLOAD_TYPES.YARD_DOC:
         return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE.YARD_DOCUMENT;
+      case this.UPLOAD_TYPES.SHIPPING_LINES_DOC:
+        return API_ROUTES.DATA_MIGRATION.ACCOUNT_RECEIVABLE
+          .SHIPPING_LINES_DOCUMENT;
       default:
         throw new Error(
           `Invalid upload type, Upload type must satisfies ${Object.entries(

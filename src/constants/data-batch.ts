@@ -6,6 +6,7 @@ export const ACCOUNT_RECEIVABLE_ENTRY_PROCESSOR_TYPES = [
   TEntryProcessorTypes.AccountReceivableFreightCreditNote,
   TEntryProcessorTypes.AccountReceivableTruckingCreditNote,
   TEntryProcessorTypes.AccountReceivableYard,
+  TEntryProcessorTypes.AccountReceivableShippingLines,
 ] as const;
 
 export const isAccountReceivableEntryProcessorType = (
@@ -43,6 +44,10 @@ export const ENTRY_PROCESSOR_OPTIONS = {
     {
       label: 'Yard',
       value: TEntryProcessorTypes.AccountReceivableYard,
+    },
+    {
+      label: 'Shipping Lines',
+      value: TEntryProcessorTypes.AccountReceivableShippingLines,
     },
   ],
   ACCOUNT_PAYABLE: [
