@@ -65,6 +65,9 @@ export const ROUTES = {
         REMEDIATIONS: '/dashboard/ledger/batch/$batchId/remediations',
       },
     },
+    BANK_MAPPING: {
+      HOME: '/dashboard/bank-mapping',
+    },
     CASH_IN: {
       HOME: '/dashboard/cash-in',
       BATCH: {

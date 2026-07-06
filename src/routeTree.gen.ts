@@ -26,6 +26,7 @@ import { Route as DashboardLedgerPageRouteImport } from './routes/dashboard/ledg
 import { Route as DashboardCashOutPageRouteImport } from './routes/dashboard/cash-out/page'
 import { Route as DashboardCashManagementPageRouteImport } from './routes/dashboard/cash-management/page'
 import { Route as DashboardCashInPageRouteImport } from './routes/dashboard/cash-in/page'
+import { Route as DashboardBankMappingPageRouteImport } from './routes/dashboard/bank-mapping/page'
 import { Route as DashboardAccountsReceivablePageRouteImport } from './routes/dashboard/accounts-receivable/page'
 import { Route as DashboardAccountsPayablePageRouteImport } from './routes/dashboard/accounts-payable/page'
 import { Route as DashboardAccessPageRouteImport } from './routes/dashboard/access/page'
@@ -167,6 +168,12 @@ const DashboardCashInPageRoute = DashboardCashInPageRouteImport.update({
   path: '/cash-in/',
   getParentRoute: () => DashboardLayoutRoute,
 } as any)
+const DashboardBankMappingPageRoute =
+  DashboardBankMappingPageRouteImport.update({
+    id: '/bank-mapping/',
+    path: '/bank-mapping/',
+    getParentRoute: () => DashboardLayoutRoute,
+  } as any)
 const DashboardAccountsReceivablePageRoute =
   DashboardAccountsReceivablePageRouteImport.update({
     id: '/accounts-receivable/',
@@ -514,6 +521,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/access': typeof DashboardAccessPageRoute
   '/dashboard/accounts-payable': typeof DashboardAccountsPayablePageRoute
   '/dashboard/accounts-receivable': typeof DashboardAccountsReceivablePageRoute
+  '/dashboard/bank-mapping': typeof DashboardBankMappingPageRoute
   '/dashboard/cash-in': typeof DashboardCashInPageRoute
   '/dashboard/cash-management': typeof DashboardCashManagementPageRoute
   '/dashboard/cash-out': typeof DashboardCashOutPageRoute
@@ -579,6 +587,7 @@ export interface FileRoutesByTo {
   '/dashboard/access': typeof DashboardAccessPageRoute
   '/dashboard/accounts-payable': typeof DashboardAccountsPayablePageRoute
   '/dashboard/accounts-receivable': typeof DashboardAccountsReceivablePageRoute
+  '/dashboard/bank-mapping': typeof DashboardBankMappingPageRoute
   '/dashboard/cash-in': typeof DashboardCashInPageRoute
   '/dashboard/cash-management': typeof DashboardCashManagementPageRoute
   '/dashboard/cash-out': typeof DashboardCashOutPageRoute
@@ -647,6 +656,7 @@ export interface FileRoutesById {
   '/dashboard/access/': typeof DashboardAccessPageRoute
   '/dashboard/accounts-payable/': typeof DashboardAccountsPayablePageRoute
   '/dashboard/accounts-receivable/': typeof DashboardAccountsReceivablePageRoute
+  '/dashboard/bank-mapping/': typeof DashboardBankMappingPageRoute
   '/dashboard/cash-in/': typeof DashboardCashInPageRoute
   '/dashboard/cash-management/': typeof DashboardCashManagementPageRoute
   '/dashboard/cash-out/': typeof DashboardCashOutPageRoute
@@ -721,6 +731,7 @@ export interface FileRouteTypes {
     | '/dashboard/access'
     | '/dashboard/accounts-payable'
     | '/dashboard/accounts-receivable'
+    | '/dashboard/bank-mapping'
     | '/dashboard/cash-in'
     | '/dashboard/cash-management'
     | '/dashboard/cash-out'
@@ -786,6 +797,7 @@ export interface FileRouteTypes {
     | '/dashboard/access'
     | '/dashboard/accounts-payable'
     | '/dashboard/accounts-receivable'
+    | '/dashboard/bank-mapping'
     | '/dashboard/cash-in'
     | '/dashboard/cash-management'
     | '/dashboard/cash-out'
@@ -853,6 +865,7 @@ export interface FileRouteTypes {
     | '/dashboard/access/'
     | '/dashboard/accounts-payable/'
     | '/dashboard/accounts-receivable/'
+    | '/dashboard/bank-mapping/'
     | '/dashboard/cash-in/'
     | '/dashboard/cash-management/'
     | '/dashboard/cash-out/'
@@ -1036,6 +1049,13 @@ declare module '@tanstack/react-router' {
       path: '/cash-in'
       fullPath: '/dashboard/cash-in'
       preLoaderRoute: typeof DashboardCashInPageRouteImport
+      parentRoute: typeof DashboardLayoutRoute
+    }
+    '/dashboard/bank-mapping/': {
+      id: '/dashboard/bank-mapping/'
+      path: '/bank-mapping'
+      fullPath: '/dashboard/bank-mapping'
+      preLoaderRoute: typeof DashboardBankMappingPageRouteImport
       parentRoute: typeof DashboardLayoutRoute
     }
     '/dashboard/accounts-receivable/': {
@@ -1746,6 +1766,7 @@ interface DashboardLayoutRouteChildren {
   DashboardAccessPageRoute: typeof DashboardAccessPageRoute
   DashboardAccountsPayablePageRoute: typeof DashboardAccountsPayablePageRoute
   DashboardAccountsReceivablePageRoute: typeof DashboardAccountsReceivablePageRoute
+  DashboardBankMappingPageRoute: typeof DashboardBankMappingPageRoute
   DashboardCashInPageRoute: typeof DashboardCashInPageRoute
   DashboardCashManagementPageRoute: typeof DashboardCashManagementPageRoute
   DashboardCashOutPageRoute: typeof DashboardCashOutPageRoute
@@ -1774,6 +1795,7 @@ const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
   DashboardAccessPageRoute: DashboardAccessPageRoute,
   DashboardAccountsPayablePageRoute: DashboardAccountsPayablePageRoute,
   DashboardAccountsReceivablePageRoute: DashboardAccountsReceivablePageRoute,
+  DashboardBankMappingPageRoute: DashboardBankMappingPageRoute,
   DashboardCashInPageRoute: DashboardCashInPageRoute,
   DashboardCashManagementPageRoute: DashboardCashManagementPageRoute,
   DashboardCashOutPageRoute: DashboardCashOutPageRoute,

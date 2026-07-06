@@ -1,0 +1,821 @@
+
+
+
+
+
+
+.bank-mapping-page input {
+  font: inherit;
+}
+
+.bank-mapping-page {
+  width: min(940px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 64px 0 36px;
+}
+
+.bank-mapping-page .bank-mapping-hero {
+  max-width: 720px;
+  margin-bottom: 30px;
+}
+
+.bank-mapping-page .eyebrow {
+  color: #187253;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.bank-mapping-page h1 {
+  margin: 10px 0 12px;
+  font-size: 2.25rem;
+  line-height: 1.08;
+  letter-spacing: 0;
+  font-weight: 750;
+}
+
+.bank-mapping-page .bank-mapping-hero p {
+  margin: 0;
+  color: #52635d;
+  font-size: 1.08rem;
+  line-height: 1.7;
+}
+
+.bank-mapping-page code {
+  padding: 0.12em 0.35em;
+  border-radius: 5px;
+  background: #e4ece7;
+  color: #174f3c;
+  font-size: 0.88em;
+}
+
+.bank-mapping-page .card {
+  padding: clamp(24px, 5vw, 44px);
+  border: 1px solid rgba(25, 72, 56, 0.13);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 24px 70px rgba(29, 64, 51, 0.12);
+  backdrop-filter: blur(18px);
+}
+
+.bank-mapping-page .section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.bank-mapping-page .section-heading > span {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: #dff0e7;
+  color: #136447;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.bank-mapping-page h2 {
+  margin: 1px 0 4px;
+  font-size: 1.12rem;
+}
+
+.bank-mapping-page .section-heading p {
+  margin: 0;
+  color: #78857f;
+  font-size: 0.9rem;
+}
+
+.bank-mapping-page .file-grid,
+.bank-mapping-page .toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.bank-mapping-page .file-field {
+  display: flex;
+  min-height: 112px;
+  align-items: center;
+  gap: 15px;
+  padding: 18px;
+  border: 1.5px dashed #a7bbb2;
+  border-radius: 8px;
+  background: #f8fbf9;
+  cursor: pointer;
+  transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+}
+
+.bank-mapping-page .file-field:hover {
+  transform: translateY(-2px);
+  border-color: #23815f;
+  background: #f2f9f5;
+}
+
+.bank-mapping-page .file-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 8px;
+  background: #e1f0e8;
+  color: #187253;
+  font-size: 1.4rem;
+}
+
+.bank-mapping-page .file-field strong,
+.bank-mapping-page .file-field small {
+  display: block;
+}
+
+.bank-mapping-page .file-field small {
+  overflow: hidden;
+  max-width: 270px;
+  margin-top: 5px;
+  color: #718078;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bank-mapping-page .file-field input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.bank-mapping-page .divider {
+  height: 1px;
+  margin: 34px 0;
+  background: #e7ece9;
+}
+
+.bank-mapping-page .settings-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.bank-mapping-page .settings-grid label > span {
+  display: block;
+  margin-bottom: 7px;
+  color: #42534c;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.bank-mapping-page .settings-grid input {
+  width: 100%;
+  height: 46px;
+  padding: 0 13px;
+  border: 1px solid #cdd8d2;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  color: #15261f;
+}
+
+.bank-mapping-page .settings-grid input:focus {
+  border-color: #23815f;
+  box-shadow: 0 0 0 3px rgba(35, 129, 95, 0.12);
+}
+
+.bank-mapping-page .toggle-grid {
+  margin-top: 20px;
+}
+
+.bank-mapping-page .toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 15px;
+  border-radius: 8px;
+  background: #f5f8f6;
+}
+
+.bank-mapping-page .toggle input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: #187253;
+}
+
+.bank-mapping-page .toggle strong,
+.bank-mapping-page .toggle small {
+  display: block;
+}
+
+.bank-mapping-page .toggle small {
+  margin-top: 3px;
+  color: #75827c;
+  line-height: 1.4;
+}
+
+.bank-mapping-page .message {
+  margin-top: 20px;
+  padding: 13px 15px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+}
+
+.bank-mapping-page .message.error {
+  background: #fff0ee;
+  color: #9d2c21;
+}
+
+.bank-mapping-page .message.success {
+  background: #e9f7ef;
+  color: #176643;
+}
+
+.bank-mapping-page .primary-button {
+  display: flex;
+  width: 100%;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 24px;
+  border: 0;
+  border-radius: 8px;
+  background: #176f51;
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(23, 111, 81, 0.24);
+}
+
+.bank-mapping-page .primary-button:hover:not(:disabled) {
+  background: #105f44;
+}
+
+.bank-mapping-page .primary-button:disabled {
+  cursor: wait;
+  opacity: 0.75;
+}
+
+.bank-mapping-page .spinner {
+  width: 17px;
+  height: 17px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.bank-mapping-page .privacy-note {
+  margin: 18px 0 0;
+  color: #718078;
+  text-align: center;
+  font-size: 0.82rem;
+}
+
+.bank-mapping-page .results-card {
+  margin-top: 24px;
+  padding: clamp(22px, 4vw, 36px);
+  border: 1px solid rgba(25, 72, 56, 0.13);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 20px 55px rgba(29, 64, 51, 0.1);
+}
+
+.bank-mapping-page .results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.bank-mapping-page .results-header h2 {
+  margin-top: 7px;
+  font-size: 1.55rem;
+}
+
+.bank-mapping-page .download-button {
+  padding: 12px 17px;
+  border: 0;
+  border-radius: 8px;
+  background: #176f51;
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.bank-mapping-page .download-button:disabled {
+  cursor: wait;
+  opacity: 0.75;
+}
+
+.bank-mapping-page .summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.bank-mapping-page .summary-grid > div {
+  padding: 16px;
+  border: 1px solid #e0e8e3;
+  border-radius: 8px;
+  background: #f7faf8;
+}
+
+.bank-mapping-page .summary-grid strong,
+.bank-mapping-page .summary-grid span {
+  display: block;
+}
+
+.bank-mapping-page .summary-grid strong {
+  font-size: 1.65rem;
+  color: #145e45;
+}
+
+.bank-mapping-page .summary-grid span {
+  margin-top: 3px;
+  color: #718078;
+  font-size: 0.82rem;
+}
+
+.bank-mapping-page .review-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 15px;
+}
+
+.bank-mapping-page .filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.bank-mapping-page .filter-buttons button {
+  padding: 8px 11px;
+  border: 1px solid #d3ded8;
+  border-radius: 8px;
+  background: #fff;
+  color: #485951;
+  cursor: pointer;
+}
+
+.bank-mapping-page .filter-buttons button.active {
+  border-color: #187253;
+  background: #e4f2ea;
+  color: #125b42;
+  font-weight: 700;
+}
+
+.bank-mapping-page .review-toolbar input {
+  width: min(330px, 100%);
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #cdd8d2;
+  border-radius: 8px;
+  outline: none;
+}
+
+.bank-mapping-page .table-shell {
+  overflow: auto;
+  max-height: 620px;
+  border: 1px solid #dde6e1;
+  border-radius: 8px;
+}
+
+.bank-mapping-page table {
+  width: 100%;
+  min-width: 1120px;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.bank-mapping-page td {
+  padding: 11px 12px;
+  border-bottom: 1px solid #e7ede9;
+  text-align: left;
+  vertical-align: top;
+}
+
+.bank-mapping-page th {
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  background: #edf4f0;
+  color: #3f5048;
+  font-size: 0.74rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.bank-mapping-page td strong,
+.bank-mapping-page td small {
+  display: block;
+}
+
+.bank-mapping-page td small {
+  max-width: 250px;
+  margin-top: 3px;
+  color: #77847e;
+}
+
+.bank-mapping-page .number {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.bank-mapping-page .reason-cell {
+  max-width: 360px;
+  color: #5e6d66;
+}
+
+.bank-mapping-page .status-pill {
+  display: inline-block;
+  padding: 4px 7px;
+  border-radius: 999px;
+  font-size: 0.71rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.bank-mapping-page .status-pill.review {
+  background: #fff0cf;
+  color: #805b09;
+}
+
+.bank-mapping-page .status-pill.unmatched {
+  background: #f4e7e5;
+  color: #87362e;
+}
+
+.bank-mapping-page .result-note {
+  color: #74817b;
+  font-size: 0.8rem;
+}
+
+.bank-mapping-page .rules-panel {
+  margin: 0 0 22px;
+  padding: 14px 16px;
+  border: 1px solid #dce7e1;
+  border-radius: 8px;
+  background: #f7faf8;
+  color: #52635d;
+}
+
+.bank-mapping-page .rules-panel summary {
+  color: #195f47;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.bank-mapping-page .rules-panel ol {
+  margin: 13px 0 8px;
+  padding-left: 22px;
+  line-height: 1.55;
+}
+
+.bank-mapping-page .rules-panel p {
+  margin-bottom: 0;
+  font-size: 0.85rem;
+}
+
+.bank-mapping-page .results-guide {
+  margin: 0 0 22px;
+  padding: 16px;
+  border: 1px solid #dce7e1;
+  border-radius: 8px;
+  background: #fbfdfc;
+}
+
+.bank-mapping-page .results-guide h3 {
+  margin: 0 0 12px;
+  color: #174f3c;
+  font-size: 1rem;
+}
+
+.bank-mapping-page .guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.bank-mapping-page .guide-grid > div {
+  padding: 13px;
+  border: 1px solid #e0e8e3;
+  border-radius: 8px;
+  background: #f7faf8;
+}
+
+.bank-mapping-page .guide-grid strong,
+.bank-mapping-page .guide-grid p,
+.bank-mapping-page .tab-explainer strong,
+.bank-mapping-page .tab-explainer span {
+  display: block;
+}
+
+.bank-mapping-page .guide-grid strong {
+  color: #18332b;
+  font-size: 0.88rem;
+}
+
+.bank-mapping-page .guide-grid p {
+  margin: 7px 0 0;
+  color: #5c6b64;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.bank-mapping-page .tab-explainer {
+  margin: -2px 0 16px;
+  padding: 13px 15px;
+  border-left: 4px solid #176f51;
+  border-radius: 8px;
+  background: #f1f8f4;
+}
+
+.bank-mapping-page .tab-explainer strong {
+  color: #174f3c;
+  font-size: 0.9rem;
+}
+
+.bank-mapping-page .tab-explainer span {
+  margin-top: 4px;
+  color: #52635d;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.bank-mapping-page .toolbar-label {
+  display: flex;
+  align-items: center;
+}
+
+.bank-mapping-page .toolbar-label span {
+  color: #52635d;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 700px) {
+  .bank-mapping-page {
+    padding-top: 38px;
+  }
+
+  .bank-mapping-page .file-grid,
+  .bank-mapping-page .toggle-grid,
+  .bank-mapping-page .settings-grid,
+  .bank-mapping-page .guide-grid,
+  .bank-mapping-page .summary-grid,
+  .bank-mapping-page .summary-grid.summary-grid-5 {
+    grid-template-columns: 1fr;
+  }
+
+  .bank-mapping-page .results-header,
+  .bank-mapping-page .review-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .bank-mapping-page .card {
+    border-radius: 8px;
+  }
+}
+
+.bank-mapping-page .summary-grid.summary-grid-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.bank-mapping-page .tab-bar {
+  display: flex;
+  gap: 10px;
+  border-bottom: 2px solid #e7ece9;
+  margin: 24px 0 20px;
+}
+
+.bank-mapping-page .tab-button {
+  padding: 10px 16px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #718078;
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  margin-bottom: -2px;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.bank-mapping-page .tab-button:hover {
+  color: #176f51;
+}
+
+.bank-mapping-page .tab-button.active {
+  color: #176f51;
+  border-bottom-color: #176f51;
+}
+
+.bank-mapping-page .deposit-amt {
+  color: #125b42;
+  font-weight: 700;
+}
+
+.bank-mapping-page .withdraw-amt {
+  color: #87362e;
+  font-weight: 700;
+}
+
+/* Dark Mode Overrides */
+.dark .bank-mapping-page .card,
+.dark .bank-mapping-page .results-card {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.25);
+}
+
+.dark .bank-mapping-page h1,
+.dark .bank-mapping-page h2,
+.dark .bank-mapping-page h3,
+.dark .bank-mapping-page strong {
+  color: #f1f5f9;
+}
+
+.dark .bank-mapping-page p,
+.dark .bank-mapping-page small,
+.dark .bank-mapping-page span,
+.dark .bank-mapping-page .bank-mapping-hero p,
+.dark .bank-mapping-page .section-heading p,
+.dark .bank-mapping-page .file-field small,
+.dark .bank-mapping-page .toggle small {
+  color: #94a3b8;
+}
+
+.dark .bank-mapping-page .eyebrow {
+  color: #10b981;
+}
+
+.dark .bank-mapping-page code {
+  background: #334155;
+  color: #6ee7b7;
+}
+
+.dark .bank-mapping-page .section-heading > span {
+  background: #064e3b;
+  color: #10b981;
+}
+
+.dark .bank-mapping-page .file-field {
+  background: rgba(15, 23, 42, 0.5);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.dark .bank-mapping-page .file-field:hover {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: #10b981;
+}
+
+.dark .bank-mapping-page .file-icon {
+  background: #022c22;
+  color: #10b981;
+}
+
+.dark .bank-mapping-page .divider {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark .bank-mapping-page .settings-grid input,
+.dark .bank-mapping-page .review-toolbar input {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f1f5f9;
+}
+
+.dark .bank-mapping-page .settings-grid input:focus,
+.dark .bank-mapping-page .review-toolbar input:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.dark .bank-mapping-page .toggle {
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.dark .bank-mapping-page .primary-button {
+  background: #10b981;
+  color: #022c22;
+}
+
+.dark .bank-mapping-page .primary-button:hover:not(:disabled) {
+  background: #34d399;
+}
+
+.dark .bank-mapping-page .message.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.dark .bank-mapping-page .message.success {
+  background: rgba(16, 185, 129, 0.1);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.dark .bank-mapping-page .summary-grid > div,
+.dark .bank-mapping-page .guide-grid > div {
+  background: rgba(15, 23, 42, 0.4);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .bank-mapping-page .summary-grid strong {
+  color: #34d399;
+}
+
+.dark .bank-mapping-page .rules-panel,
+.dark .bank-mapping-page .results-guide {
+  background: rgba(15, 23, 42, 0.4);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .bank-mapping-page .rules-panel summary,
+.dark .bank-mapping-page .results-guide h3 {
+  color: #34d399;
+}
+
+.dark .bank-mapping-page .tab-explainer {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: #10b981;
+}
+
+.dark .bank-mapping-page .tab-explainer strong {
+  color: #6ee7b7;
+}
+
+.dark .bank-mapping-page th {
+  background: #0f172a;
+  color: #94a3b8;
+}
+
+.dark .bank-mapping-page th,
+.dark .bank-mapping-page td {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .bank-mapping-page .status-pill.review {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fcd34d;
+}
+
+.dark .bank-mapping-page .status-pill.unmatched {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+}
+
+.dark .bank-mapping-page .filter-buttons button {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+}
+
+.dark .bank-mapping-page .filter-buttons button.active {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: #10b981;
+  color: #6ee7b7;
+}
+
+.dark .bank-mapping-page .tab-button {
+  color: #94a3b8;
+}
+
+.dark .bank-mapping-page .tab-button:hover,
+.dark .bank-mapping-page .tab-button.active {
+  color: #34d399;
+  border-bottom-color: #34d399;
+}
+
+.dark .bank-mapping-page .tab-bar {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .bank-mapping-page .deposit-amt {
+  color: #34d399;
+}
+
+.dark .bank-mapping-page .withdraw-amt {
+  color: #f87171;
+}
+
+.dark .bank-mapping-page .table-shell {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
