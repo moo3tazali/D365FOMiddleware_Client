@@ -81,10 +81,7 @@ export const useBatchForm = () => {
 
   const navigate = useNavigate();
 
-  const isDisabled = useMemo(() => {
-    const isSuccess = batch && batch.totalFormattedCount > 0;
-    return isSuccess || isPending;
-  }, [batch, isPending]);
+  const isDisabled = useMemo(() => !!batch || isPending, [batch, isPending]);
 
   const onSubmit = useCallback(
     (values: FormData) => {
