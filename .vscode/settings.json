@@ -21,6 +21,8 @@
   "eslint.validate": ["typescript", "typescriptreact"],
   "eslint.workingDirectories": ["."],
   "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   }
