@@ -16,7 +16,8 @@ export const BatchFooter = () => {
   const [batch] = useBatchQueryData();
 
   const ActionBtn = (() => {
-    if (!batch || batch.totalFormattedCount === 0) return <UploadBtn />;
+    if (!batch) return <UploadBtn />;
+    if (batch.totalFormattedCount === 0) return <NewEntryBtn />;
 
     return <SubmitBtn data={batch} />;
   })();
@@ -32,19 +33,32 @@ const UploadBtn = () => {
   });
 
   return (
-    <Button
-      size='lg'
-      className='w-full flex sm:max-w-xs ms-auto'
-      onClick={() => {
-        document.getElementById('upload_entries_btn')?.click();
-      }}
-      disabled={isUploading > 0}
-    >
-      <Upload className='size-5' />
-      Upload
-    </Button>
+    <div className='flex justify-end'>
+      <Button
+        size='lg'
+        className='w-full sm:max-w-xs'
+        onClick={() => {
+          document.getElementById('upload_entries_btn')?.click();
+        }}
+        disabled={isUploading > 0}
+      >
+        <Upload className='size-5' />
+        Upload
+      </Button>
+    </div>
   );
 };
+
+const NewEntryBtn = () => (
+  <div className='flex justify-end'>
+    <Button asChild size='lg' className='w-full sm:max-w-xs'>
+      <Link to={ROUTES.DASHBOARD.CASH_OUT.BATCH.NEW}>
+        <Upload className='size-5' />
+        New Entry
+      </Link>
+    </Button>
+  </div>
+);
 
 const SubmitBtn = ({ data }: { data: TDataBatch }) => {
   const { onSubmit, isPending, validationErrors, closeValidationModal } =
@@ -61,17 +75,19 @@ const SubmitBtn = ({ data }: { data: TDataBatch }) => {
 
   if (!showSubmit)
     return (
-      <Button
-        asChild
-        size='lg'
-        disabled={isPending}
-        className='sm:max-w-xs ms-auto w-full'
-      >
-        <Link to={ROUTES.DASHBOARD.CASH_OUT.BATCH.NEW}>
-          <Upload className='size-5' />
-          New Entry
-        </Link>
-      </Button>
+      <div className='flex justify-end'>
+        <Button
+          asChild
+          size='lg'
+          disabled={isPending}
+          className='w-full sm:max-w-xs'
+        >
+          <Link to={ROUTES.DASHBOARD.CASH_OUT.BATCH.NEW}>
+            <Upload className='size-5' />
+            New Entry
+          </Link>
+        </Button>
+      </div>
     );
   return (
     <>

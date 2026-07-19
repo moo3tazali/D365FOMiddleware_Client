@@ -16,7 +16,8 @@ export const BatchFooter = () => {
   const [batch] = useBatchQueryData();
 
   const ActionBtn = (() => {
-    if (!batch || batch.totalFormattedCount === 0) return <UploadBtn />;
+    if (!batch) return <UploadBtn />;
+    if (batch.totalFormattedCount === 0) return <NewEntryBtn />;
 
     return <SubmitBtn data={batch} />;
   })();
@@ -32,10 +33,10 @@ const UploadBtn = () => {
   });
 
   return (
-    <div className='pt-4 border-t border-border'>
+    <div className='flex justify-end pt-4 border-t border-border'>
       <Button
         size='lg'
-        className='w-full flex sm:max-w-xs ms-auto'
+        className='w-full sm:max-w-xs'
         onClick={() => {
           document.getElementById('upload_entries_btn')?.click();
         }}
@@ -47,6 +48,17 @@ const UploadBtn = () => {
     </div>
   );
 };
+
+const NewEntryBtn = () => (
+  <div className='flex justify-end pt-4 border-t border-border'>
+    <Button asChild size='lg' className='w-full sm:max-w-xs'>
+      <Link to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.NEW}>
+        <Upload className='size-5' />
+        New Entry
+      </Link>
+    </Button>
+  </div>
+);
 
 const SubmitBtn = ({ data }: { data: TDataBatch }) => {
   const { onSubmit, isPending, validationErrors, closeValidationModal } =
@@ -63,12 +75,12 @@ const SubmitBtn = ({ data }: { data: TDataBatch }) => {
 
   if (!showSubmit)
     return (
-      <div className='pt-4 border-t border-border'>
+      <div className='flex justify-end pt-4 border-t border-border'>
         <Button
           asChild
           size='lg'
           disabled={isPending}
-          className='sm:max-w-xs ms-auto w-full'
+          className='w-full sm:max-w-xs'
         >
           <Link to={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.NEW}>
             <Upload className='size-5' />
