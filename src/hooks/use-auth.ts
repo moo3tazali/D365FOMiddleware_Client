@@ -9,7 +9,7 @@ export function useAuth<T>(selector?: (state: TAuth) => T): T | TAuth {
   const store = useContext(AuthContext);
 
   if (!store) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth must be used within an AuthProvider!');
   }
 
   const state = useStore(store, selector ?? ((s) => s as T));
