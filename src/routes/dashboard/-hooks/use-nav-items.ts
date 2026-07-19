@@ -12,6 +12,8 @@ import Server from 'lucide-react/dist/esm/icons/server';
 import UserCheck from 'lucide-react/dist/esm/icons/user-check';
 import CircleUser from 'lucide-react/dist/esm/icons/circle-user';
 
+import Landmark from 'lucide-react/dist/esm/icons/landmark';
+
 import { ROUTES } from '@/router';
 import { useAuth } from '@/hooks/use-auth';
 import { useServices } from '@/hooks/use-services';
@@ -37,6 +39,12 @@ export const useNavItems = () => {
         url: ROUTES.DASHBOARD.HOME,
         icon: Home,
         isActive: pathname === ROUTES.DASHBOARD.HOME,
+      },
+      {
+        title: 'Bank Mapping',
+        url: ROUTES.DASHBOARD.BANK_MAPPING.HOME,
+        icon: Landmark,
+        isActive: pathname.startsWith(ROUTES.DASHBOARD.BANK_MAPPING.HOME),
       },
       {
         title: 'Accounts Receivable',

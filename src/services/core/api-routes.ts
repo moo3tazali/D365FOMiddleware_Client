@@ -162,6 +162,10 @@ export const API_ROUTES = {
       POST_TO_DFO: '/DataMigration/Cash/PostToDFO',
     },
   },
+  RECONCILIATION: {
+    PROCESS: '/reconciliation/process',
+    DOWNLOAD: '/reconciliation/download/:id',
+  },
 } as const;
 
 type ApiRoutesValues = FlattenObj<typeof API_ROUTES>;
