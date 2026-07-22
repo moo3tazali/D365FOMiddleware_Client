@@ -54,6 +54,8 @@ export interface TDataBatch {
   errorCount: number;
   totalFormattedCount: number;
   totalUploadedCount: number;
+  withholdingRemovedCount?: number;
+  withholdingRemovedAmount?: number;
   status: TDataBatchStatus;
   skipErrors?: boolean;
   expectedGroupCount?: number;

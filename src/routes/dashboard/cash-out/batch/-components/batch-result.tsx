@@ -25,7 +25,7 @@ export const BatchResult = () => {
           <Description>{batch?.description}</Description>
         </div>
       </div>
-      <div className='grid grid-cols-2 sm:grid-cols-4 gap-3'>
+      <div className='grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3'>
         {items.map(({ icon, color, total, label }) => (
           <StatCard
             key={label}
@@ -115,8 +115,8 @@ const StatCard = ({ icon, color, total, label }: StatCardProps) => {
 
 const useResultItems = (entries?: TDataBatch | null) => {
   const defaultTotal = '--';
-  return useMemo(
-    () => [
+  return useMemo(() => {
+    const baseItems = [
       {
         label: 'Total Uploaded',
         total:
@@ -147,7 +147,25 @@ const useResultItems = (entries?: TDataBatch | null) => {
         color: 'red' as const,
         icon: <CloudAlert className='size-5 text-red-500 dark:text-red-400' />,
       },
-    ],
-    [entries],
-  );
+    ];
+
+    if (entries?.withholdingRemovedCount && entries.withholdingRemovedCount > 0) {
+      baseItems.push(
+        {
+          label: 'Withholding Removed (Count)',
+          total: entries.withholdingRemovedCount.toLocaleString('en-US'),
+          color: 'emerald' as const,
+          icon: <SlidersHorizontal className='size-5 text-emerald-500 dark:text-emerald-400' />,
+        },
+        {
+          label: 'Withholding Amount',
+          total: entries.withholdingRemovedAmount?.toLocaleString('en-US') || defaultTotal,
+          color: 'indigo' as const,
+          icon: <SlidersHorizontal className='size-5 text-indigo-500 dark:text-indigo-400' />,
+        }
+      );
+    }
+
+    return baseItems;
+  }, [entries]);
 };
