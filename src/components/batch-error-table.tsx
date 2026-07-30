@@ -20,7 +20,7 @@ const MAX_SOURCE_IDS_VISIBLE = 8;
  * with all affected source record IDs. Eliminates repetition when the same error
  * appears for many sources.
  */
-function groupErrorsByMessage(
+export function groupErrorsByMessage(
   items: TDataBatchError[],
 ): GroupedByMessageError[] {
   const map = new Map<

@@ -1,7 +1,6 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 
 import { ErrorFallback } from '@/components/fallback/error-fallback';
-import { CashOutUploadValidationProvider } from './-hooks/use-upload-validation';
 
 export const Route = createFileRoute('/dashboard/cash-out/batch')({
   component: BatchLayoutComponent,
@@ -9,9 +8,5 @@ export const Route = createFileRoute('/dashboard/cash-out/batch')({
 });
 
 function BatchLayoutComponent() {
-  return (
-    <CashOutUploadValidationProvider>
-      <Outlet />
-    </CashOutUploadValidationProvider>
-  );
+  return <Outlet />;
 }

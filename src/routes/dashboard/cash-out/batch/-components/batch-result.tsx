@@ -11,18 +11,11 @@ import { ROUTES } from '@/router';
 import { BatchDFOStatus } from '@/routes/dashboard/accounts-receivable/batch/-components/batch-dfo-status';
 import { BatchResultAlert } from '@/components/batch-result-alert';
 import { cn } from '@/lib/utils';
-import { useCashOutUploadValidation } from '../-hooks/use-upload-validation';
-import {
-  getUploadValidationItems,
-  UploadValidationErrors,
-} from './upload-validation-errors';
 
 export const BatchResult = () => {
   const [batch] = useBatchQueryData();
-  const { uploadError } = useCashOutUploadValidation();
-  const uploadErrorCount = getUploadValidationItems(uploadError).length;
 
-  const items = useResultItems(batch, uploadErrorCount);
+  const items = useResultItems(batch);
 
   return (
     <div className='flex-1 space-y-5'>
@@ -51,8 +44,6 @@ export const BatchResult = () => {
           errorsRoute={ROUTES.DASHBOARD.CASH_OUT.BATCH.ERRORS}
         />
       )}
-
-      {!batch && uploadError && <UploadValidationErrors error={uploadError} />}
 
       {batch && <BatchDFOStatus batch={batch} />}
     </div>
@@ -122,7 +113,7 @@ const StatCard = ({ icon, color, total, label }: StatCardProps) => {
   );
 };
 
-const useResultItems = (entries?: TDataBatch | null, uploadErrorCount = 0) => {
+const useResultItems = (entries?: TDataBatch | null) => {
   const defaultTotal = '--';
   return useMemo(() => {
     const baseItems = [
@@ -152,12 +143,7 @@ const useResultItems = (entries?: TDataBatch | null, uploadErrorCount = 0) => {
       },
       {
         label: 'Error Count',
-        total:
-          entries?.errorCount?.toLocaleString('en-US') ||
-          (uploadErrorCount > 0
-            ? uploadErrorCount.toLocaleString('en-US')
-            : undefined) ||
-          defaultTotal,
+        total: entries?.errorCount?.toLocaleString('en-US') || defaultTotal,
         color: 'red' as const,
         icon: <CloudAlert className='size-5 text-red-500 dark:text-red-400' />,
       },
@@ -190,5 +176,5 @@ const useResultItems = (entries?: TDataBatch | null, uploadErrorCount = 0) => {
     }
 
     return baseItems;
-  }, [entries, uploadErrorCount]);
+  }, [entries]);
 };
