@@ -11,11 +11,18 @@ import { ROUTES } from '@/router';
 import { BatchDFOStatus } from '@/routes/dashboard/accounts-receivable/batch/-components/batch-dfo-status';
 import { BatchResultAlert } from '@/components/batch-result-alert';
 import { cn } from '@/lib/utils';
+import { useCashOutUploadValidation } from '../-hooks/use-upload-validation';
+import {
+  getUploadValidationItems,
+  UploadValidationErrors,
+} from './upload-validation-errors';
 
 export const BatchResult = () => {
   const [batch] = useBatchQueryData();
+  const { uploadError } = useCashOutUploadValidation();
+  const uploadErrorCount = getUploadValidationItems(uploadError).length;
 
-  const items = useResultItems(batch);
+  const items = useResultItems(batch, uploadErrorCount);
 
   return (
     <div className='flex-1 space-y-5'>
@@ -44,6 +51,8 @@ export const BatchResult = () => {
           errorsRoute={ROUTES.DASHBOARD.CASH_OUT.BATCH.ERRORS}
         />
       )}
+
+      {!batch && uploadError && <UploadValidationErrors error={uploadError} />}
 
       {batch && <BatchDFOStatus batch={batch} />}
     </div>
@@ -113,7 +122,7 @@ const StatCard = ({ icon, color, total, label }: StatCardProps) => {
   );
 };
 
-const useResultItems = (entries?: TDataBatch | null) => {
+const useResultItems = (entries?: TDataBatch | null, uploadErrorCount = 0) => {
   const defaultTotal = '--';
   return useMemo(() => {
     const baseItems = [
@@ -143,29 +152,43 @@ const useResultItems = (entries?: TDataBatch | null) => {
       },
       {
         label: 'Error Count',
-        total: entries?.errorCount?.toLocaleString('en-US') || defaultTotal,
+        total:
+          entries?.errorCount?.toLocaleString('en-US') ||
+          (uploadErrorCount > 0
+            ? uploadErrorCount.toLocaleString('en-US')
+            : undefined) ||
+          defaultTotal,
         color: 'red' as const,
         icon: <CloudAlert className='size-5 text-red-500 dark:text-red-400' />,
       },
     ];
 
-    if (entries?.withholdingRemovedCount && entries.withholdingRemovedCount > 0) {
+    if (
+      entries?.withholdingRemovedCount &&
+      entries.withholdingRemovedCount > 0
+    ) {
       baseItems.push(
         {
           label: 'Withholding Removed (Count)',
           total: entries.withholdingRemovedCount.toLocaleString('en-US'),
           color: 'emerald' as const,
-          icon: <SlidersHorizontal className='size-5 text-emerald-500 dark:text-emerald-400' />,
+          icon: (
+            <SlidersHorizontal className='size-5 text-emerald-500 dark:text-emerald-400' />
+          ),
         },
         {
           label: 'Withholding Amount',
-          total: entries.withholdingRemovedAmount?.toLocaleString('en-US') || defaultTotal,
+          total:
+            entries.withholdingRemovedAmount?.toLocaleString('en-US') ||
+            defaultTotal,
           color: 'indigo' as const,
-          icon: <SlidersHorizontal className='size-5 text-indigo-500 dark:text-indigo-400' />,
-        }
+          icon: (
+            <SlidersHorizontal className='size-5 text-indigo-500 dark:text-indigo-400' />
+          ),
+        },
       );
     }
 
     return baseItems;
-  }, [entries]);
+  }, [entries, uploadErrorCount]);
 };
