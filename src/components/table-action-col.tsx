@@ -2,6 +2,8 @@ import toast from 'react-hot-toast';
 import ClipboardCopy from 'lucide-react/dist/esm/icons/clipboard-copy';
 import DownloadIcon from 'lucide-react/dist/esm/icons/download';
 import MoreVertical from 'lucide-react/dist/esm/icons/more-vertical';
+import PauseIcon from 'lucide-react/dist/esm/icons/pause';
+import PlayIcon from 'lucide-react/dist/esm/icons/play';
 import RefreshCw from 'lucide-react/dist/esm/icons/refresh-cw';
 import Telescope from 'lucide-react/dist/esm/icons/telescope';
 import Trash2 from 'lucide-react/dist/esm/icons/trash-2';
@@ -94,6 +96,21 @@ const Reprocess = ({
 };
 
 TableActionCol.Reprocess = Reprocess;
+
+const PausePosting = ({
+  children = 'Pause Posting',
+  paused = false,
+  ...props
+}: React.ComponentProps<typeof DropdownMenuItem> & { paused?: boolean }) => {
+  return (
+    <DropdownMenuItem {...props}>
+      {paused ? <PlayIcon /> : <PauseIcon />}
+      {children}
+    </DropdownMenuItem>
+  );
+};
+
+TableActionCol.PausePosting = PausePosting;
 
 const Delete = ({
   children = 'Delete',

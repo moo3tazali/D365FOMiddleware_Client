@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { SharedDataBatchHeader as DataBatchHeader } from '@/components/batch/shared-data-batch-header';
 import { DataBatchTable } from './-components/data-batch-table';
+import { PostingQueueControls } from './-components/posting-queue-controls';
 import { ErrorFallback } from '@/components/fallback/error-fallback';
 import { LoadingFallback } from '@/components/fallback/loading-fallback';
 
@@ -26,6 +27,7 @@ function CashOutPage() {
         title='Cash Out'
         newUploadLink='/dashboard/cash-out/batch/new'
       />
+      <PostingQueueControls />
       <DataBatchTable />
     </div>
   );

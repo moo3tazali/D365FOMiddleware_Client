@@ -15,6 +15,7 @@ import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/data-batch';
 import { useSearchQuery } from '@/hooks/use-search-query';
 import { ClampText } from '@/components/ui/clamp-text';
 import { ReprocessBatchMenuItem } from '@/components/reprocess-batch-menu-item';
+import { PostingPauseMenuItem } from '@/components/posting-pause-menu-item';
 import {
   BatchCreatedBy,
   formatBatchDate,
@@ -108,7 +109,7 @@ const columns: ColumnDef<TDataBatch>[] = [
   {
     accessorKey: 'status',
     header: 'Status',
-    cell: ({ getValue }) => <CellStatus value={getValue<number>()} />,
+    cell: ({ row }) => <CellStatus batch={row.original} />,
   },
   {
     id: 'action',
@@ -156,12 +157,20 @@ const statusColorMap = {
   [TDataBatchStatus.Canceled]: 'destructive',
   [TDataBatchStatus.Revalidating]: 'info',
 } as const;
-const CellStatus = ({ value }: { value: keyof typeof statusColorMap }) => {
+const CellStatus = ({ batch }: { batch: TDataBatch }) => {
+  const status = batch.status as keyof typeof statusColorMap;
   return (
-    <Badge dot variant='ghost' color={statusColorMap[value]}>
-      {statusOptions.find(({ value: optionValue }) => optionValue === value)
-        ?.label ?? ''}
-    </Badge>
+    <div className='flex flex-col items-start gap-0.5'>
+      <Badge dot variant='ghost' color={statusColorMap[status]}>
+        {statusOptions.find(({ value: optionValue }) => optionValue === status)
+          ?.label ?? ''}
+      </Badge>
+      {batch.postingPaused && (
+        <Badge dot variant='ghost' color='warning' size='small'>
+          Posting paused
+        </Badge>
+      )}
+    </div>
   );
 };
 
@@ -180,6 +189,7 @@ const CellAction = ({ row }: { row: TDataBatch }) => {
         Copy Batch Number
       </TableActionCol.Copy>
       <TableActionCol.View onClick={onView} />
+      <PostingPauseMenuItem batch={row} />
       <ReprocessBatchMenuItem batch={row} />
       <TableActionCol.Download variant='primary' onClick={onDownload}>
         Download Batch

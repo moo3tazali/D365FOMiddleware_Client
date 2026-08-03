@@ -3,6 +3,7 @@ import { API_ROUTES } from '../core/api-routes';
 import { sync } from '../core/sync';
 import {
   TEntryProcessorTypes,
+  type TBatchPostingPauseState,
   type TDataBatch,
   type TDataBatchMissingMasterData,
   type TMissingMasterDataPage,
@@ -257,6 +258,31 @@ export class DataBatch {
       {
         params: { batchId },
       },
+    );
+  };
+
+  /**
+   * Hold the batch back from being posted to D365FO. A worker that is already
+   * posting it stops after the journal it is currently writing.
+   */
+  public pausePosting = async (
+    batchId: string,
+  ): Promise<TBatchPostingPauseState> => {
+    return this.syncService.save<TBatchPostingPauseState, void>(
+      API_ROUTES.DATA_MIGRATION.DATA_BATCH.POSTING_PAUSE,
+      undefined,
+      { params: { batchId } },
+    );
+  };
+
+  /** Let a paused batch continue with the journals that are still pending. */
+  public resumePosting = async (
+    batchId: string,
+  ): Promise<TBatchPostingPauseState> => {
+    return this.syncService.save<TBatchPostingPauseState, void>(
+      API_ROUTES.DATA_MIGRATION.DATA_BATCH.POSTING_RESUME,
+      undefined,
+      { params: { batchId } },
     );
   };
 

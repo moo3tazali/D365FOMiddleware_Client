@@ -1,17 +1,20 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import RefreshCwIcon from 'lucide-react/dist/esm/icons/refresh-cw';
 import ActivityIcon from 'lucide-react/dist/esm/icons/activity';
 import ServerIcon from 'lucide-react/dist/esm/icons/server';
 import CheckCircleIcon from 'lucide-react/dist/esm/icons/check-circle';
 import AlertTriangleIcon from 'lucide-react/dist/esm/icons/alert-triangle';
 import ClockIcon from 'lucide-react/dist/esm/icons/clock';
+import Trash2Icon from 'lucide-react/dist/esm/icons/trash-2';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useServices } from '@/hooks/use-services';
+import type { DurableQueueJob } from '@/interfaces/observability';
 import { ROUTES } from '@/router';
 import { DurableJobsTable } from './-components/durable-jobs-table';
 
@@ -26,6 +29,7 @@ export const Route = createFileRoute('/dashboard/queues/')({
 
 function QueuesPage() {
   const { observability } = useServices();
+  const queryClient = useQueryClient();
   const [autoRefresh, setAutoRefresh] = useState(true);
 
   const {
@@ -37,6 +41,91 @@ function QueuesPage() {
     ...observability.queuesQueryOptions(),
     refetchInterval: autoRefresh ? 5_000 : false,
   });
+
+  const deleteJobMutation = useMutation({
+    mutationFn: (job: DurableQueueJob) =>
+      observability.deleteJob(job.queueName, job.jobId),
+    onSuccess: () => {
+      toast.success('Job deleted');
+      void queryClient.invalidateQueries({
+        queryKey: ['admin.observability.queues'],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ['admin.observability.postings'],
+      });
+      void refetch();
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Failed to delete job');
+    },
+  });
+
+  const handleDeleteJob = (job: DurableQueueJob) => {
+    if (
+      !window.confirm(
+        `Permanently delete job ${job.jobId} from ${job.queueName}? This removes the durable record and any Redis work still held for it.`,
+      )
+    ) {
+      return;
+    }
+    deleteJobMutation.mutate(job);
+  };
+
+  const cleanQueueMutation = useMutation({
+    mutationFn: ({
+      queueName,
+      scope,
+    }: {
+      queueName: string;
+      scope: 'failed' | 'active' | 'all';
+    }) => observability.cleanQueue(queueName, scope),
+    onSuccess: (result) => {
+      const redisTotal = Object.values(result.redis ?? {}).reduce(
+        (sum, n) => sum + (n || 0),
+        0,
+      );
+      toast.success(
+        `Cleared ${redisTotal} Redis job(s) and ${result.durablePurged} durable record(s)`,
+      );
+      void queryClient.invalidateQueries({
+        queryKey: ['admin.observability.queues'],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ['admin.observability.postings'],
+      });
+      void refetch();
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Failed to clear queue jobs');
+    },
+  });
+
+  const handleClearQueue = (
+    queueName: string,
+    scope: 'failed' | 'active' | 'all',
+    counts: {
+      failed: number;
+      waiting: number;
+      active: number;
+      completed: number;
+      delayed: number;
+    },
+  ) => {
+    const label =
+      scope === 'failed'
+        ? `${counts.failed} failed job(s)`
+        : scope === 'active'
+          ? `${counts.active} active job(s) (in-flight work may still finish in FO)`
+          : `all queue jobs including active (${counts.waiting + counts.active + counts.failed + counts.completed + counts.delayed} Redis count)`;
+    if (
+      !window.confirm(
+        `Permanently clear ${label} from ${queueName}? This cannot be undone.`,
+      )
+    ) {
+      return;
+    }
+    cleanQueueMutation.mutate({ queueName, scope });
+  };
 
   const queuesList = queuesData?.queues ?? [];
 
@@ -275,6 +364,76 @@ function QueuesPage() {
                         Inspect →
                       </Link>
                     </div>
+
+                    {((queue.failed || 0) > 0 ||
+                      (queue.active || 0) > 0 ||
+                      (queue.waiting || 0) > 0 ||
+                      (queue.completed || 0) > 0 ||
+                      (queue.delayed || 0) > 0) && (
+                      <div className='flex flex-wrap items-center gap-2 pt-1'>
+                        {(queue.failed || 0) > 0 && (
+                          <Button
+                            variant='outline'
+                            size='sm'
+                            className='h-7 gap-1 px-2 text-[10px] uppercase tracking-wider text-destructive hover:bg-destructive/10'
+                            disabled={cleanQueueMutation.isPending}
+                            onClick={() =>
+                              handleClearQueue(queue.queueName, 'failed', {
+                                failed: queue.failed || 0,
+                                waiting: queue.waiting || 0,
+                                active: queue.active || 0,
+                                completed: queue.completed || 0,
+                                delayed: queue.delayed || 0,
+                              })
+                            }
+                            title='Permanently delete failed jobs'
+                          >
+                            <Trash2Icon className='size-3' />
+                            Clear failed ({queue.failed})
+                          </Button>
+                        )}
+                        {(queue.active || 0) > 0 && (
+                          <Button
+                            variant='outline'
+                            size='sm'
+                            className='h-7 gap-1 px-2 text-[10px] uppercase tracking-wider text-destructive hover:bg-destructive/10'
+                            disabled={cleanQueueMutation.isPending}
+                            onClick={() =>
+                              handleClearQueue(queue.queueName, 'active', {
+                                failed: queue.failed || 0,
+                                waiting: queue.waiting || 0,
+                                active: queue.active || 0,
+                                completed: queue.completed || 0,
+                                delayed: queue.delayed || 0,
+                              })
+                            }
+                            title='Permanently delete active jobs'
+                          >
+                            <Trash2Icon className='size-3' />
+                            Clear active ({queue.active})
+                          </Button>
+                        )}
+                        <Button
+                          variant='outline'
+                          size='sm'
+                          className='h-7 gap-1 px-2 text-[10px] uppercase tracking-wider text-destructive hover:bg-destructive/10'
+                          disabled={cleanQueueMutation.isPending}
+                          onClick={() =>
+                            handleClearQueue(queue.queueName, 'all', {
+                              failed: queue.failed || 0,
+                              waiting: queue.waiting || 0,
+                              active: queue.active || 0,
+                              completed: queue.completed || 0,
+                              delayed: queue.delayed || 0,
+                            })
+                          }
+                          title='Permanently delete all jobs including active'
+                        >
+                          <Trash2Icon className='size-3' />
+                          Clear jobs
+                        </Button>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               );
@@ -284,7 +443,11 @@ function QueuesPage() {
       </section>
 
       {/* Recent Durable Jobs Table */}
-      <DurableJobsTable jobsList={queuesData?.jobs} />
+      <DurableJobsTable
+        jobsList={queuesData?.jobs}
+        onDeleteJob={handleDeleteJob}
+        isDeleting={deleteJobMutation.isPending}
+      />
     </div>
   );
 }

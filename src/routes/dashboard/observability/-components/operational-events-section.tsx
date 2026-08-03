@@ -1,3 +1,4 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import CalendarIcon from 'lucide-react/dist/esm/icons/calendar';
@@ -6,6 +7,7 @@ import ChevronRightIcon from 'lucide-react/dist/esm/icons/chevron-right';
 import ChevronsLeftIcon from 'lucide-react/dist/esm/icons/chevrons-left';
 import ChevronsRightIcon from 'lucide-react/dist/esm/icons/chevrons-right';
 import CopyIcon from 'lucide-react/dist/esm/icons/copy';
+import DownloadIcon from 'lucide-react/dist/esm/icons/download';
 import EyeIcon from 'lucide-react/dist/esm/icons/eye';
 import RefreshCwIcon from 'lucide-react/dist/esm/icons/refresh-cw';
 import SlidersHorizontalIcon from 'lucide-react/dist/esm/icons/sliders-horizontal';
@@ -36,8 +38,24 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import type { OperationalLog } from '@/interfaces/observability';
+import { useServices } from '@/hooks/use-services';
+import type {
+  OperationalLog,
+  OperationalLogBodySnapshot,
+} from '@/interfaces/observability';
 import { cn } from '@/lib/utils';
+
+/** Event types that carry a captured request or response body. */
+const EVENT_TYPE_OPTIONS = [
+  {
+    value: 'd365fo.cash-out.bulk-request',
+    label: 'Cash-Out bulk request (Lines)',
+  },
+  { value: 'd365fo.cash-out.bulk-response', label: 'Cash-Out bulk response' },
+  { value: 'd365fo.request.completed', label: 'D365FO call completed' },
+  { value: 'd365fo.request.failed', label: 'D365FO call failed' },
+  { value: 'http.request.completed', label: 'Inbound HTTP request' },
+];
 
 // Define Prop types for hook return values
 interface OperationalEventsSectionProps {
@@ -78,6 +96,10 @@ interface OperationalEventsSectionProps {
     setExplorerStatus: (val: string) => void;
     explorerQueue: string;
     setExplorerQueue: (val: string) => void;
+    explorerEventType: string;
+    setExplorerEventType: (val: string) => void;
+    explorerOnlyWithPayload: boolean;
+    setExplorerOnlyWithPayload: (val: boolean) => void;
     timePreset: string;
     setTimePreset: (val: string) => void;
     customFrom: string;
@@ -119,11 +141,125 @@ interface OperationalEventsSectionProps {
 export function OperationalEventsSection({
   obs,
 }: OperationalEventsSectionProps) {
+  const { observability } = useServices();
+  const queryClient = useQueryClient();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [selectedLog, setSelectedLog] = useState<OperationalLog | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const pagination = obs.explorerPagination;
+
+  const invalidateLogs = () => {
+    void queryClient.invalidateQueries({
+      queryKey: ['admin.observability.logs'],
+    });
+    void queryClient.invalidateQueries({
+      queryKey: ['admin.observability.explorerLogs'],
+    });
+  };
+
+  const deleteLogMutation = useMutation({
+    mutationFn: (eventId: string) => observability.deleteLog(eventId),
+    onSuccess: () => {
+      toast.success('Log deleted');
+      if (selectedLog) {
+        setSelectedLog(null);
+        setDrawerOpen(false);
+      }
+      invalidateLogs();
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Failed to delete log');
+    },
+  });
+
+  const clearLogsMutation = useMutation({
+    mutationFn: async () => {
+      if (obs.activeTab === 'live') {
+        const level =
+          obs.liveLevel && obs.liveLevel !== '__ALL__'
+            ? obs.liveLevel
+            : undefined;
+        const hasFilters = Boolean(obs.liveSearch || obs.liveBatchId || level);
+        return observability.clearLiveLogs({
+          search: obs.liveSearch || undefined,
+          batchId: obs.liveBatchId || undefined,
+          level,
+          confirmAll: hasFilters ? undefined : 'true',
+        });
+      }
+
+      const filters = {
+        level:
+          obs.explorerLevel && obs.explorerLevel !== '__ALL__'
+            ? obs.explorerLevel
+            : undefined,
+        from: obs.fromState || undefined,
+        to: obs.toState || undefined,
+        search: obs.explorerSearch || undefined,
+        method:
+          obs.explorerMethod && obs.explorerMethod !== '__ALL__'
+            ? obs.explorerMethod
+            : undefined,
+        route: obs.explorerRoute || undefined,
+        status:
+          obs.explorerStatus && obs.explorerStatus !== '__ALL__'
+            ? obs.explorerStatus
+            : undefined,
+        queue: obs.explorerQueue || undefined,
+        jobId: obs.explorerJobId || undefined,
+        batchId: obs.explorerBatchId || undefined,
+        requestId: obs.explorerRequestId || undefined,
+        eventType:
+          obs.explorerEventType && obs.explorerEventType !== '__ALL__'
+            ? obs.explorerEventType
+            : undefined,
+        hasPayload: obs.explorerOnlyWithPayload ? 'true' : undefined,
+      };
+      const hasFilters = Object.values(filters).some(Boolean);
+      return observability.clearExplorerLogs({
+        ...filters,
+        confirmAll: hasFilters ? undefined : 'true',
+      });
+    },
+    onSuccess: (result) => {
+      toast.success(`Deleted ${result.deletedCount} log(s)`);
+      setSelectedLog(null);
+      setDrawerOpen(false);
+      invalidateLogs();
+      obs.refetchLive();
+      obs.refetchExplorer();
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Failed to clear logs');
+    },
+  });
+
+  const handleDeleteLog = (eventId: string) => {
+    if (
+      !window.confirm(
+        `Permanently delete log ${eventId}? This cannot be undone.`,
+      )
+    ) {
+      return;
+    }
+    deleteLogMutation.mutate(eventId);
+  };
+
+  const handleClearLogs = () => {
+    const scope =
+      obs.activeTab === 'live'
+        ? 'matching the current Live Feed filters (or all live logs if none)'
+        : 'matching the current Explorer filters (or all logs if none)';
+    if (
+      !window.confirm(
+        `Permanently delete application logs ${scope}? This cannot be undone.`,
+      )
+    ) {
+      return;
+    }
+    clearLogsMutation.mutate();
+  };
 
   const handleRowClick = (log: OperationalLog) => {
     setSelectedLog(log);
@@ -237,24 +373,46 @@ export function OperationalEventsSection({
                 />
                 Refresh
               </Button>
+              <Button
+                variant='outline'
+                size='sm'
+                className='h-8 gap-1.5 text-xs text-destructive hover:bg-destructive/10'
+                onClick={handleClearLogs}
+                disabled={clearLogsMutation.isPending}
+              >
+                <Trash2Icon className='size-3' />
+                Clear logs
+              </Button>
             </>
           ) : (
-            <Button
-              variant='outline'
-              size='sm'
-              className='h-8 gap-1.5 text-xs'
-              onClick={obs.refetchExplorer}
-              disabled={obs.isLoadingExplorer || obs.isRefetchingExplorer}
-            >
-              <RefreshCwIcon
-                className={cn(
-                  'size-3',
-                  (obs.isLoadingExplorer || obs.isRefetchingExplorer) &&
-                    'animate-spin',
-                )}
-              />
-              Refresh Explorer
-            </Button>
+            <>
+              <Button
+                variant='outline'
+                size='sm'
+                className='h-8 gap-1.5 text-xs'
+                onClick={obs.refetchExplorer}
+                disabled={obs.isLoadingExplorer || obs.isRefetchingExplorer}
+              >
+                <RefreshCwIcon
+                  className={cn(
+                    'size-3',
+                    (obs.isLoadingExplorer || obs.isRefetchingExplorer) &&
+                      'animate-spin',
+                  )}
+                />
+                Refresh Explorer
+              </Button>
+              <Button
+                variant='outline'
+                size='sm'
+                className='h-8 gap-1.5 text-xs text-destructive hover:bg-destructive/10'
+                onClick={handleClearLogs}
+                disabled={clearLogsMutation.isPending}
+              >
+                <Trash2Icon className='size-3' />
+                Clear matching
+              </Button>
+            </>
           )}
         </div>
       </div>
@@ -513,6 +671,46 @@ export function OperationalEventsSection({
                     onChange={(e) => obs.setExplorerRequestId(e.target.value)}
                   />
                 </div>
+
+                <div>
+                  <label className='text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1'>
+                    Event Type
+                  </label>
+                  <Select
+                    value={obs.explorerEventType || '__ALL__'}
+                    onValueChange={(val) =>
+                      obs.setExplorerEventType(val === '__ALL__' ? '' : val)
+                    }
+                  >
+                    <SelectTrigger className='h-9 text-xs'>
+                      <SelectValue placeholder='All Event Types' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='__ALL__'>All Event Types</SelectItem>
+                      {EVENT_TYPE_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className='flex items-end'>
+                  <label className='flex h-9 w-full cursor-pointer items-center gap-2 rounded-md border px-3 bg-background'>
+                    <input
+                      type='checkbox'
+                      checked={obs.explorerOnlyWithPayload}
+                      onChange={(e) =>
+                        obs.setExplorerOnlyWithPayload(e.target.checked)
+                      }
+                      className='rounded border-gray-300 text-primary focus:ring-primary size-4'
+                    />
+                    <span className='text-xs select-none'>
+                      Only events with a captured body
+                    </span>
+                  </label>
+                </div>
               </div>
             )}
           </div>
@@ -584,21 +782,37 @@ export function OperationalEventsSection({
                     <TableCell className='truncate max-w-[160px] text-xs font-semibold'>
                       {log.context || log.eventType}
                     </TableCell>
-                    <TableCell className='text-xs font-mono truncate max-w-[400px]'>
-                      {log.message}
+                    <TableCell className='text-xs font-mono max-w-[400px]'>
+                      <span className='flex items-center gap-1.5'>
+                        <span className='truncate'>{log.message}</span>
+                        {bodyBadge(log)}
+                      </span>
                     </TableCell>
                     <TableCell
                       className='text-right'
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <Button
-                        variant='ghost'
-                        size='sm'
-                        className='h-7 w-7 p-0'
-                        onClick={() => handleRowClick(log)}
-                      >
-                        <EyeIcon className='size-3.5' />
-                      </Button>
+                      <div className='inline-flex items-center gap-0.5'>
+                        <Button
+                          variant='ghost'
+                          size='sm'
+                          className='h-7 w-7 p-0'
+                          onClick={() => handleRowClick(log)}
+                          title='View log'
+                        >
+                          <EyeIcon className='size-3.5' />
+                        </Button>
+                        <Button
+                          variant='ghost'
+                          size='sm'
+                          className='h-7 w-7 p-0 text-destructive hover:bg-destructive/10'
+                          onClick={() => handleDeleteLog(log.eventId)}
+                          disabled={deleteLogMutation.isPending}
+                          title='Delete log'
+                        >
+                          <Trash2Icon className='size-3.5' />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
@@ -686,12 +900,17 @@ export function OperationalEventsSection({
                     </TableCell>
                     <TableCell>{statusBadge(log.status)}</TableCell>
                     <TableCell
-                      className='text-xs font-mono max-w-[350px] truncate'
+                      className='text-xs font-mono max-w-[350px]'
                       title={log.message}
                     >
-                      {log.metadata?.path
-                        ? (log.metadata.path as string)
-                        : log.message}
+                      <span className='flex items-center gap-1.5'>
+                        <span className='truncate'>
+                          {log.metadata?.path
+                            ? (log.metadata.path as string)
+                            : log.message}
+                        </span>
+                        {bodyBadge(log)}
+                      </span>
                     </TableCell>
                     <TableCell className='text-right font-mono text-xs text-muted-foreground'>
                       {log.durationMs !== undefined
@@ -702,14 +921,27 @@ export function OperationalEventsSection({
                       className='text-right'
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <Button
-                        variant='ghost'
-                        size='sm'
-                        className='h-7 w-7 p-0'
-                        onClick={() => handleRowClick(log)}
-                      >
-                        <EyeIcon className='size-3.5' />
-                      </Button>
+                      <div className='inline-flex items-center gap-0.5'>
+                        <Button
+                          variant='ghost'
+                          size='sm'
+                          className='h-7 w-7 p-0'
+                          onClick={() => handleRowClick(log)}
+                          title='View log'
+                        >
+                          <EyeIcon className='size-3.5' />
+                        </Button>
+                        <Button
+                          variant='ghost'
+                          size='sm'
+                          className='h-7 w-7 p-0 text-destructive hover:bg-destructive/10'
+                          onClick={() => handleDeleteLog(log.eventId)}
+                          disabled={deleteLogMutation.isPending}
+                          title='Delete log'
+                        >
+                          <Trash2Icon className='size-3.5' />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
@@ -856,12 +1088,27 @@ export function OperationalEventsSection({
                     {selectedLog.eventId}
                   </span>
                 </div>
-                <SheetTitle className='text-base font-semibold tracking-tight mt-2 text-foreground font-mono truncate'>
-                  {selectedLog.eventType}
-                </SheetTitle>
-                <SheetDescription className='text-xs text-muted-foreground'>
-                  Logged at {new Date(selectedLog.timestamp).toLocaleString()}
-                </SheetDescription>
+                <div className='flex items-start justify-between gap-3 mt-2'>
+                  <div className='min-w-0'>
+                    <SheetTitle className='text-base font-semibold tracking-tight text-foreground font-mono truncate'>
+                      {selectedLog.eventType}
+                    </SheetTitle>
+                    <SheetDescription className='text-xs text-muted-foreground'>
+                      Logged at{' '}
+                      {new Date(selectedLog.timestamp).toLocaleString()}
+                    </SheetDescription>
+                  </div>
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    className='h-8 gap-1.5 text-xs shrink-0 text-destructive hover:bg-destructive/10'
+                    onClick={() => handleDeleteLog(selectedLog.eventId)}
+                    disabled={deleteLogMutation.isPending}
+                  >
+                    <Trash2Icon className='size-3.5' />
+                    Delete
+                  </Button>
+                </div>
               </SheetHeader>
 
               <div className='flex-1 py-4 space-y-5 text-sm'>
@@ -914,6 +1161,24 @@ export function OperationalEventsSection({
                       </span>
                     </div>
                   </div>
+                )}
+
+                {/* Full request / response bodies as sent and received */}
+                {selectedLog.payload?.request && (
+                  <BodySnapshotPanel
+                    title='Request Body (as sent)'
+                    snapshot={selectedLog.payload.request}
+                    fileName={`request-${selectedLog.eventId}.json`}
+                    onCopy={copyToClipboard}
+                  />
+                )}
+                {selectedLog.payload?.response && (
+                  <BodySnapshotPanel
+                    title='Response Body (as received)'
+                    snapshot={selectedLog.payload.response}
+                    fileName={`response-${selectedLog.eventId}.json`}
+                    onCopy={copyToClipboard}
+                  />
                 )}
 
                 {/* Technical / Operations Context IDs */}
@@ -986,7 +1251,7 @@ export function OperationalEventsSection({
                   </div>
                 )}
 
-                {/* Full Log Document JSON */}
+                {/* Full Log Document JSON, minus the bodies shown above */}
                 <div className='border rounded-md overflow-hidden'>
                   <div className='flex items-center justify-between border-b px-3 py-1.5 bg-muted/40'>
                     <span className='text-[10px] font-semibold text-muted-foreground uppercase tracking-wider'>
@@ -1002,13 +1267,17 @@ export function OperationalEventsSection({
                           'Metadata JSON',
                         )
                       }
-                      title='Copy Document'
+                      title='Copy Document (including bodies)'
                     >
                       <CopyIcon className='size-3' />
                     </Button>
                   </div>
                   <pre className='p-3 max-h-60 overflow-auto bg-muted/30 font-mono text-[11px] leading-relaxed text-foreground'>
-                    {JSON.stringify(selectedLog, null, 2)}
+                    {JSON.stringify(
+                      { ...selectedLog, payload: undefined },
+                      null,
+                      2,
+                    )}
                   </pre>
                 </div>
               </div>
@@ -1018,6 +1287,142 @@ export function OperationalEventsSection({
       </Sheet>
     </section>
   );
+}
+
+// Subcomponent: marks rows whose event carries a captured body
+function bodyBadge(log: OperationalLog) {
+  if (!log.payload?.request && !log.payload?.response) return null;
+  return (
+    <Badge
+      color='muted'
+      size='small'
+      className='shrink-0 px-1.5 rounded-sm text-[9px] font-semibold uppercase'
+      title='This event carries the full request/response body'
+    >
+      Body
+    </Badge>
+  );
+}
+
+// Subcomponent: full request/response body viewer
+function BodySnapshotPanel({
+  title,
+  snapshot,
+  fileName,
+  onCopy,
+}: {
+  title: string;
+  snapshot: OperationalLogBodySnapshot;
+  fileName: string;
+  onCopy: (text?: string, label?: string) => void;
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  const json = useMemo(() => {
+    try {
+      return JSON.stringify(snapshot.body, null, 2);
+    } catch {
+      return String(snapshot.body);
+    }
+  }, [snapshot.body]);
+
+  const download = () => {
+    const url = URL.createObjectURL(
+      new Blob([json], { type: 'application/json' }),
+    );
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = fileName;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div className='border rounded-md overflow-hidden'>
+      <div className='flex items-center justify-between gap-2 border-b px-3 py-1.5 bg-muted/40'>
+        <div className='flex flex-wrap items-center gap-1.5'>
+          <span className='text-[10px] font-semibold text-muted-foreground uppercase tracking-wider'>
+            {title}
+          </span>
+          <Badge
+            color='muted'
+            size='small'
+            className='px-1.5 rounded-sm font-mono text-[10px]'
+          >
+            {formatBytes(snapshot.sizeBytes)}
+          </Badge>
+          {snapshot.truncated && (
+            <Badge
+              color='warning'
+              size='small'
+              className='px-1.5 rounded-sm text-[10px] font-semibold'
+              title='The body exceeded the capture budget; trailing items were dropped.'
+            >
+              Truncated
+            </Badge>
+          )}
+          {snapshot.redactedKeys && snapshot.redactedKeys.length > 0 && (
+            <Badge
+              color='info'
+              size='small'
+              className='px-1.5 rounded-sm text-[10px] font-semibold'
+              title={`Redacted: ${snapshot.redactedKeys.join(', ')}`}
+            >
+              {snapshot.redactedKeys.length} redacted
+            </Badge>
+          )}
+        </div>
+        <div className='flex items-center gap-0.5 shrink-0'>
+          <Button
+            variant='ghost'
+            size='sm'
+            className='h-6 px-1.5 text-[10px] font-semibold uppercase'
+            onClick={() => setExpanded(!expanded)}
+          >
+            {expanded ? 'Collapse' : 'Expand'}
+          </Button>
+          <Button
+            variant='ghost'
+            size='sm'
+            className='h-6 w-6 p-0'
+            onClick={() => onCopy(json, title)}
+            title={`Copy ${title}`}
+          >
+            <CopyIcon className='size-3' />
+          </Button>
+          <Button
+            variant='ghost'
+            size='sm'
+            className='h-6 w-6 p-0'
+            onClick={download}
+            title='Download as JSON'
+          >
+            <DownloadIcon className='size-3' />
+          </Button>
+        </div>
+      </div>
+      {snapshot.captureError ? (
+        <p className='p-3 text-xs text-destructive'>
+          Body could not be captured: {snapshot.captureError}
+        </p>
+      ) : (
+        <pre
+          className={cn(
+            'p-3 overflow-auto bg-muted/30 font-mono text-[11px] leading-relaxed text-foreground whitespace-pre',
+            expanded ? 'max-h-[32rem]' : 'max-h-56',
+          )}
+        >
+          {json}
+        </pre>
+      )}
+    </div>
+  );
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 }
 
 // Subcomponent: level badge helper

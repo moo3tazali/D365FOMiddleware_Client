@@ -1,3 +1,18 @@
+/** A captured request or response body, already redacted by the backend. */
+export interface OperationalLogBodySnapshot {
+  body: unknown;
+  /** Size of the body before truncation, in bytes. */
+  sizeBytes: number;
+  truncated: boolean;
+  redactedKeys?: string[];
+  captureError?: string;
+}
+
+export interface OperationalLogPayload {
+  request?: OperationalLogBodySnapshot;
+  response?: OperationalLogBodySnapshot;
+}
+
 export interface OperationalLog {
   _id: string;
   eventId: string;
@@ -15,6 +30,7 @@ export interface OperationalLog {
   durationMs?: number;
   error?: { name?: string; message: string; stack?: string };
   metadata?: Record<string, unknown>;
+  payload?: OperationalLogPayload;
 }
 
 export interface QueueStats {
@@ -25,6 +41,22 @@ export interface QueueStats {
   failed: number;
   delayed: number;
   isPaused?: boolean;
+}
+
+/** A posting that has not finished, with the pause state of its batch. */
+export interface InFlightPosting {
+  batchId: string;
+  jobId: string;
+  queueName: string;
+  jobStatus: string;
+  sourceModule: string;
+  company: string;
+  completedGroups: number;
+  totalGroups: number;
+  paused: boolean;
+  /** Paused, but the worker is still finishing the journal it started. */
+  stopping: boolean;
+  updatedAt?: string;
 }
 
 export interface DurableQueueJob {

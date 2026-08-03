@@ -1,6 +1,9 @@
 import { Link } from '@tanstack/react-router';
+import Trash2Icon from 'lucide-react/dist/esm/icons/trash-2';
+
 import type { DurableQueueJob } from '@/interfaces/observability';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
@@ -14,9 +17,15 @@ import { ROUTES } from '@/router';
 
 interface DurableJobsTableProps {
   jobsList?: DurableQueueJob[];
+  onDeleteJob?: (job: DurableQueueJob) => void;
+  isDeleting?: boolean;
 }
 
-export function DurableJobsTable({ jobsList }: DurableJobsTableProps) {
+export function DurableJobsTable({
+  jobsList,
+  onDeleteJob,
+  isDeleting,
+}: DurableJobsTableProps) {
   if (!jobsList || jobsList.length === 0) {
     return (
       <Card className='border shadow-xs bg-card'>
@@ -65,6 +74,11 @@ export function DurableJobsTable({ jobsList }: DurableJobsTableProps) {
               <TableHead className='w-[100px] text-xs uppercase font-bold tracking-wider text-center'>
                 Retries
               </TableHead>
+              {onDeleteJob && (
+                <TableHead className='w-[80px] text-xs uppercase font-bold tracking-wider text-right'>
+                  Action
+                </TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -126,6 +140,20 @@ export function DurableJobsTable({ jobsList }: DurableJobsTableProps) {
                 <TableCell className='font-mono text-xs text-center font-medium'>
                   {job.retryCount}
                 </TableCell>
+                {onDeleteJob && (
+                  <TableCell className='text-right'>
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className='h-7 w-7 p-0 text-destructive hover:bg-destructive/10'
+                      onClick={() => onDeleteJob(job)}
+                      disabled={isDeleting}
+                      title='Delete job'
+                    >
+                      <Trash2Icon className='size-3.5' />
+                    </Button>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>

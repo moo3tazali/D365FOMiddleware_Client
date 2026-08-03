@@ -5,6 +5,11 @@ import { useIsMutating } from '@tanstack/react-query';
 
 import { TDataBatchStatus, type TDataBatch } from '@/interfaces/data-batch';
 import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useServices } from '@/hooks/use-services';
 import { useBatchQueryData } from '../-hooks/use-batch-query-data';
 import { Link } from '@tanstack/react-router';
@@ -71,7 +76,10 @@ const SubmitBtn = ({ data }: { data: TDataBatch }) => {
     (data.dfoIds && data.dfoIds.length > 0) ||
     (data.dfoPostingErrors && data.dfoPostingErrors.length > 0);
   const canRetry = data.status === TDataBatchStatus.Canceled;
-  const isDisabled = isPending || (isAlreadyPosted && !canRetry);
+  const isPaused = Boolean(data.postingPaused);
+  const isDisabled = Boolean(
+    isPending || isPaused || (isAlreadyPosted && !canRetry),
+  );
 
   if (!showSubmit)
     return (
@@ -104,24 +112,12 @@ const SubmitBtn = ({ data }: { data: TDataBatch }) => {
           </Link>
         </Button>
 
-        <Button
-          size='lg'
-          variant='success'
+        <PostBtn
           disabled={isDisabled}
+          isPaused={isPaused}
+          canRetry={canRetry}
           onClick={() => onSubmit(data)}
-        >
-          {canRetry ? (
-            <>
-              <RotateCcw className='size-5' />
-              Retry
-            </>
-          ) : (
-            <>
-              <CloudUpload className='size-5' />
-              Post to D365FO
-            </>
-          )}
-        </Button>
+        />
       </div>
       {validationErrors && (
         <ValidationErrorsModal
@@ -131,5 +127,46 @@ const SubmitBtn = ({ data }: { data: TDataBatch }) => {
         />
       )}
     </>
+  );
+};
+
+const PostBtn = ({
+  disabled,
+  isPaused,
+  canRetry,
+  onClick,
+}: {
+  disabled: boolean;
+  isPaused: boolean;
+  canRetry: boolean;
+  onClick: () => void;
+}) => {
+  const button = (
+    <Button size='lg' variant='success' disabled={disabled} onClick={onClick}>
+      {canRetry ? (
+        <>
+          <RotateCcw className='size-5' />
+          Retry
+        </>
+      ) : (
+        <>
+          <CloudUpload className='size-5' />
+          Post to D365FO
+        </>
+      )}
+    </Button>
+  );
+
+  if (!isPaused) return button;
+
+  return (
+    <Tooltip delayDuration={200}>
+      <TooltipTrigger asChild>
+        <span>{button}</span>
+      </TooltipTrigger>
+      <TooltipContent side='top'>
+        Posting is paused for this batch. Resume it above to post.
+      </TooltipContent>
+    </Tooltip>
   );
 };

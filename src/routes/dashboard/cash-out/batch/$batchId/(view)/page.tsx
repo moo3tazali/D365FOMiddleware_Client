@@ -3,6 +3,7 @@ import { SharedBatchHeader as BatchHeader } from '@/components/batch/shared-batc
 import { BatchForm } from '../../-components/batch-form';
 import { BatchResult } from '../../-components/batch-result';
 import { BatchFooter } from '../../-components/batch-footer';
+import { BatchPostingControls } from '../../-components/batch-posting-controls';
 import { useBatchQueryData } from '../../-hooks/use-batch-query-data';
 import { NotFoundFallback } from '@/components/fallback/not-found-fallback';
 
@@ -29,6 +30,7 @@ function ViewBatchPage() {
   return (
     <div className='h-full flex flex-col gap-5'>
       <BatchHeader batch={batch} />
+      <BatchPostingControls batch={batch} />
       <BatchForm />
       <BatchResult />
       <BatchFooter />

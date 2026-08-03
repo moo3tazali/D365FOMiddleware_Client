@@ -13,12 +13,16 @@ export const API_ROUTES = {
     OBSERVABILITY: {
       LOGS: '/admin/logs',
       LOG: '/admin/logs/:eventId',
+      LOGS_CLEAR: '/admin/logs',
       EXPLORER_LOGS: '/observability/logs',
       EXPLORER_LOG: '/observability/logs/:eventId',
+      EXPLORER_LOGS_CLEAR: '/observability/logs',
       QUEUES: '/admin/queues',
+      POSTINGS: '/admin/queues/postings',
       QUEUES_DETAIL: '/admin/queues/:queueName',
       QUEUES_PAUSE: '/admin/queues/:queueName/pause',
       QUEUES_RESUME: '/admin/queues/:queueName/resume',
+      QUEUES_CLEAN: '/admin/queues/:queueName/clean',
       QUEUES_JOBS: '/admin/queues/:queueName/jobs',
       JOB: '/admin/queues/:queueName/jobs/:jobId',
       JOB_RETRY: '/admin/queues/:queueName/jobs/:jobId/retry',
@@ -121,6 +125,8 @@ export const API_ROUTES = {
       REMEDIATION_SUMMARY:
         '/DataMigration/DataBatch/:batchId/remediation-summary',
       REPROCESS: '/DataMigration/DataBatch/:batchId/reprocess',
+      POSTING_PAUSE: '/DataMigration/DataBatch/:batchId/posting/pause',
+      POSTING_RESUME: '/DataMigration/DataBatch/:batchId/posting/resume',
     },
     ACCOUNT_RECEIVABLE: {
       FREIGHT_DOCUMENT: '/DataMigration/AccountReceivable/Freight-Document',
@@ -160,6 +166,9 @@ export const API_ROUTES = {
       CASH_OUT_TRUCKING_DOCUMENT:
         '/DataMigration/Cash/CashOut-Trucking-Document',
       POST_TO_DFO: '/DataMigration/Cash/PostToDFO',
+      POSTING_QUEUE: '/DataMigration/Cash/posting-queue',
+      POSTING_QUEUE_PAUSE: '/DataMigration/Cash/posting-queue/pause',
+      POSTING_QUEUE_RESUME: '/DataMigration/Cash/posting-queue/resume',
     },
   },
   RECONCILIATION: {

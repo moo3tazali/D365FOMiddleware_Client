@@ -236,6 +236,12 @@ function QueueDetailPage() {
       toast.success('Job deleted successfully');
       void refetchJobs();
       void refetchDetail();
+      void queryClient.invalidateQueries({
+        queryKey: ['admin.observability.queues'],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ['admin.observability.postings'],
+      });
     },
     onError: (err: Error) => {
       toast.error(err.message || 'Failed to delete job');

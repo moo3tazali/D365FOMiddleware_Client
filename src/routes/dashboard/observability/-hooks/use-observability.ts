@@ -40,6 +40,8 @@ export const useObservability = () => {
   const [explorerMethod, setExplorerMethod] = useState('');
   const [explorerStatus, setExplorerStatus] = useState('');
   const [explorerQueue, setExplorerQueue] = useState('');
+  const [explorerEventType, setExplorerEventType] = useState('');
+  const [explorerOnlyWithPayload, setExplorerOnlyWithPayload] = useState(false);
   const [timePreset, setTimePreset] = useState<string>('24h');
   const [customFrom, setCustomFrom] = useState('');
   const [customTo, setCustomTo] = useState('');
@@ -132,6 +134,8 @@ export const useObservability = () => {
       jobId: explorerJobId || undefined,
       batchId: explorerBatchId || undefined,
       requestId: explorerRequestId || undefined,
+      eventType: explorerEventType || undefined,
+      hasPayload: explorerOnlyWithPayload ? 'true' : undefined,
       sortBy,
       sortDirection,
     };
@@ -149,6 +153,8 @@ export const useObservability = () => {
     explorerJobId,
     explorerBatchId,
     explorerRequestId,
+    explorerEventType,
+    explorerOnlyWithPayload,
     sortBy,
     sortDirection,
   ]);
@@ -168,6 +174,8 @@ export const useObservability = () => {
     explorerJobId,
     explorerBatchId,
     explorerRequestId,
+    explorerEventType,
+    explorerOnlyWithPayload,
     sortBy,
     sortDirection,
   ]);
@@ -207,6 +215,8 @@ export const useObservability = () => {
     setExplorerMethod('');
     setExplorerStatus('');
     setExplorerQueue('');
+    setExplorerEventType('');
+    setExplorerOnlyWithPayload(false);
     setTimePreset('24h');
     setCustomFrom('');
     setCustomTo('');
@@ -253,6 +263,10 @@ export const useObservability = () => {
     setExplorerStatus,
     explorerQueue,
     setExplorerQueue,
+    explorerEventType,
+    setExplorerEventType,
+    explorerOnlyWithPayload,
+    setExplorerOnlyWithPayload,
     timePreset,
     setTimePreset,
     customFrom,

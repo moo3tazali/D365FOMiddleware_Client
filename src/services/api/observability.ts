@@ -2,6 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 
 import type {
   DurableQueueJob,
+  InFlightPosting,
   OperationalLog,
   QueueStats,
 } from '@/interfaces/observability';
@@ -32,6 +33,9 @@ export interface ExplorerLogFilters {
   jobId?: string;
   batchId?: string;
   requestId?: string;
+  eventType?: string;
+  /** 'true' keeps only events that carry a captured request/response body. */
+  hasPayload?: string;
   sortBy?: string;
   sortDirection?: 'asc' | 'desc';
 }
@@ -78,6 +82,23 @@ export class Observability {
     });
   }
 
+  deleteLog(eventId: string) {
+    return this.sync.del<{
+      status: string;
+      eventId: string;
+      deletedCount: number;
+    }>(API_ROUTES.ADMIN.OBSERVABILITY.LOG, {
+      params: { eventId },
+    });
+  }
+
+  clearLiveLogs(filters: LogFilters & { confirmAll?: string } = {}) {
+    return this.sync.del<{ status: string; deletedCount: number }>(
+      API_ROUTES.ADMIN.OBSERVABILITY.LOGS_CLEAR,
+      { query: { ...filters } },
+    );
+  }
+
   listExplorerLogs(filters: ExplorerLogFilters = {}) {
     return this.sync.fetch<ExplorerLogsResponse>(
       API_ROUTES.ADMIN.OBSERVABILITY.EXPLORER_LOGS,
@@ -87,11 +108,35 @@ export class Observability {
     );
   }
 
+  clearExplorerLogs(
+    filters: ExplorerLogFilters & { confirmAll?: string } = {},
+  ) {
+    return this.sync.del<{ status: string; deletedCount: number }>(
+      API_ROUTES.ADMIN.OBSERVABILITY.EXPLORER_LOGS_CLEAR,
+      { query: { ...filters } },
+    );
+  }
+
   listQueues() {
     return this.sync.fetch<{
       queues: QueueStats[];
       jobs: DurableQueueJob[];
     }>(API_ROUTES.ADMIN.OBSERVABILITY.QUEUES);
+  }
+
+  /** Postings that have not finished, with the pause state of their batch. */
+  listInFlightPostings() {
+    return this.sync.fetch<InFlightPosting[]>(
+      API_ROUTES.ADMIN.OBSERVABILITY.POSTINGS,
+    );
+  }
+
+  inFlightPostingsQueryOptions() {
+    return queryOptions({
+      queryKey: ['admin.observability.postings'],
+      queryFn: () => this.listInFlightPostings(),
+      refetchInterval: 5_000,
+    });
   }
 
   logsQueryOptions(filters: LogFilters) {
@@ -146,6 +191,23 @@ export class Observability {
       API_ROUTES.ADMIN.OBSERVABILITY.QUEUES_RESUME,
       {},
       { params: { queueName } },
+    );
+  }
+
+  /** Permanently clear BullMQ + durable jobs for a queue. */
+  cleanQueue(
+    queueName: string,
+    scope: 'failed' | 'completed' | 'waiting' | 'active' | 'all',
+  ) {
+    return this.sync.save<{
+      status: string;
+      scope: string;
+      redis: Record<string, number>;
+      durablePurged: number;
+    }>(
+      API_ROUTES.ADMIN.OBSERVABILITY.QUEUES_CLEAN,
+      {},
+      { params: { queueName }, query: { scope } },
     );
   }
 

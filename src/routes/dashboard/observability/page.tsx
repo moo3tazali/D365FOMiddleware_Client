@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { ROUTES } from '@/router';
 import { useObservability } from './-hooks/use-observability';
 import { OperationalEventsSection } from './-components/operational-events-section';
+import { ProcessingControlsSection } from './-components/processing-controls-section';
 
 export const Route = createFileRoute('/dashboard/observability/')({
   beforeLoad: ({ context }) => {
@@ -154,6 +155,9 @@ function ObservabilityPage() {
           </CardContent>
         </Card>
       </section>
+
+      {/* Queue and batch posting switches */}
+      <ProcessingControlsSection />
 
       {/* Operational Logs Explorer Section */}
       <OperationalEventsSection obs={obs} />

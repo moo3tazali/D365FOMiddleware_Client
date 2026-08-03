@@ -1,6 +1,7 @@
 import { sync } from '../core/sync';
 import { API_ROUTES } from '../core/api-routes';
 import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
+import { queryOptions } from '@tanstack/react-query';
 
 interface UploadData {
   companyId: string;
@@ -14,10 +15,22 @@ interface PostToDFOResponse {
   message: string;
 }
 
+/** The BullMQ queue every cash batch is posted through. */
+export interface CashPostingQueueState {
+  queueName: string;
+  paused: boolean;
+  waiting: number;
+  active: number;
+  completed: number;
+  failed: number;
+  delayed: number;
+}
+
 const syncService = sync;
 
 export class CashOut {
   public readonly mutationKey = ['cash-out-upload'];
+  public readonly postingQueueQueryKey = ['cash-posting-queue'];
   public readonly UPLOAD_TYPES = {
     FREIGHT_DOC: TEntryProcessorTypes.CashOutFreight,
     TRUCKING_DOC: TEntryProcessorTypes.CashOutTrucking,
@@ -52,6 +65,35 @@ export class CashOut {
       { batchId },
     );
   };
+
+  /** State of the queue that carries cash batches to D365FO. */
+  public getPostingQueue = async (): Promise<CashPostingQueueState> => {
+    return syncService.fetch<CashPostingQueueState>(
+      API_ROUTES.DATA_MIGRATION.CASH.POSTING_QUEUE,
+    );
+  };
+
+  /**
+   * Stop handing cash posting jobs to the worker (admin only). Batches
+   * submitted while the queue is paused wait in it.
+   */
+  public setPostingQueuePaused = async (
+    paused: boolean,
+  ): Promise<CashPostingQueueState> => {
+    return syncService.save<CashPostingQueueState, void>(
+      paused
+        ? API_ROUTES.DATA_MIGRATION.CASH.POSTING_QUEUE_PAUSE
+        : API_ROUTES.DATA_MIGRATION.CASH.POSTING_QUEUE_RESUME,
+      undefined,
+    );
+  };
+
+  public postingQueueQueryOptions = () =>
+    queryOptions({
+      queryKey: this.postingQueueQueryKey,
+      queryFn: () => this.getPostingQueue(),
+      refetchInterval: 10_000,
+    });
 
   private async _getUploadApiRoute(type: number | string) {
     switch (Number(type)) {

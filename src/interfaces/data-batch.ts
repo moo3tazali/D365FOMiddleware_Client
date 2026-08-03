@@ -64,6 +64,12 @@ export interface TDataBatch {
   createdByUserId?: string;
   createdByName?: string;
   createdByEmail?: string;
+  /** True while the batch is held back from being posted to D365FO. */
+  postingPaused?: boolean;
+  postingPausedAt?: string;
+  postingPausedByName?: string;
+  postingPausedByEmail?: string;
+  postingResumedAt?: string;
   lastReprocessedAt?: string;
   lastReprocessedByUserId?: string;
   lastReprocessedByName?: string;
@@ -72,6 +78,22 @@ export interface TDataBatch {
   lastReprocessJobId?: string;
   lastReprocessStatus?: 'queued' | 'active' | 'completed' | 'failed';
   lastReprocessError?: string;
+}
+
+/** Result of pausing or resuming the posting of one batch. */
+export interface TBatchPostingPauseState {
+  batchId: string;
+  paused: boolean;
+  status: TDataBatchStatus;
+  /** Paused, but a worker is still finishing the journal it had started. */
+  stopping: boolean;
+  pausedAt: string | null;
+  pausedByName: string | null;
+  jobId?: string;
+  jobStatus?: string;
+  completedGroups?: number;
+  totalGroups?: number;
+  message: string;
 }
 
 export interface TDataBatchMissingMasterData {
