@@ -59,6 +59,24 @@ export interface InFlightPosting {
   updatedAt?: string;
 }
 
+export interface RedisJobSnapshot {
+  jobId: string;
+  batchId?: string;
+  state: string;
+  timestamp?: number;
+  processedOn?: number | null;
+  finishedOn?: number | null;
+  attemptsMade: number;
+  failedReason: string | null;
+}
+
+export interface RedisQueueSnapshot {
+  active: RedisJobSnapshot[];
+  waiting: RedisJobSnapshot[];
+  delayed: RedisJobSnapshot[];
+  paused: RedisJobSnapshot[];
+}
+
 export interface DurableQueueJob {
   jobId: string;
   queueName: string;

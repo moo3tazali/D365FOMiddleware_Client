@@ -17,7 +17,6 @@ import { useBatchReprocess } from '@/hooks/use-batch-reprocess';
 import { useServices } from '@/hooks/use-services';
 import { useMutation } from '@/hooks/use-mutation';
 import { useAuth } from '@/hooks/use-auth';
-import { TDataBatchStatus } from '@/interfaces/data-batch';
 import type { TDataBatch } from '@/interfaces/data-batch';
 
 interface BatchActionsDropdownProps {
@@ -39,11 +38,11 @@ export function BatchActionsDropdown({ batch }: BatchActionsDropdownProps) {
 
   const isReprocessDisabled = !batch || !canReprocess || isReprocessPending;
 
-  const canDelete =
+  const canDelete = Boolean(
     batch &&
-    (user?.role === 'ADMIN' ||
-      (Boolean(user?.id) && batch.createdByUserId === user?.id)) &&
-    batch.status !== TDataBatchStatus.Posted;
+      (user?.role === 'ADMIN' ||
+        (Boolean(user?.id) && batch.createdByUserId === user?.id)),
+  );
 
   const parentPath = location.pathname.split('/batch/')[0];
 

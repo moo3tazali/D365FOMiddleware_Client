@@ -217,6 +217,26 @@ function QueueDetailPage() {
     },
   });
 
+  const releaseOrphansMutation = useMutation({
+    mutationFn: () => observability.releaseOrphanedJobs(queueName),
+    onSuccess: (result) => {
+      const releasedCount = result.released.length;
+      const restoredCount = result.restored.length;
+      toast.success(
+        releasedCount || restoredCount
+          ? `Released ${releasedCount} stuck Redis job(s), restored ${restoredCount} queued job(s).`
+          : 'No stuck Redis locks found.',
+      );
+      void handleRefresh();
+      void queryClient.invalidateQueries({
+        queryKey: ['admin.observability.queues'],
+      });
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Failed to release stuck Redis jobs');
+    },
+  });
+
   // 4. Job Retry/Delete Mutations
   const retryMutation = useMutation({
     mutationFn: (id: string) => observability.retryJob(queueName, id),
@@ -431,6 +451,27 @@ function QueueDetailPage() {
             </Button>
           )}
 
+          <Button
+            variant='outline'
+            size='sm'
+            className='h-9 gap-1.5 text-xs font-semibold'
+            disabled={releaseOrphansMutation.isPending}
+            onClick={() => {
+              if (
+                window.confirm(
+                  `Release stuck Redis active jobs on ${queueName}? Live postings (Mongo active/retrying) are kept. Ghost locks that block Waiting jobs are dropped.`,
+                )
+              ) {
+                releaseOrphansMutation.mutate();
+              }
+            }}
+          >
+            <AlertTriangleIcon className='size-3.5' />
+            {releaseOrphansMutation.isPending
+              ? 'Releasing…'
+              : 'Release stuck Redis'}
+          </Button>
+
           {/* Manual Refresh */}
           <Button
             variant='outline'
@@ -486,6 +527,66 @@ function QueueDetailPage() {
           <ClockIcon className='size-4' />,
         )}
       </section>
+
+      {queueDetail?.redisJobs &&
+        (queueDetail.redisJobs.active.length > 0 ||
+          queueDetail.redisJobs.waiting.length > 0) && (
+          <section className='border rounded-lg p-4 bg-muted/10 space-y-3'>
+            <h2 className='text-sm font-semibold uppercase tracking-wider text-muted-foreground'>
+              Redis jobs (what the worker actually sees)
+            </h2>
+            <p className='text-xs text-muted-foreground'>
+              Active Redis jobs occupy this queue&apos;s single worker. If
+              Active is 1 but the table below is still Queued, a ghost lock is
+              blocking posting.
+            </p>
+            <div className='overflow-x-auto'>
+              <Table>
+                <TableHeader>
+                  <TableRow className='bg-muted/30 hover:bg-muted/30'>
+                    <TableHead className='text-xs uppercase'>State</TableHead>
+                    <TableHead className='text-xs uppercase'>Job ID</TableHead>
+                    <TableHead className='text-xs uppercase'>
+                      Batch ID
+                    </TableHead>
+                    <TableHead className='text-xs uppercase'>
+                      Started
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {[
+                    ...queueDetail.redisJobs.active,
+                    ...queueDetail.redisJobs.waiting,
+                  ].map((job) => (
+                    <TableRow key={`${job.state}-${job.jobId}`}>
+                      <TableCell>
+                        <Badge
+                          color={statusColor(job.state)}
+                          size='small'
+                          className='uppercase rounded-xs text-[9px] font-semibold px-1.5 py-0'
+                        >
+                          {job.state}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className='font-mono text-[11px]'>
+                        {job.jobId}
+                      </TableCell>
+                      <TableCell className='font-mono text-[11px]'>
+                        {job.batchId || '-'}
+                      </TableCell>
+                      <TableCell className='text-xs text-muted-foreground'>
+                        {job.processedOn
+                          ? new Date(job.processedOn).toLocaleString()
+                          : '-'}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </section>
+        )}
 
       {/* Filters Container */}
       <section className='border rounded-lg p-4 bg-muted/10 space-y-4'>

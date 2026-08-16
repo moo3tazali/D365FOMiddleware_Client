@@ -8,6 +8,7 @@ import {
   type TDataBatchMissingMasterData,
   type TMissingMasterDataPage,
   type TRemediationSummary,
+  type JournalIntegrityResult,
 } from '@/interfaces/data-batch';
 import {
   infiniteQueryOptions,
@@ -310,6 +311,17 @@ export class DataBatch {
       queryKey: [...this.queryKey, 'remediation-summary', batchId],
       queryFn: () => this.getRemediationSummary(batchId),
     });
+  };
+
+  public getJournalIntegrity = async (
+    journalBatchNumber: string,
+  ): Promise<JournalIntegrityResult> => {
+    return this.syncService.fetch<JournalIntegrityResult>(
+      API_ROUTES.DATA_MIGRATION.DATA_BATCH.JOURNAL_INTEGRITY,
+      {
+        params: { journalBatchNumber },
+      },
+    );
   };
 
   /** @deprecated Use missingMasterDataInfiniteQueryOptions instead */

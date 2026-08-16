@@ -144,3 +144,18 @@ export interface TRemediationSummary {
   total: number;
   types: TRemediationTypeSummary[];
 }
+
+export interface AlreadyMarkedJournal {
+  journalBatchNumber: string;
+  invoiceCount: number;
+}
+
+export interface JournalIntegrityResult {
+  journalBatchNumber: string;
+  status: 'PASS' | 'WARNING' | 'FAIL';
+  alreadyMarkedElsewhere: {
+    thisJournalMarkedLineCount: number;
+    journals: AlreadyMarkedJournal[];
+    description: string;
+  };
+}

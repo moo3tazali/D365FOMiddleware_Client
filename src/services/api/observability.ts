@@ -5,6 +5,7 @@ import type {
   InFlightPosting,
   OperationalLog,
   QueueStats,
+  RedisQueueSnapshot,
 } from '@/interfaces/observability';
 import { API_ROUTES } from '@/services/core/api-routes';
 import { sync } from '@/services/core/sync';
@@ -173,6 +174,7 @@ export class Observability {
         delayed: number;
       };
       isPaused: boolean;
+      redisJobs?: RedisQueueSnapshot;
     }>(API_ROUTES.ADMIN.OBSERVABILITY.QUEUES_DETAIL, {
       params: { queueName },
     });
@@ -208,6 +210,24 @@ export class Observability {
       API_ROUTES.ADMIN.OBSERVABILITY.QUEUES_CLEAN,
       {},
       { params: { queueName }, query: { scope } },
+    );
+  }
+
+  releaseOrphanedJobs(queueName: string) {
+    return this.sync.save<{
+      status: string;
+      released: Array<{
+        queueName: string;
+        jobId: string;
+        batchId?: string;
+        mongoStatus: string;
+      }>;
+      restored: string[];
+      redisJobs: RedisQueueSnapshot;
+    }>(
+      API_ROUTES.ADMIN.OBSERVABILITY.QUEUES_RELEASE_ORPHANS,
+      {},
+      { params: { queueName } },
     );
   }
 

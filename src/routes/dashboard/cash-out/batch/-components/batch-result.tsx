@@ -11,11 +11,18 @@ import { ROUTES } from '@/router';
 import { BatchDFOStatus } from '@/routes/dashboard/accounts-receivable/batch/-components/batch-dfo-status';
 import { BatchResultAlert } from '@/components/batch-result-alert';
 import { cn } from '@/lib/utils';
+import { useCashOutUploadValidation } from '../-hooks/use-upload-validation';
+import {
+  getUploadValidationItems,
+  UploadValidationErrors,
+} from './upload-validation-errors';
 
 export const BatchResult = () => {
   const [batch] = useBatchQueryData();
+  const { uploadError } = useCashOutUploadValidation();
+  const uploadErrorCount = getUploadValidationItems(uploadError).length;
 
-  const items = useResultItems(batch);
+  const items = useResultItems(batch, uploadErrorCount);
 
   return (
     <div className='flex-1 space-y-5'>
@@ -44,6 +51,8 @@ export const BatchResult = () => {
           errorsRoute={ROUTES.DASHBOARD.CASH_OUT.BATCH.ERRORS}
         />
       )}
+
+      {!batch && uploadError && <UploadValidationErrors error={uploadError} />}
 
       {batch && <BatchDFOStatus batch={batch} />}
     </div>
@@ -113,21 +122,33 @@ const StatCard = ({ icon, color, total, label }: StatCardProps) => {
   );
 };
 
-const useResultItems = (entries?: TDataBatch | null) => {
+export const formatBatchResultCount = (
+  value: number | null | undefined,
+  fallback = '--',
+) =>
+  value === null || value === undefined
+    ? fallback
+    : value.toLocaleString('en-US');
+
+const useResultItems = (entries?: TDataBatch | null, uploadErrorCount = 0) => {
   const defaultTotal = '--';
   return useMemo(() => {
     const baseItems = [
       {
         label: 'Total Uploaded',
-        total:
-          entries?.totalUploadedCount?.toLocaleString('en-US') || defaultTotal,
+        total: formatBatchResultCount(
+          entries?.totalUploadedCount,
+          defaultTotal,
+        ),
         color: 'sky' as const,
         icon: <UploadCloud className='size-5 text-sky-500 dark:text-sky-400' />,
       },
       {
         label: 'Total Formatted',
-        total:
-          entries?.totalFormattedCount?.toLocaleString('en-US') || defaultTotal,
+        total: formatBatchResultCount(
+          entries?.totalFormattedCount,
+          defaultTotal,
+        ),
         color: 'indigo' as const,
         icon: (
           <SlidersHorizontal className='size-5 text-indigo-500 dark:text-indigo-400' />
@@ -135,7 +156,7 @@ const useResultItems = (entries?: TDataBatch | null) => {
       },
       {
         label: 'Success Count',
-        total: entries?.successCount?.toLocaleString('en-US') || defaultTotal,
+        total: formatBatchResultCount(entries?.successCount, defaultTotal),
         color: 'emerald' as const,
         icon: (
           <CloudCheck className='size-5 text-emerald-500 dark:text-emerald-400' />
@@ -143,7 +164,11 @@ const useResultItems = (entries?: TDataBatch | null) => {
       },
       {
         label: 'Error Count',
-        total: entries?.errorCount?.toLocaleString('en-US') || defaultTotal,
+        total: entries
+          ? formatBatchResultCount(entries.errorCount, defaultTotal)
+          : uploadErrorCount > 0
+            ? formatBatchResultCount(uploadErrorCount, defaultTotal)
+            : defaultTotal,
         color: 'red' as const,
         icon: <CloudAlert className='size-5 text-red-500 dark:text-red-400' />,
       },
@@ -176,5 +201,5 @@ const useResultItems = (entries?: TDataBatch | null) => {
     }
 
     return baseItems;
-  }, [entries]);
+  }, [entries, uploadErrorCount]);
 };

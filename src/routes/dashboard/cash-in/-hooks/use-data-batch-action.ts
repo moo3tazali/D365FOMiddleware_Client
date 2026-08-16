@@ -1,6 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
 
-import { TDataBatchStatus } from '@/interfaces/data-batch';
 import type { TDataBatch } from '@/interfaces/data-batch';
 
 import { useServices } from '@/hooks/use-services';
@@ -12,10 +11,10 @@ import { useAuth } from '@/hooks/use-auth';
 export const useDataBatchAction = (data: TDataBatch) => {
   const { dataBatch } = useServices();
   const user = useAuth((state) => state.user);
-  const canDelete =
-    (user?.role === 'ADMIN' ||
-      (Boolean(user?.id) && data.createdByUserId === user?.id)) &&
-    data.status !== TDataBatchStatus.Posted;
+  const canDelete = Boolean(
+    user?.role === 'ADMIN' ||
+      (Boolean(user?.id) && data.createdByUserId === user?.id),
+  );
 
   const navigate = useNavigate();
 

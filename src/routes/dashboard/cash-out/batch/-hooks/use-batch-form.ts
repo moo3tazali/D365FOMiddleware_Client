@@ -10,6 +10,8 @@ import { useMutation } from '@/hooks/use-mutation';
 import { useBatchQueryData } from './use-batch-query-data';
 import { ROUTES } from '@/router';
 import { useParsedPagination } from '@/hooks/use-parsed-pagination';
+import type { ErrorRes } from '@/interfaces/api-res';
+import { useCashOutUploadValidation } from './use-upload-validation';
 
 const acceptedTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -66,6 +68,7 @@ export const useBatchForm = () => {
   const { cashOut, dataBatch } = useServices();
 
   const defaultPagination = useParsedPagination();
+  const { clearUploadError, setUploadError } = useCashOutUploadValidation();
 
   const {
     mutateAsync: startUpload,
@@ -77,6 +80,11 @@ export const useBatchForm = () => {
     mutationFn: cashOut.upload,
     formControl: form.control,
     refetchQueries: [[...dataBatch.getQueryKey('cashOut', defaultPagination)]],
+    onError: (error: ErrorRes) => {
+      if (Object.keys(error.validationErrors ?? {}).length > 0) {
+        setUploadError(error);
+      }
+    },
   });
 
   const navigate = useNavigate();
@@ -85,6 +93,7 @@ export const useBatchForm = () => {
 
   const onSubmit = useCallback(
     (values: FormData) => {
+      clearUploadError();
       const files = values.dataFile!;
 
       const options = {
@@ -113,7 +122,7 @@ export const useBatchForm = () => {
         () => undefined,
       );
     },
-    [startUpload, navigate, setBatch, dismissLoading],
+    [clearUploadError, startUpload, navigate, setBatch, dismissLoading],
   );
 
   return {

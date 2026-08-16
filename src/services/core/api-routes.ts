@@ -23,6 +23,7 @@ export const API_ROUTES = {
       QUEUES_PAUSE: '/admin/queues/:queueName/pause',
       QUEUES_RESUME: '/admin/queues/:queueName/resume',
       QUEUES_CLEAN: '/admin/queues/:queueName/clean',
+      QUEUES_RELEASE_ORPHANS: '/admin/queues/:queueName/release-orphans',
       QUEUES_JOBS: '/admin/queues/:queueName/jobs',
       JOB: '/admin/queues/:queueName/jobs/:jobId',
       JOB_RETRY: '/admin/queues/:queueName/jobs/:jobId/retry',
@@ -127,6 +128,8 @@ export const API_ROUTES = {
       REPROCESS: '/DataMigration/DataBatch/:batchId/reprocess',
       POSTING_PAUSE: '/DataMigration/DataBatch/:batchId/posting/pause',
       POSTING_RESUME: '/DataMigration/DataBatch/:batchId/posting/resume',
+      JOURNAL_INTEGRITY:
+        '/DataMigration/DataBatch/journal-batch/:journalBatchNumber/integrity',
     },
     ACCOUNT_RECEIVABLE: {
       FREIGHT_DOCUMENT: '/DataMigration/AccountReceivable/Freight-Document',
