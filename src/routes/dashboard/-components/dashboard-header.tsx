@@ -10,7 +10,6 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { CodexAssistantModal } from '@/components/codex-assistant-modal';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { z } from 'zod';
@@ -27,7 +26,6 @@ export const DashboardHeader = () => {
       </div>
 
       <div className='flex items-center gap-2'>
-        <CodexAssistantModal />
         <ThemeToggle />
       </div>
     </header>
