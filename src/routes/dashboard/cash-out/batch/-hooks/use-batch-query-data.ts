@@ -35,17 +35,15 @@ export const useBatchQueryData = (): [
 
   const setValue = useCallback(
     (newBatch: TDataBatch): void => {
-      const newQueryKey = [
-        ...dataBatch.queryKey,
-        { batchNumber: newBatch.id, maxCount: 1, skipCount: 0 },
-      ];
-      queryClient.setQueryData<PaginationRes<TDataBatch>>(newQueryKey, {
+      const batchQueryKey = [...dataBatch.queryKey, { batchId: newBatch.id }];
+      queryClient.setQueryData<PaginationRes<TDataBatch>>(batchQueryKey, {
         pageNumber: 1,
         totalCount: 1,
         pageSize: 1,
         totalPages: 1,
         items: [newBatch],
       });
+      queryClient.invalidateQueries({ queryKey: dataBatch.queryKey });
     },
     [dataBatch.queryKey, queryClient],
   );

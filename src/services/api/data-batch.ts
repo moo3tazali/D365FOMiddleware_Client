@@ -138,6 +138,13 @@ export class DataBatch {
       queryKey,
       queryFn: () => this.list(queryKey[1]),
       placeholderData: keepPreviousData,
+      refetchInterval: (query) => {
+        const items = query.state.data?.items ?? [];
+        const hasProcessing = items.some(
+          (b) => b.status === TDataBatchStatus.Processing,
+        );
+        return hasProcessing ? 3000 : false;
+      },
     });
   };
 
