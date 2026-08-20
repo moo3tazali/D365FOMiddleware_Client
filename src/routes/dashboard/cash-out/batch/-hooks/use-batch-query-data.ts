@@ -4,7 +4,7 @@ import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 
 import { useServices } from '@/hooks/use-services';
 import type { PaginationRes } from '@/interfaces/api-res';
-import type { TDataBatch } from '@/interfaces/data-batch';
+import { TDataBatchStatus, type TDataBatch } from '@/interfaces/data-batch';
 
 export const useBatchQueryData = (): [
   value: TDataBatch | undefined,
@@ -18,7 +18,15 @@ export const useBatchQueryData = (): [
 
   const { dataBatch } = useServices();
 
-  const { data } = useSuspenseQuery(dataBatch.batchByIdQueryOptions(batchId));
+  const { data } = useSuspenseQuery({
+    ...dataBatch.batchByIdQueryOptions(batchId),
+    refetchInterval: (query) => {
+      const currentBatch = query.state.data?.items?.[0];
+      return currentBatch?.status === TDataBatchStatus.Processing
+        ? 3000
+        : false;
+    },
+  });
 
   const value = useMemo(
     () => data?.items.find((item) => item.id === batchId),

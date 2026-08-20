@@ -37,6 +37,7 @@ export enum TDataBatchStatus {
   Posted = 3,
   Canceled = 4,
   Revalidating = 5,
+  Processing = 6,
 }
 
 export interface TDataBatch {

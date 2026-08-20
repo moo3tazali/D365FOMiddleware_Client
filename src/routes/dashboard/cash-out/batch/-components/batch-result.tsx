@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 import UploadCloud from 'lucide-react/dist/esm/icons/upload-cloud';
 import SlidersHorizontal from 'lucide-react/dist/esm/icons/sliders-horizontal';
 import CloudAlert from 'lucide-react/dist/esm/icons/cloud-alert';
+import LoaderCircle from 'lucide-react/dist/esm/icons/loader-circle';
 
-import type { TDataBatch } from '@/interfaces/data-batch';
+import { TDataBatchStatus, type TDataBatch } from '@/interfaces/data-batch';
 import { CloudCheck } from '@/assets/icons/cloud-check';
 import { useBatchQueryData } from '../-hooks/use-batch-query-data';
 import { Description } from '@/components/ui/description';
@@ -44,7 +45,23 @@ export const BatchResult = () => {
         ))}
       </div>
 
-      {batch && !!batch.totalUploadedCount && (
+      {batch?.status === TDataBatchStatus.Processing && (
+        <section className='flex items-start gap-3 rounded-xl border border-info/25 bg-info/5 px-5 py-4'>
+          <LoaderCircle className='mt-0.5 size-5 shrink-0 animate-spin text-info' />
+          <div className='space-y-1'>
+            <h4 className='text-sm font-semibold text-foreground'>
+              Processing uploaded file
+            </h4>
+            <p className='text-sm text-muted-foreground'>
+              {batch.totalUploadedCount.toLocaleString('en-US')} source rows are
+              being validated in the background. This page refreshes
+              automatically until processing completes.
+            </p>
+          </div>
+        </section>
+      )}
+
+      {batch && !!batch.totalUploadedCount && batch.status !== TDataBatchStatus.Processing && (
         <BatchResultAlert
           errorCount={batch.errorCount}
           batchId={batch.id}

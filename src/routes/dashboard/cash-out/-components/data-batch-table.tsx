@@ -156,6 +156,7 @@ const statusColorMap = {
   [TDataBatchStatus.Posted]: 'success',
   [TDataBatchStatus.Canceled]: 'destructive',
   [TDataBatchStatus.Revalidating]: 'info',
+  [TDataBatchStatus.Processing]: 'info',
 } as const;
 const CellStatus = ({ batch }: { batch: TDataBatch }) => {
   const status = batch.status as keyof typeof statusColorMap;
