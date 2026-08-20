@@ -121,7 +121,7 @@ export const useBatchForm = () => {
   const isDisabled = useMemo(() => !!batch || isPending, [batch, isPending]);
 
   const onSubmit = useCallback(
-    (values: FormData) => {
+    async (values: FormData) => {
       const files = values.dataFile!;
 
       const options = {
@@ -140,13 +140,21 @@ export const useBatchForm = () => {
         },
       };
 
-      startUpload(options).then((data) => {
-        setBatch(data);
+      try {
+        const data = await startUpload(options);
+        
+        // Await setBatch to ensure query cache is updated before navigation
+        await setBatch(data);
+        
+        // Navigate after the query cache has been properly updated
         navigate({
           to: ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.VIEW,
           params: { batchId: data.id },
         });
-      });
+      } catch (error) {
+        // Error handling is already done by useMutation
+        console.error('Upload failed:', error);
+      }
     },
     [startUpload, navigate, setBatch, dismissLoading],
   );
