@@ -3,6 +3,7 @@ import { API_ROUTES } from '../core/api-routes';
 import { sync } from '../core/sync';
 import {
   TEntryProcessorTypes,
+  TDataBatchStatus,
   type TBatchPostingPauseState,
   type TDataBatch,
   type TDataBatchMissingMasterData,
@@ -161,6 +162,19 @@ export class DataBatch {
               totalPages: 1,
               items: [],
             },
+      refetchInterval: (query) => {
+        const item = query.state.data?.items?.[0];
+        if (!item) return false;
+        if (
+          item.status === TDataBatchStatus.Processing ||
+          item.status === TDataBatchStatus.Revalidating ||
+          item.lastReprocessStatus === 'active' ||
+          item.lastReprocessStatus === 'queued'
+        ) {
+          return 2000;
+        }
+        return false;
+      },
     });
   };
 

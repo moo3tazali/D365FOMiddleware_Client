@@ -216,7 +216,7 @@ export class Observability {
   releaseOrphanedJobs(queueName: string) {
     return this.sync.save<{
       status: string;
-        ]    released: Array<{
+      released: Array<{
         queueName: string;
         jobId: string;
         batchId?: string;
