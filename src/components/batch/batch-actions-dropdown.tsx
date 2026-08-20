@@ -4,8 +4,6 @@ import ClipboardCopy from 'lucide-react/dist/esm/icons/clipboard-copy';
 import DownloadIcon from 'lucide-react/dist/esm/icons/download';
 import RefreshCw from 'lucide-react/dist/esm/icons/refresh-cw';
 import Trash2 from 'lucide-react/dist/esm/icons/trash-2';
-import { useLocation, useNavigate } from '@tanstack/react-router';
-
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -13,10 +11,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useBatchDelete } from '@/hooks/use-batch-delete';
 import { useBatchReprocess } from '@/hooks/use-batch-reprocess';
 import { useServices } from '@/hooks/use-services';
 import { useMutation } from '@/hooks/use-mutation';
-import { useAuth } from '@/hooks/use-auth';
 import type { TDataBatch } from '@/interfaces/data-batch';
 
 interface BatchActionsDropdownProps {
@@ -25,9 +23,6 @@ interface BatchActionsDropdownProps {
 
 export function BatchActionsDropdown({ batch }: BatchActionsDropdownProps) {
   const { dataBatch } = useServices();
-  const user = useAuth((state) => state.user);
-  const location = useLocation();
-  const navigate = useNavigate();
 
   const {
     canReprocess,
@@ -36,15 +31,10 @@ export function BatchActionsDropdown({ batch }: BatchActionsDropdownProps) {
     reprocess,
   } = useBatchReprocess(batch);
 
+  const { canDelete, disabledReason: deleteDisabledReason, deleteBatch } =
+    useBatchDelete(batch, { navigateAway: true });
+
   const isReprocessDisabled = !batch || !canReprocess || isReprocessPending;
-
-  const canDelete = Boolean(
-    batch &&
-      (user?.role === 'ADMIN' ||
-        (Boolean(user?.id) && batch.createdByUserId === user?.id)),
-  );
-
-  const parentPath = location.pathname.split('/batch/')[0];
 
   const { mutateAsync: onDownload } = useMutation({
     operationName: 'download record',
@@ -60,15 +50,6 @@ export function BatchActionsDropdown({ batch }: BatchActionsDropdownProps) {
   const { mutateAsync: onDownloadSourceFile } = useMutation({
     operationName: 'download source file',
     mutationFn: () => dataBatch.downloadSourceFile({ batchId: batch!.id }),
-  });
-
-  const { mutateAsync: onDelete } = useMutation({
-    operationName: 'delete record',
-    mutationFn: () => dataBatch.deleteBatch({ batchId: batch!.id }),
-    refetchQueries: [dataBatch.queryKey],
-    onSuccess: () => {
-      navigate({ to: parentPath });
-    },
   });
 
   if (!batch) {
@@ -141,7 +122,8 @@ export function BatchActionsDropdown({ batch }: BatchActionsDropdownProps) {
         <DropdownMenuItem
           variant='destructive'
           disabled={!canDelete}
-          onClick={() => onDelete(undefined)}
+          title={deleteDisabledReason}
+          onClick={() => deleteBatch()}
         >
           <Trash2 className='size-4 mr-2' />
           Delete Batch
