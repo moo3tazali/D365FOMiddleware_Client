@@ -40,7 +40,7 @@ const SettingsRows = () => {
   );
 
   useEffect(() => {
-    let interval: number | undefined = undefined;
+    let interval: ReturnType<typeof setInterval> | undefined;
 
     if (isSyncing) {
       interval = setInterval(() => {

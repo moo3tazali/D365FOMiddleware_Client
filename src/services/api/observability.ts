@@ -144,7 +144,6 @@ export class Observability {
     return queryOptions({
       queryKey: ['admin.observability.logs', filters],
       queryFn: () => this.listLogs(filters),
-      refetchInterval: 5_000,
     });
   }
 
