@@ -197,7 +197,7 @@ const useResultItems = (entries?: TDataBatch | null, uploadErrorCount = 0) => {
     ) {
       baseItems.push(
         {
-          label: 'Withholding Removed (Count)',
+          label: 'Withholding Processed (Count)',
           total: entries.withholdingRemovedCount.toLocaleString('en-US'),
           color: 'emerald' as const,
           icon: (
@@ -205,7 +205,7 @@ const useResultItems = (entries?: TDataBatch | null, uploadErrorCount = 0) => {
           ),
         },
         {
-          label: 'Withholding Amount',
+          label: 'Withholding Processed Amount',
           total:
             entries.withholdingRemovedAmount?.toLocaleString('en-US') ||
             defaultTotal,
