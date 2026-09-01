@@ -101,15 +101,21 @@ export const BatchDFOStatus = ({ batch, errorsRoute }: BatchDFOStatusProps) => {
             </p>
           )}
           <ul className='space-y-1.5 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3'>
-            {fatalErrors.map((error, idx) => (
+            {fatalErrors.slice(0, 3).map((error, idx) => (
               <li
                 key={idx}
                 className='flex items-start gap-2 text-sm text-destructive'
               >
                 <span className='mt-1.5 size-1.5 shrink-0 rounded-full bg-destructive' />
-                <span className='line-clamp-6 break-words'>{error}</span>
+                <span className='line-clamp-3 break-words'>{error}</span>
               </li>
             ))}
+            {fatalErrors.length > 3 && (
+              <li className='text-sm text-muted-foreground'>
+                {fatalErrors.length - 3} more errors are on the errors page and
+                in the error Excel.
+              </li>
+            )}
           </ul>
           {skipSummary.hasSkips && (
             <SkippedLinesNotice

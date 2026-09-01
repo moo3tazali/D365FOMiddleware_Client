@@ -30,6 +30,23 @@ describe('summarizeDfoSkipErrors', () => {
     expect(summary.skipIssueCount).toBe(42);
     expect(summary.otherErrors).toEqual([]);
   });
+
+  it('collapses the live batch dump that starts with UniqueId 488810', () => {
+    const dump = [
+      'Upload skipped: UniqueId 488810 Excel line 4267, 4268, 4452: Failed to post cash-out lines for header Mesco-000015603: This transaction has been marked for settlement by Vendor Payment Freight Mesco-000015603 in company m-p.',
+      'Settlement skipped: UniqueId 510443 Excel line 841: Expected one open invoice transaction for vendor, found 2.',
+      'Upload skipped: UniqueId 466596 Excel line 900: This transaction has been marked for settlement by Vendor Payment Freight Mesco-000015604 in company m-p.',
+    ].join('\n');
+
+    const summary = summarizeDfoSkipErrors([dump]);
+
+    expect(summary).toEqual({
+      skipIssueCount: 3,
+      uniqueIdCount: 3,
+      otherErrors: [],
+      hasSkips: true,
+    });
+  });
 });
 
 describe('formatExcelLineList', () => {
