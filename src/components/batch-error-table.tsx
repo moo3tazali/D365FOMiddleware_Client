@@ -39,17 +39,16 @@ export function groupErrorsByMessage(
     if (skip) {
       const key = `${skip.property}\n${skip.message}\n${skip.sourceRecordIds.join(',')}`;
       const existing = map.get(key);
+      const excelLineNumbers = skip.excelLineNumbers ?? [];
       if (existing) {
         skip.sourceRecordIds.forEach((id) => existing.sourceIds.add(id));
-        skip.excelLineNumbers.forEach((line) =>
-          existing.excelLineNumbers.add(line),
-        );
+        excelLineNumbers.forEach((line) => existing.excelLineNumbers.add(line));
       } else {
         map.set(key, {
           property: skip.property,
           message: skip.message,
           sourceIds: new Set(skip.sourceRecordIds),
-          excelLineNumbers: new Set(skip.excelLineNumbers),
+          excelLineNumbers: new Set(excelLineNumbers),
         });
       }
       continue;
