@@ -25,7 +25,8 @@ export const useObservability = () => {
       level: liveLevel,
       limit: 100,
     }),
-    refetchInterval: liveAutoRefresh ? 5_000 : false,
+    enabled: activeTab === 'live',
+    refetchInterval: activeTab === 'live' && liveAutoRefresh ? 5_000 : false,
   });
 
   // --- EXPLORER MODE STATES ---

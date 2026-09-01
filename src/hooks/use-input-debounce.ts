@@ -5,7 +5,9 @@ export const useInputDebounce = (
   cb?: (value: string) => void,
 ): string => {
   const [finalValue, setFinalValue] = useState<string>('');
-  const timeoutRef = useRef<number | undefined>(undefined);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
   const lastValueRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
