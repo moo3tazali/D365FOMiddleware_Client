@@ -11,6 +11,7 @@ interface BatchResultAlertProps {
   batchId: string;
   errorsRoute: TRoutes;
   successMessage?: string;
+  skipCount?: number;
 }
 
 /**
@@ -22,7 +23,61 @@ export function BatchResultAlert({
   batchId,
   errorsRoute,
   successMessage = 'All entries have been formatted. Click Post to D365FO to send them to Dynamics 365 Finance & Operations.',
+  skipCount = 0,
 }: BatchResultAlertProps) {
+  if (!errorCount && skipCount > 0) {
+    return (
+      <div
+        className={cn(
+          'relative flex flex-col sm:flex-row sm:items-center gap-4 overflow-hidden rounded-xl',
+          'border border-amber-200 dark:border-amber-800/50',
+          'bg-amber-50 dark:bg-amber-950/20',
+          'px-5 py-4',
+        )}
+      >
+        <div className='absolute inset-y-0 left-0 w-1 rounded-l-xl bg-gradient-to-b from-amber-400/60 via-amber-500 to-amber-400/60' />
+
+        <div className='flex items-start gap-3 flex-1 min-w-0'>
+          <div className='mt-0.5 shrink-0 flex size-8 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/40'>
+            <AlertCircleIcon className='size-4 text-amber-700 dark:text-amber-300' />
+          </div>
+          <div className='space-y-0.5'>
+            <p className='text-sm font-semibold text-foreground'>
+              {skipCount.toLocaleString('en-US')} UniqueId issue
+              {skipCount !== 1 ? 's' : ''} skipped during posting
+            </p>
+            <p className='text-sm text-muted-foreground'>
+              Review UniqueId, Excel line, and reason on the errors page, or
+              download the error Excel. Successful journals still posted.
+            </p>
+          </div>
+        </div>
+
+        <Link
+          to={errorsRoute}
+          params={{ batchId }}
+          className={cn(
+            'group relative inline-flex shrink-0 items-center gap-0 overflow-hidden',
+            'rounded-md text-sm font-semibold h-9',
+            'bg-amber-700 text-white shadow-sm',
+            'transition-all duration-200 ease-out',
+            'hover:bg-amber-800 hover:shadow-md hover:-translate-y-px',
+            'active:translate-y-0 active:shadow-sm',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/40 focus-visible:ring-offset-1',
+          )}
+        >
+          <span className='flex h-full items-center px-2.5 border-r border-white/15 bg-black/10 group-hover:bg-black/15 transition-colors duration-200'>
+            <AlertCircleIcon className='size-3.5' />
+          </span>
+          <span className='px-3'>View skipped lines</span>
+          <span className='flex h-full items-center pl-0 pr-2.5'>
+            <ArrowRight className='size-3.5 transition-transform duration-200 group-hover:translate-x-0.5' />
+          </span>
+        </Link>
+      </div>
+    );
+  }
+
   if (!errorCount) {
     return (
       <div

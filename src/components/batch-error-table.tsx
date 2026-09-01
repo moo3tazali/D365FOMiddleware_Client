@@ -12,6 +12,7 @@ import type {
 import { Badge } from '@/components/ui/badge';
 import { useParsedPagination } from '@/hooks/use-parsed-pagination';
 import type { PaginationRes } from '@/interfaces/api-res';
+import { formatExcelLineList } from '@/lib/dfo-skip-errors';
 
 const MAX_SOURCE_IDS_VISIBLE = 8;
 
@@ -25,10 +26,35 @@ export function groupErrorsByMessage(
 ): GroupedByMessageError[] {
   const map = new Map<
     string,
-    { property: string; message: string; sourceIds: Set<string> }
+    {
+      property: string;
+      message: string;
+      sourceIds: Set<string>;
+      excelLineNumbers: Set<number>;
+    }
   >();
 
   for (const item of items) {
+    const skip = toSkipErrorGroup(item);
+    if (skip) {
+      const key = `${skip.property}\n${skip.message}\n${skip.sourceRecordIds.join(',')}`;
+      const existing = map.get(key);
+      if (existing) {
+        skip.sourceRecordIds.forEach((id) => existing.sourceIds.add(id));
+        skip.excelLineNumbers.forEach((line) =>
+          existing.excelLineNumbers.add(line),
+        );
+      } else {
+        map.set(key, {
+          property: skip.property,
+          message: skip.message,
+          sourceIds: new Set(skip.sourceRecordIds),
+          excelLineNumbers: new Set(skip.excelLineNumbers),
+        });
+      }
+      continue;
+    }
+
     const errors: TDataBatchErrorEnhancedError[] =
       item.enhancedData?.errors && item.enhancedData.errors.length > 0
         ? item.enhancedData.errors
@@ -48,6 +74,7 @@ export function groupErrorsByMessage(
           property: e.property,
           message: e.message,
           sourceIds: new Set(sourceIds),
+          excelLineNumbers: new Set(),
         });
       }
     }
@@ -59,20 +86,50 @@ export function groupErrorsByMessage(
     sourceRecordIds: Array.from(v.sourceIds).sort(
       (a, b) => Number(a) - Number(b) || a.localeCompare(b),
     ),
+    ...(v.excelLineNumbers.size > 0
+      ? {
+          excelLineNumbers: [...v.excelLineNumbers].sort(
+            (left, right) => left - right,
+          ),
+        }
+      : {}),
   }));
+}
+
+function toSkipErrorGroup(item: TDataBatchError): GroupedByMessageError | null {
+  const enhanced = item.enhancedData;
+  if (enhanced?.kind !== 'custody-settlement-skip') return null;
+  const uniqueId = String(enhanced.uniqueId ?? item.sourceRecordIds?.[0] ?? '')
+    .trim();
+  const phase = enhanced.phase === 'settle' ? 'Settlement skipped' : 'Upload skipped';
+  const message = String(enhanced.error ?? item.errorMessages?.[0] ?? '').trim();
+  const excelLineNumbers = Array.isArray(enhanced.excelLineNumbers)
+    ? enhanced.excelLineNumbers
+        .map((value) => Number(value))
+        .filter((value) => Number.isFinite(value) && value > 0)
+    : [];
+  return {
+    property: phase,
+    message,
+    sourceRecordIds: uniqueId ? [uniqueId] : item.sourceRecordIds ?? [],
+    excelLineNumbers,
+  };
 }
 
 function ErrorCell({
   property,
   message,
+  excelLineNumbers,
 }: {
   property: string;
   message: string;
+  excelLineNumbers?: number[];
 }) {
   const [expanded, setExpanded] = useState(false);
   const isLong = message.length > 120;
   const displayMessage =
     isLong && !expanded ? `${message.slice(0, 120)}…` : message;
+  const excelLines = formatExcelLineList(excelLineNumbers ?? []);
 
   return (
     <div className='flex gap-2 items-start text-left'>
@@ -86,6 +143,11 @@ function ErrorCell({
           >
             {property}
           </Badge>
+        )}
+        {excelLines && (
+          <p className='text-xs text-muted-foreground'>
+            Excel line {excelLines}
+          </p>
         )}
         <p className='text-sm text-foreground leading-snug'>{displayMessage}</p>
         {isLong && (
@@ -155,13 +217,14 @@ const columns: ColumnDef<GroupedByMessageError>[] = [
       <ErrorCell
         property={row.original.property}
         message={row.original.message}
+        excelLineNumbers={row.original.excelLineNumbers}
       />
     ),
   },
   {
     id: 'affectedSources',
     accessorKey: 'sourceRecordIds',
-    header: 'Affected source IDs',
+    header: 'Affected UniqueIds / source IDs',
     cell: ({ row }) => (
       <AffectedSourcesCell sourceRecordIds={row.original.sourceRecordIds} />
     ),

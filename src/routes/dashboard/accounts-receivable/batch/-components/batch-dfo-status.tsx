@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import CheckCircle2Icon from 'lucide-react/dist/esm/icons/check-circle-2';
 import AlertCircleIcon from 'lucide-react/dist/esm/icons/alert-circle';
+import AlertTriangleIcon from 'lucide-react/dist/esm/icons/alert-triangle';
 import InfoIcon from 'lucide-react/dist/esm/icons/info';
 import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down';
 import ChevronUp from 'lucide-react/dist/esm/icons/chevron-up';
 import ActivityIcon from 'lucide-react/dist/esm/icons/activity';
+import DownloadIcon from 'lucide-react/dist/esm/icons/download';
+import { Link } from '@tanstack/react-router';
 
 import { getExpectedGroupCountLabel } from '@/constants/data-batch';
 import type {
@@ -12,14 +15,20 @@ import type {
   TDataBatch,
 } from '@/interfaces/data-batch';
 import { useAuth } from '@/hooks/use-auth';
+import { useMutation } from '@/hooks/use-mutation';
+import { useServices } from '@/hooks/use-services';
+import { summarizeDfoSkipErrors } from '@/lib/dfo-skip-errors';
 import { cn } from '@/lib/utils';
 import { dataBatch } from '@/services';
+import type { TRoutes } from '@/router';
+import { Button } from '@/components/ui/button';
 
 interface BatchDFOStatusProps {
   batch: TDataBatch;
+  errorsRoute?: TRoutes;
 }
 
-export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
+export const BatchDFOStatus = ({ batch, errorsRoute }: BatchDFOStatusProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const expectedGroupCount =
     typeof batch.expectedGroupCount === 'number'
@@ -27,16 +36,18 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
       : undefined;
   const dfoIds = batch.dfoIds ?? [];
   const dfoPostingErrors = batch.dfoPostingErrors ?? [];
+  const skipSummary = summarizeDfoSkipErrors(dfoPostingErrors);
+  const fatalErrors = skipSummary.otherErrors;
   const alreadyMarkedFromErrors = extractAlreadyMarkedJournals(
-    dfoPostingErrors.join('\n'),
+    fatalErrors.join('\n'),
   );
   const hasDfoIds = dfoIds.length > 0;
-  const hasDfoPostingErrors = dfoPostingErrors.length > 0;
+  const hasFatalErrors = fatalErrors.length > 0;
   const groupLabels = getDfoGroupLabels(batch.entryProcessorType);
   const isAdmin = useAuth((state) => state.user?.role === 'ADMIN');
 
   // ── Not posted yet ─────────────────────────────────────────────────────────
-  if (!hasDfoIds && !hasDfoPostingErrors) {
+  if (!hasDfoIds && !hasFatalErrors && !skipSummary.hasSkips) {
     return (
       <StatusCard
         variant='neutral'
@@ -66,7 +77,7 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
   }
 
   // ── Posting failed ─────────────────────────────────────────────────────────
-  if (hasDfoPostingErrors) {
+  if (hasFatalErrors) {
     return (
       <StatusCard
         variant='error'
@@ -90,7 +101,7 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
             </p>
           )}
           <ul className='space-y-1.5 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3'>
-            {dfoPostingErrors.map((error, idx) => (
+            {fatalErrors.map((error, idx) => (
               <li
                 key={idx}
                 className='flex items-start gap-2 text-sm text-destructive'
@@ -100,6 +111,67 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
               </li>
             ))}
           </ul>
+          {skipSummary.hasSkips && (
+            <SkippedLinesNotice
+              batchId={batch.id}
+              errorsRoute={errorsRoute}
+              skipIssueCount={skipSummary.skipIssueCount}
+              uniqueIdCount={skipSummary.uniqueIdCount}
+            />
+          )}
+          {isAdmin && <TraceLink batchId={batch.id} />}
+        </div>
+      </StatusCard>
+    );
+  }
+
+  // ── Posted with skipped UniqueIds / lines ──────────────────────────────────
+  if (skipSummary.hasSkips) {
+    return (
+      <StatusCard
+        variant='warning'
+        icon={
+          <AlertTriangleIcon className='size-4 text-amber-700 dark:text-amber-300' />
+        }
+        title='Posted with skipped UniqueIds'
+        iconBg='bg-amber-100 dark:bg-amber-900/40'
+        accentColor='bg-gradient-to-b from-amber-400/60 via-amber-500 to-amber-400/60'
+      >
+        <div className='space-y-3'>
+          <p className='text-sm text-muted-foreground'>
+            {hasDfoIds ? (
+              <>
+                <span className='font-semibold text-foreground'>
+                  {dfoIds.length}
+                </span>{' '}
+                {groupLabels.countLabel} created in D365FO.{' '}
+              </>
+            ) : null}
+            <span className='font-semibold text-foreground'>
+              {skipSummary.skipIssueCount.toLocaleString('en-US')}
+            </span>{' '}
+            UniqueId issue
+            {skipSummary.skipIssueCount !== 1 ? 's' : ''} were skipped
+            {skipSummary.uniqueIdCount > 0
+              ? ` across ${skipSummary.uniqueIdCount.toLocaleString('en-US')} UniqueId${skipSummary.uniqueIdCount !== 1 ? 's' : ''}`
+              : ''}
+            . Details are on the errors page and in the error Excel — they are
+            not listed here.
+          </p>
+          <SkippedLinesNotice
+            batchId={batch.id}
+            errorsRoute={errorsRoute}
+            skipIssueCount={skipSummary.skipIssueCount}
+            uniqueIdCount={skipSummary.uniqueIdCount}
+          />
+          {hasDfoIds && (
+            <PostedJournalList
+              dfoIds={dfoIds}
+              groupLabels={groupLabels}
+              isExpanded={isExpanded}
+              onToggle={() => setIsExpanded((previous) => !previous)}
+            />
+          )}
           {isAdmin && <TraceLink batchId={batch.id} />}
         </div>
       </StatusCard>
@@ -126,39 +198,14 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
             {groupLabels.countLabel} created successfully in D365FO.
           </p>
 
-          {/* Collapsible IDs */}
-          <div className='rounded-lg border border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-950/20 overflow-hidden'>
-            <button
-              type='button'
-              onClick={() => setIsExpanded((p) => !p)}
-              aria-expanded={isExpanded}
-              aria-controls='dfo-ids-list'
-              className='flex w-full items-center justify-between px-4 py-2.5 text-sm font-medium text-emerald-800 dark:text-emerald-200 hover:bg-emerald-100/50 dark:hover:bg-emerald-900/20 transition-colors'
-            >
-              <span>
-                {isExpanded ? 'Hide' : 'View'} {groupLabels.detailsLabel}
-              </span>
-              {isExpanded ? (
-                <ChevronUp className='size-4' />
-              ) : (
-                <ChevronDown className='size-4' />
-              )}
-            </button>
-            {isExpanded && (
-              <ul
-                id='dfo-ids-list'
-                className='divide-y divide-emerald-200/60 dark:divide-emerald-800/40 border-t border-emerald-200 dark:border-emerald-800/50'
-              >
-                {dfoIds.map((id, idx) => (
-                  <JournalMarkCheckRow
-                    key={`${id}-${idx}`}
-                    journalBatchNumber={id}
-                    itemLabel={groupLabels.itemLabel}
-                  />
-                ))}
-              </ul>
-            )}
-          </div>
+          {hasDfoIds && (
+            <PostedJournalList
+              dfoIds={dfoIds}
+              groupLabels={groupLabels}
+              isExpanded={isExpanded}
+              onToggle={() => setIsExpanded((previous) => !previous)}
+            />
+          )}
 
           {isAdmin && <TraceLink batchId={batch.id} />}
         </div>
@@ -168,6 +215,104 @@ export const BatchDFOStatus = ({ batch }: BatchDFOStatusProps) => {
 
   return null;
 };
+
+function PostedJournalList({
+  dfoIds,
+  groupLabels,
+  isExpanded,
+  onToggle,
+}: {
+  dfoIds: string[];
+  groupLabels: ReturnType<typeof getDfoGroupLabels>;
+  isExpanded: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div className='rounded-lg border border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-950/20 overflow-hidden'>
+      <button
+        type='button'
+        onClick={onToggle}
+        aria-expanded={isExpanded}
+        aria-controls='dfo-ids-list'
+        className='flex w-full items-center justify-between px-4 py-2.5 text-sm font-medium text-emerald-800 dark:text-emerald-200 hover:bg-emerald-100/50 dark:hover:bg-emerald-900/20 transition-colors'
+      >
+        <span>
+          {isExpanded ? 'Hide' : 'View'} {groupLabels.detailsLabel}
+        </span>
+        {isExpanded ? (
+          <ChevronUp className='size-4' />
+        ) : (
+          <ChevronDown className='size-4' />
+        )}
+      </button>
+      {isExpanded && (
+        <ul
+          id='dfo-ids-list'
+          className='divide-y divide-emerald-200/60 dark:divide-emerald-800/40 border-t border-emerald-200 dark:border-emerald-800/50'
+        >
+          {dfoIds.map((id, idx) => (
+            <JournalMarkCheckRow
+              key={`${id}-${idx}`}
+              journalBatchNumber={id}
+              itemLabel={groupLabels.itemLabel}
+            />
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function SkippedLinesNotice({
+  batchId,
+  errorsRoute,
+  skipIssueCount,
+  uniqueIdCount,
+}: {
+  batchId: string;
+  errorsRoute?: TRoutes;
+  skipIssueCount: number;
+  uniqueIdCount: number;
+}) {
+  const { dataBatch: dataBatchService } = useServices();
+  const { mutateAsync: onDownloadError, isPending } = useMutation({
+    operationName: 'download record errors',
+    mutationFn: () =>
+      dataBatchService.downloadBatchErrorList({ batchId }),
+  });
+
+  return (
+    <div className='space-y-2'>
+      <p className='text-sm text-amber-950 dark:text-amber-100'>
+        {skipIssueCount.toLocaleString('en-US')} skipped UniqueId issue
+        {skipIssueCount !== 1 ? 's' : ''}
+        {uniqueIdCount > 0
+          ? ` (${uniqueIdCount.toLocaleString('en-US')} UniqueId${uniqueIdCount !== 1 ? 's' : ''})`
+          : ''}
+        . Open the errors page for UniqueId, Excel line, and reason, or download
+        the Excel file.
+      </p>
+      <div className='flex flex-wrap gap-2'>
+        {errorsRoute && (
+          <Button asChild size='sm'>
+            <Link to={errorsRoute} params={{ batchId }}>
+              View skipped lines
+            </Link>
+          </Button>
+        )}
+        <Button
+          size='sm'
+          variant='destructive'
+          disabled={isPending}
+          onClick={() => onDownloadError(undefined)}
+        >
+          <DownloadIcon className='size-4' />
+          Download error Excel
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 function JournalMarkCheckRow({
   journalBatchNumber,
@@ -291,7 +436,7 @@ function StatusCard({
   iconBg: string;
   accentColor?: string;
   children: React.ReactNode;
-  variant: 'neutral' | 'error' | 'success';
+  variant: 'neutral' | 'error' | 'success' | 'warning';
 }) {
   return (
     <div
@@ -302,6 +447,8 @@ function StatusCard({
           'border-destructive/20 dark:border-destructive/30 bg-destructive/5 dark:bg-destructive/10',
         variant === 'success' &&
           'border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-950/20',
+        variant === 'warning' &&
+          'border-amber-200 dark:border-amber-800/50 bg-amber-50 dark:bg-amber-950/20',
       )}
     >
       {/* Left accent bar */}
@@ -330,6 +477,7 @@ function StatusCard({
             variant === 'neutral' && 'text-foreground',
             variant === 'error' && 'text-foreground',
             variant === 'success' && 'text-emerald-900 dark:text-emerald-100',
+            variant === 'warning' && 'text-amber-950 dark:text-amber-100',
           )}
         >
           {title}

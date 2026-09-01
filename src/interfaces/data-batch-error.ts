@@ -54,4 +54,5 @@ export interface GroupedByMessageError {
   property: string;
   message: string;
   sourceRecordIds: string[];
+  excelLineNumbers?: number[];
 }

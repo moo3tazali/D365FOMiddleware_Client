@@ -55,7 +55,12 @@ export const BatchResult = () => {
         />
       )}
 
-      {batch && <BatchDFOStatus batch={batch} />}
+      {batch && (
+        <BatchDFOStatus
+          batch={batch}
+          errorsRoute={ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.ERRORS}
+        />
+      )}
     </div>
   );
 };

@@ -38,4 +38,24 @@ describe('BatchResultAlert', () => {
       screen.getByRole('link', { name: /View Errors/i }).getAttribute('href'),
     ).toBe('/dashboard/cash-out/batch/507f1f77bcf86cd799439011/errors');
   });
+
+  it('shows skipped UniqueIds without listing every posting error', () => {
+    render(
+      <BatchResultAlert
+        errorCount={0}
+        skipCount={42}
+        batchId='507f1f77bcf86cd799439011'
+        errorsRoute='/dashboard/cash-out/batch/$batchId/errors'
+      />,
+    );
+
+    expect(
+      screen.getByText('42 UniqueId issues skipped during posting'),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole('link', { name: /View skipped lines/i }).getAttribute(
+        'href',
+      ),
+    ).toBe('/dashboard/cash-out/batch/507f1f77bcf86cd799439011/errors');
+  });
 });

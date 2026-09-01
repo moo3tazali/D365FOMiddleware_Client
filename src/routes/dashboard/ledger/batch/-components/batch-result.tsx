@@ -45,7 +45,12 @@ export const BatchResult = () => {
         />
       )}
 
-      {batch && <BatchDFOStatus batch={batch} />}
+      {batch && (
+        <BatchDFOStatus
+          batch={batch}
+          errorsRoute={ROUTES.DASHBOARD.LEDGER.BATCH.ERRORS}
+        />
+      )}
     </div>
   );
 };

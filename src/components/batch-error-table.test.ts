@@ -32,4 +32,35 @@ describe('groupErrorsByMessage', () => {
       },
     ]);
   });
+
+  it('shows skipped UniqueIds with Excel lines instead of the raw posting dump', () => {
+    const items = [
+      {
+        id: 'skip-1',
+        batchId: 'batch-1',
+        sourceRecordIds: ['488810'],
+        errorMessages: [
+          'Upload skipped: UniqueId 488810 186 Excel lines (4267–4452): already marked',
+        ],
+        enhancedRecordIds: ['1'],
+        accountDimensionsModel: {},
+        enhancedData: {
+          kind: 'custody-settlement-skip',
+          uniqueId: '488810',
+          excelLineNumbers: [4267, 4268, 4452],
+          phase: 'post',
+          error: 'This transaction has been marked for settlement.',
+        },
+      },
+    ] as unknown as TDataBatchError[];
+
+    expect(groupErrorsByMessage(items)).toEqual([
+      {
+        property: 'Upload skipped',
+        message: 'This transaction has been marked for settlement.',
+        sourceRecordIds: ['488810'],
+        excelLineNumbers: [4267, 4268, 4452],
+      },
+    ]);
+  });
 });

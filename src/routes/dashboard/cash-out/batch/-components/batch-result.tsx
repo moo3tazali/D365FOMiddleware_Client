@@ -12,6 +12,7 @@ import { ROUTES } from '@/router';
 import { BatchDFOStatus } from '@/routes/dashboard/accounts-receivable/batch/-components/batch-dfo-status';
 import { BatchResultAlert } from '@/components/batch-result-alert';
 import { cn } from '@/lib/utils';
+import { summarizeDfoSkipErrors } from '@/lib/dfo-skip-errors';
 import { useCashOutUploadValidation } from '../-hooks/use-upload-validation';
 import {
   getUploadValidationItems,
@@ -64,6 +65,7 @@ export const BatchResult = () => {
       {batch && !!batch.totalUploadedCount && batch.status !== TDataBatchStatus.Processing && (
         <BatchResultAlert
           errorCount={batch.errorCount}
+          skipCount={summarizeDfoSkipErrors(batch.dfoPostingErrors).skipIssueCount}
           batchId={batch.id}
           errorsRoute={ROUTES.DASHBOARD.CASH_OUT.BATCH.ERRORS}
         />
@@ -71,7 +73,12 @@ export const BatchResult = () => {
 
       {!batch && uploadError && <UploadValidationErrors error={uploadError} />}
 
-      {batch && <BatchDFOStatus batch={batch} />}
+      {batch && (
+        <BatchDFOStatus
+          batch={batch}
+          errorsRoute={ROUTES.DASHBOARD.CASH_OUT.BATCH.ERRORS}
+        />
+      )}
     </div>
   );
 };
@@ -190,6 +197,18 @@ const useResultItems = (entries?: TDataBatch | null, uploadErrorCount = 0) => {
         icon: <CloudAlert className='size-5 text-red-500 dark:text-red-400' />,
       },
     ];
+
+    const skipCount = summarizeDfoSkipErrors(
+      entries?.dfoPostingErrors,
+    ).skipIssueCount;
+    if (skipCount > 0) {
+      baseItems.push({
+        label: 'Skipped UniqueIds',
+        total: formatBatchResultCount(skipCount, defaultTotal),
+        color: 'red' as const,
+        icon: <CloudAlert className='size-5 text-red-500 dark:text-red-400' />,
+      });
+    }
 
     if (
       entries?.withholdingRemovedCount &&
