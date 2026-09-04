@@ -2,7 +2,7 @@ import { useServices } from '@/hooks/use-services';
 import { Button } from '@/components/ui/button';
 import { useMutation } from '@/hooks/use-mutation';
 import type { MasterDataPayload, SyncType } from '@/services/api/master-data';
-import { Suspense, useEffect } from 'react';
+import { Suspense } from 'react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
   SyncJobStatus,
@@ -13,7 +13,11 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import AlertCircleIcon from 'lucide-react/dist/esm/icons/alert-circle';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useInvalidate } from '@/hooks/use-invalidate';
+
+const SYNC_POLL_INTERVAL_MS = 5000;
+
+const isRunning = (status: SyncJobStatus) =>
+  status === SyncJobStatus.PENDING || status === SyncJobStatus.PROCESSING;
 
 export const RefreshMasterData = () => {
   return (
@@ -29,39 +33,20 @@ export const RefreshMasterData = () => {
 const SettingsRows = () => {
   const { masterData } = useServices();
 
-  const { data } = useSuspenseQuery(masterData.getSyncListQueryOptions());
-
-  const { invalidate } = useInvalidate();
-
-  const isSyncing = data.some(
-    (item) =>
-      item.status === SyncJobStatus.PROCESSING ||
-      item.status === SyncJobStatus.PENDING,
-  );
-
-  useEffect(() => {
-    let interval: ReturnType<typeof setInterval> | undefined;
-
-    if (isSyncing) {
-      interval = setInterval(() => {
-        // eslint-disable-next-line no-console
-        console.info('invalidating master data');
-        invalidate(masterData.queryKey);
-      }, 30000);
-    } else {
-      if (interval) {
-        clearInterval(interval);
-      }
-    }
-
-    return () => clearInterval(interval);
-  }, [isSyncing, invalidate, masterData.queryKey]);
+  const { data } = useSuspenseQuery({
+    ...masterData.getSyncListQueryOptions(),
+    // Keep polling while any sync job is queued or running, then stop.
+    refetchInterval: (query) =>
+      query.state.data?.some((item) => isRunning(item.status))
+        ? SYNC_POLL_INTERVAL_MS
+        : false,
+  });
 
   return (
     <div className='space-y-3'>
-      {data.map((item, idx) => (
+      {data.map((item) => (
         <SettingsRow
-          key={idx}
+          key={item.syncType}
           data={item}
           mutationFn={masterData.sync}
           queryKey={masterData.queryKey}
@@ -108,7 +93,10 @@ const SettingsRow = ({
     operationName: `Refresh ${label}`,
     mutationFn,
     refetchQueries: [queryKey],
-    disableToast: true,
+    toastMsgs: {
+      loading: `Starting ${label} refresh...`,
+      success: `${label} refresh started`,
+    },
   });
 
   const onRefresh = () => {
