@@ -211,6 +211,8 @@ export class DataBatch {
         return [
           TEntryProcessorTypes.CashInFreight,
           TEntryProcessorTypes.CashInTrucking,
+          TEntryProcessorTypes.CashInShiplink,
+          TEntryProcessorTypes.CashInYard,
         ];
       case 'cashOut':
         return [

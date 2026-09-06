@@ -21,6 +21,8 @@ export class CashIn {
   public readonly UPLOAD_TYPES = {
     FREIGHT_DOC: TEntryProcessorTypes.CashInFreight,
     TRUCKING_DOC: TEntryProcessorTypes.CashInTrucking,
+    SHIPLINK_DOC: TEntryProcessorTypes.CashInShiplink,
+    YARD_DOC: TEntryProcessorTypes.CashInYard,
   };
 
   constructor() {}
@@ -59,6 +61,10 @@ export class CashIn {
         return API_ROUTES.DATA_MIGRATION.CASH.CASH_IN_FREIGHT_DOCUMENT;
       case this.UPLOAD_TYPES.TRUCKING_DOC:
         return API_ROUTES.DATA_MIGRATION.CASH.CASH_IN_TRUCKING_DOCUMENT;
+      case this.UPLOAD_TYPES.SHIPLINK_DOC:
+        return API_ROUTES.DATA_MIGRATION.CASH.CASH_IN_SHIPLINK_DOCUMENT;
+      case this.UPLOAD_TYPES.YARD_DOC:
+        return API_ROUTES.DATA_MIGRATION.CASH.CASH_IN_YARD_DOCUMENT;
       default:
         throw new Error(
           `Invalid upload type, Upload type must satisfies ${Object.entries(

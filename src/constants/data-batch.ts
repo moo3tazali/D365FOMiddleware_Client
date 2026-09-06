@@ -123,6 +123,14 @@ export const ENTRY_PROCESSOR_OPTIONS = {
       label: 'Fleet (trucking) Document',
       value: TEntryProcessorTypes.CashInTrucking,
     },
+    {
+      label: 'Shiplink Document',
+      value: TEntryProcessorTypes.CashInShiplink,
+    },
+    {
+      label: 'Yard Document',
+      value: TEntryProcessorTypes.CashInYard,
+    },
   ],
   CASH_OUT: [
     {

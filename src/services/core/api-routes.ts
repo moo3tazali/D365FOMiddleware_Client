@@ -168,6 +168,8 @@ export const API_ROUTES = {
       CASH_IN_TRUCKING_DOCUMENT: '/DataMigration/Cash/CashIn-Trucking-Document',
       CASH_OUT_TRUCKING_DOCUMENT:
         '/DataMigration/Cash/CashOut-Trucking-Document',
+      CASH_IN_SHIPLINK_DOCUMENT: '/DataMigration/Cash/CashIn-Shiplink-Document',
+      CASH_IN_YARD_DOCUMENT: '/DataMigration/Cash/CashIn-Yard-Document',
       POST_TO_DFO: '/DataMigration/Cash/PostToDFO',
       POSTING_QUEUE: '/DataMigration/Cash/posting-queue',
       POSTING_QUEUE_PAUSE: '/DataMigration/Cash/posting-queue/pause',
