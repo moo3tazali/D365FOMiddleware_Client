@@ -47,6 +47,19 @@ describe('summarizeDfoSkipErrors', () => {
       hasSkips: true,
     });
   });
+
+  it('collapses UniqueIds uploaded without settlement because the invoice was already marked', () => {
+    const summary = summarizeDfoSkipErrors([
+      'Settlement skipped: UniqueId 466596 Excel line 900: Line uploaded without settlement: This transaction has been marked for settlement by Vendor Payment Freight Mesco-000015604 in company m-p.',
+    ]);
+
+    expect(summary).toEqual({
+      skipIssueCount: 1,
+      uniqueIdCount: 1,
+      otherErrors: [],
+      hasSkips: true,
+    });
+  });
 });
 
 describe('formatExcelLineList', () => {

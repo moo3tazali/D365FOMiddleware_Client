@@ -35,7 +35,7 @@ export const ValidationErrorsModal = ({
         <ResponsiveModalHeader>
           <ResponsiveModalTitle>Validation Failed</ResponsiveModalTitle>
           <ResponsiveModalDescription>
-            The following invoices have missing required fields:
+            The following journal lines need attention before they can be posted:
           </ResponsiveModalDescription>
         </ResponsiveModalHeader>
 
@@ -91,9 +91,7 @@ function parseValidationErrors(
       }
 
       const error = grouped.get(mapKey)!;
-      const fields = messages.map((msg) =>
-        msg.replace(/^Missing required field:\s*/i, ''),
-      );
+      const fields = messages.map(formatValidationMessage);
       error.fields.push(...fields);
     } else if (lineMatch) {
       const rawIndex = lineMatch[1];
@@ -111,9 +109,7 @@ function parseValidationErrors(
       }
 
       const error = grouped.get(mapKey)!;
-      const fields = messages.map((msg) =>
-        msg.replace(/^Missing required field:\s*/i, ''),
-      );
+      const fields = messages.map(formatValidationMessage);
       error.fields.push(...fields);
     }
   }
@@ -129,4 +125,25 @@ function parseValidationErrors(
     }
     return 0;
   });
+}
+
+export function describeValidationField(field: string): string {
+  const normalized = field.trim();
+  if (
+    normalized === 'customLineApiBody.VendorGroup' ||
+    normalized.toLowerCase().endsWith('.vendorgroup')
+  ) {
+    return (
+      'Vendor group is missing for this vendor. Synchronize the vendor master data ' +
+      'in D365FO or assign a VendorGroup, then reprocess the batch.'
+    );
+  }
+
+  return normalized;
+}
+
+function formatValidationMessage(message: string): string {
+  return describeValidationField(
+    message.replace(/^Missing required field:\s*/i, ''),
+  );
 }

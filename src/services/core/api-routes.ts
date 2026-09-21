@@ -130,6 +130,18 @@ export const API_ROUTES = {
       POSTING_RESUME: '/DataMigration/DataBatch/:batchId/posting/resume',
       JOURNAL_INTEGRITY:
         '/DataMigration/DataBatch/journal-batch/:journalBatchNumber/integrity',
+      SHIPLINK_SETTLEMENT_PAYLOADS_BY_JOURNAL_BATCH:
+        '/DataMigration/DataBatch/shiplink-settlement-payloads/by-journal-batch',
+      SHIPLINK_SETTLEMENT_PAYLOADS_FILTER_BY_JOURNAL_BATCH:
+        '/DataMigration/DataBatch/shiplink-settlement-payloads/filter-by-journal-batch',
+      SHIPLINK_SETTLEMENT_POST_LINES:
+        '/DataMigration/DataBatch/shiplink-settlement/post-lines',
+      SHIPLINK_SETTLEMENT_POST_SELECTED_BATCH:
+        '/DataMigration/DataBatch/shiplink-settlement/post-selected-batch',
+      SHIPLINK_SETTLEMENT_BY_JOURNAL_BATCH:
+        '/DataMigration/DataBatch/shiplink-settlement/by-journal-batch',
+      SHIPLINK_SETTLEMENT_FROM_EXCEL:
+        '/DataMigration/DataBatch/shiplink-settlement/from-excel',
     },
     ACCOUNT_RECEIVABLE: {
       FREIGHT_DOCUMENT: '/DataMigration/AccountReceivable/Freight-Document',
