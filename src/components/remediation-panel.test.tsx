@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { RemediationPanel } from '@/components/remediation-panel';
@@ -51,19 +51,21 @@ describe(RemediationPanel.name, () => {
     ];
   });
 
-  it('retries reprocessing for the stored missing record without offering creation', async () => {
+  // The per-record retry button was removed in f5ae3de (refactor reprocess logic).
+  // The batch-level reprocess service takes only batchId, so this test covers the
+  // current behavior: show the failure, offer no creation and no inline retry.
+  it('shows the reprocess failure for a created record without offering creation or retry', () => {
     render(<RemediationPanel batchId='batch-1' />);
 
     expect(
+      screen.getByText('Reprocessing failed: validation failed'),
+    ).toBeTruthy();
+    expect(
       screen.queryByRole('button', { name: /create customer/i }),
     ).toBeNull();
-
-    fireEvent.click(
-      screen.getByRole('button', { name: /retry reprocessing/i }),
-    );
-
-    await waitFor(() => {
-      expect(mocks.reprocess).toHaveBeenCalledWith('batch-1', 'missing-1');
-    });
+    expect(
+      screen.queryByRole('button', { name: /retry reprocessing/i }),
+    ).toBeNull();
+    expect(mocks.reprocess).not.toHaveBeenCalled();
   });
 });
