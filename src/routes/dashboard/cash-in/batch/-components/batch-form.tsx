@@ -147,7 +147,7 @@ export const BatchForm = ({ onTypeChange }: BatchFormProps = {}) => {
   );
 };
 
-const DropZoneContent = ({ isDisabled }: { isDisabled: boolean }) => (
+export const DropZoneContent = ({ isDisabled }: { isDisabled: boolean }) => (
   <div
     className={cn(
       'group flex flex-col items-center justify-center gap-3 rounded-xl',
@@ -182,7 +182,7 @@ const DropZoneContent = ({ isDisabled }: { isDisabled: boolean }) => (
       </p>
       <p className='flex items-center justify-center gap-1 text-xs text-muted-foreground'>
         <FileSpreadsheet className='size-3.5' />
-        .xlsx or .xls â€” up to 250 MB
+        .xlsx or .xls — up to 250 MB
       </p>
     </div>
   </div>

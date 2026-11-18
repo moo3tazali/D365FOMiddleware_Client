@@ -1,3 +1,4 @@
+import CloudUpload from 'lucide-react/dist/esm/icons/cloud-upload';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -305,28 +306,38 @@ export function YardInvoiceReview({
                 I have reviewed the invoices, amounts, rounding, accounts and
                 tags, and approve posting them.
               </label>
-              <Button
-                type='button'
-                onClick={onSubmit}
-                disabled={!submitAllowed || submitting}
-                title={
-                  !summary.canSubmit
-                    ? (summary.submitBlockedReason ?? 'Fix the errors first')
-                    : !hasFile
-                      ? 'Upload the same workbook again to submit'
-                      : undefined
-                }
-              >
-                {submitting
-                  ? 'Submitting…'
-                  : job.status === 'SUBMIT_FAILED'
-                    ? 'Retry queueing'
-                    : 'Post to D365 Finance'}
-              </Button>
             </div>
           </div>
         )}
       </fieldset>
+
+      {mode === 'post' && (
+        <div className='pt-4 border-t border-border'>
+          <div className='flex justify-end'>
+            <Button
+              size='lg'
+              variant='success'
+              className='w-full sm:max-w-xs'
+              onClick={onSubmit}
+              disabled={!submitAllowed || submitting}
+              title={
+                !summary.canSubmit
+                  ? (summary.submitBlockedReason ?? 'Fix the errors first')
+                  : !hasFile
+                    ? 'Upload the same workbook again to submit'
+                    : undefined
+              }
+            >
+              <CloudUpload className='size-5' />
+              {submitting
+                ? 'Submitting…'
+                : job.status === 'SUBMIT_FAILED'
+                  ? 'Retry queueing'
+                  : 'Post to D365 Finance'}
+            </Button>
+          </div>
+        </div>
+      )}
       <p className='text-xs text-muted-foreground'>
         Each invoice becomes one consolidated receipt. The invoice stays open
         after posting; settlement is not part of this flow.

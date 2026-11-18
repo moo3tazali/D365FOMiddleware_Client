@@ -90,7 +90,7 @@ const colorMap: Record<
   },
 };
 
-const StatCard = ({ icon, color, total, label }: StatCardProps) => {
+export const StatCard = ({ icon, color, total, label }: StatCardProps) => {
   const c = colorMap[color];
   return (
     <div

@@ -1,7 +1,21 @@
 import { useEffect, useState } from 'react';
+import Paperclip from 'lucide-react/dist/esm/icons/paperclip';
+import SlidersHorizontal from 'lucide-react/dist/esm/icons/sliders-horizontal';
+import UploadCloud from 'lucide-react/dist/esm/icons/upload-cloud';
+import CloudAlert from 'lucide-react/dist/esm/icons/cloud-alert';
+import Upload from 'lucide-react/dist/esm/icons/upload';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import {
+  FileInput,
+  FileUploader,
+  FileUploaderContent,
+  FileUploaderItem,
+} from '@/components/ui/file-upload';
+import { CloudCheck } from '@/assets/icons/cloud-check';
+import { StatCard } from '../../batch/-components/batch-result';
+import { DropZoneContent } from '../../batch/-components/batch-form';
 import {
   canSubmitReview,
   extractApiErrorMessage,
@@ -12,6 +26,7 @@ import {
   yardInvoiceApi,
   type YardInvoiceJob,
   type YardInvoiceLine,
+  type YardInvoiceSummary,
 } from '@/services/api/yard-invoice';
 
 import { YardInvoiceJobPanel } from './yard-invoice-job-panel';
@@ -33,13 +48,15 @@ function writeJobIdToUrl(id: string | undefined): void {
 }
 
 /**
- * Yard invoice upload flow. The workbook is reviewed in the background: the
- * page starts a job, polls until the review settles, then shows the summary and
- * a paged list of invoices. Submit is also a background job that the page polls.
+ * Yard Document flow inside Cash In > New Batch. It uses the same upload area,
+ * result cards and bottom action bar as the other Cash In document types. The
+ * workbook is reviewed in the background; the page polls the job until the
+ * review settles. Posting is a separate background job that the page polls too.
  * The job id is kept in the URL so a refresh or reopen shows the persisted state.
  */
 export function YardInvoiceWorkbench() {
   const [jobId, setJobId] = useState<string | undefined>(readJobIdFromUrl);
+  const [picked, setPicked] = useState<File | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [job, setJob] = useState<YardInvoiceJob | null>(null);
   const [lines, setLines] = useState<YardInvoiceLine[]>([]);
@@ -179,9 +196,51 @@ export function YardInvoiceWorkbench() {
     submitting: busy === 'submit',
   });
 
+  const reviewingNow = busy === 'review';
+  // The upload bar shows until the picked file is the one already reviewed.
+  const pickedIsReviewed = file !== null && picked === file;
+  const showUploadBar = !(job?.summary && pickedIsReviewed);
+
   return (
-    <div className='space-y-6'>
-      <UploadStep busy={busy === 'review'} onSelect={handleReview} />
+    <div className='space-y-5'>
+      <div className='space-y-3'>
+        <label className='text-sm font-medium'>Upload New Batch</label>
+        <FileUploader
+          value={picked ? [picked] : null}
+          onValueChange={(files) => setPicked(files?.[0] ?? null)}
+          dropzoneOptions={{
+            accept: {
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                ['.xlsx'],
+            },
+            multiple: false,
+            maxFiles: 1,
+            maxSize: 1024 * 1024 * 250, // 250MB
+          }}
+          className='relative bg-background rounded-xl'
+          disabled={reviewingNow}
+        >
+          <FileInput id='yardDataFile'>
+            <DropZoneContent isDisabled={reviewingNow} />
+          </FileInput>
+          <FileUploaderContent>
+            {picked && (
+              <FileUploaderItem index={0}>
+                <div className='flex items-center gap-2'>
+                  <div className='flex size-7 shrink-0 items-center justify-center rounded-md bg-primary/10'>
+                    <Paperclip className='size-3.5 text-primary' />
+                  </div>
+                  <span className='block max-w-xs truncate text-sm font-medium sm:max-w-full'>
+                    {picked.name}
+                  </span>
+                </div>
+              </FileUploaderItem>
+            )}
+          </FileUploaderContent>
+        </FileUploader>
+      </div>
+
+      <YardResultCards summary={job?.summary ?? null} />
 
       {error && (
         <Alert variant='destructive'>
@@ -219,35 +278,74 @@ export function YardInvoiceWorkbench() {
           <AlertDescription>Loading the upload job…</AlertDescription>
         </Alert>
       )}
+
+      {showUploadBar && (
+        <div className='pt-4 border-t border-border'>
+          <div className='flex justify-end'>
+            <Button
+              size='lg'
+              className='w-full sm:max-w-xs'
+              disabled={!picked || reviewingNow}
+              onClick={() => picked && handleReview(picked)}
+            >
+              <Upload className='size-5' />
+              {reviewingNow ? 'Reviewing…' : 'Upload'}
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function UploadStep({
-  busy,
-  onSelect,
-}: {
-  busy: boolean;
-  onSelect: (file: File) => void;
-}) {
-  const [picked, setPicked] = useState<File | null>(null);
+/** The same four result cards as Cash In batches, filled from the Yard review. */
+function YardResultCards({ summary }: { summary: YardInvoiceSummary | null }) {
+  const value = (n: number | undefined) =>
+    n === undefined ? '--' : n.toLocaleString('en-US');
+  const invoices = summary?.distinctInvoiceCount;
+  const blocked = summary?.blockedInvoiceCount;
+  const ready =
+    invoices !== undefined && blocked !== undefined
+      ? invoices - blocked
+      : undefined;
+
   return (
-    <div className='flex flex-col gap-3 rounded-xl border border-dashed p-5 sm:flex-row sm:items-center'>
-      <input
-        type='file'
-        accept='.xlsx'
-        aria-label='Yard invoice workbook (.xlsx)'
-        disabled={busy}
-        onChange={(event) => setPicked(event.target.files?.[0] ?? null)}
-        className='text-sm'
-      />
-      <Button
-        type='button'
-        disabled={!picked || busy}
-        onClick={() => picked && onSelect(picked)}
-      >
-        {busy ? 'Starting review…' : 'Review upload'}
-      </Button>
+    <div className='flex-1 space-y-5'>
+      <h3>Batch Results</h3>
+      <div className='grid grid-cols-2 sm:grid-cols-4 gap-3'>
+        <StatCard
+          color='sky'
+          label='Total Uploaded'
+          total={value(summary?.recordCount)}
+          icon={
+            <UploadCloud className='size-5 text-sky-500 dark:text-sky-400' />
+          }
+        />
+        <StatCard
+          color='indigo'
+          label='Total Formatted'
+          total={value(invoices)}
+          icon={
+            <SlidersHorizontal className='size-5 text-indigo-500 dark:text-indigo-400' />
+          }
+        />
+        <StatCard
+          color='emerald'
+          label='Success Count'
+          total={value(ready)}
+          icon={
+            <CloudCheck className='size-5 text-emerald-500 dark:text-emerald-400' />
+          }
+        />
+        <StatCard
+          color='red'
+          label='Error Count'
+          total={value(blocked)}
+          icon={
+            <CloudAlert className='size-5 text-red-500 dark:text-red-400' />
+          }
+        />
+      </div>
     </div>
   );
 }
