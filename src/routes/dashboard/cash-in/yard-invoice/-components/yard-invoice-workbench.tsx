@@ -29,11 +29,11 @@ import {
   type YardInvoiceSummary,
 } from '@/services/api/yard-invoice';
 
+import { DEFAULT_PAGE_SIZE } from '@/constants/pagination';
 import { YardInvoiceJobPanel } from './yard-invoice-job-panel';
 import { YardInvoiceReview } from './yard-invoice-review';
 
 const POLL_INTERVAL_MS = 3000;
-const PAGE_SIZE = 50;
 
 function readJobIdFromUrl(): string | undefined {
   const value = new URLSearchParams(window.location.search).get('jobId');
@@ -62,6 +62,7 @@ export function YardInvoiceWorkbench() {
   const [lines, setLines] = useState<YardInvoiceLine[]>([]);
   const [linesTotal, setLinesTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [reviewConfirmed, setReviewConfirmed] = useState(false);
   const [busy, setBusy] = useState<'review' | 'submit' | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -106,7 +107,7 @@ export function YardInvoiceWorkbench() {
     if (!jobId || !reviewed) return;
     let cancelled = false;
     yardInvoiceApi
-      .getLines(jobId, page, PAGE_SIZE)
+      .getLines(jobId, page, pageSize)
       .then((result) => {
         if (cancelled) return;
         setLines(result.items);
@@ -122,7 +123,7 @@ export function YardInvoiceWorkbench() {
       cancelled = true;
     };
     // Re-load when the job is re-reviewed or its outcome may have changed.
-  }, [jobId, reviewed, page, job?.status, job?.batchStatus]);
+  }, [jobId, reviewed, page, pageSize, job?.status, job?.batchStatus]);
 
   const selectJob = (id: string | undefined) => {
     setJobId(id);
@@ -252,8 +253,12 @@ export function YardInvoiceWorkbench() {
           lines={lines}
           linesTotal={linesTotal}
           page={page}
-          pageSize={PAGE_SIZE}
+          pageSize={pageSize}
           onPage={setPage}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setPage(1);
+          }}
           reviewConfirmed={reviewConfirmed}
           onConfirmChange={setReviewConfirmed}
           onSubmit={handleSubmit}

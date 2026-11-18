@@ -1,8 +1,19 @@
 import CloudUpload from 'lucide-react/dist/esm/icons/cloud-upload';
 import AlertCircleIcon from 'lucide-react/dist/esm/icons/alert-circle';
 import CheckCircle2Icon from 'lucide-react/dist/esm/icons/check-circle-2';
+import ChevronLeftIcon from 'lucide-react/dist/esm/icons/chevron-left';
+import ChevronRightIcon from 'lucide-react/dist/esm/icons/chevron-right';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { ROWS_PER_PAGE } from '@/constants/pagination';
 import {
   Table,
   TableBody,
@@ -30,6 +41,7 @@ interface Props {
   page: number;
   pageSize: number;
   onPage: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
   reviewConfirmed: boolean;
   onConfirmChange: (checked: boolean) => void;
   onSubmit: () => void;
@@ -51,6 +63,7 @@ export function YardInvoiceReview({
   page,
   pageSize,
   onPage,
+  onPageSizeChange,
   reviewConfirmed,
   onConfirmChange,
   onSubmit,
@@ -181,26 +194,14 @@ export function YardInvoiceReview({
             </TableBody>
           </Table>
         </div>
-        <div className='flex items-center justify-end gap-2'>
-          <Button
-            type='button'
-            size='sm'
-            variant='outline'
-            disabled={page <= 1}
-            onClick={() => onPage(page - 1)}
-          >
-            Previous
-          </Button>
-          <Button
-            type='button'
-            size='sm'
-            variant='outline'
-            disabled={page >= pageCount}
-            onClick={() => onPage(page + 1)}
-          >
-            Next
-          </Button>
-        </div>
+        <LinesPagination
+          page={page}
+          pageSize={pageSize}
+          pageCount={pageCount}
+          total={linesTotal}
+          onPageChange={onPage}
+          onPageSizeChange={onPageSizeChange}
+        />
       </div>
 
       {!alreadySubmitted && (
@@ -246,6 +247,73 @@ export function YardInvoiceReview({
         after posting; settlement is not part of this flow.
       </p>
     </section>
+  );
+}
+
+/** Rows-per-page selector and page controls laid out like the other Cash In tables. */
+function LinesPagination({
+  page,
+  pageSize,
+  pageCount,
+  total,
+  onPageChange,
+  onPageSizeChange,
+}: {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
+}) {
+  const start = total === 0 ? 0 : (page - 1) * pageSize + 1;
+  const end = Math.min(page * pageSize, total);
+  return (
+    <div className='flex w-full flex-wrap items-center justify-between gap-2 pt-1'>
+      <div className='flex items-center gap-2'>
+        <Label htmlFor='yard-rows-per-page' className='whitespace-nowrap'>
+          Rows per page:
+        </Label>
+        <Select
+          value={pageSize.toString()}
+          onValueChange={(value) => onPageSizeChange(Number(value))}
+        >
+          <SelectTrigger className='w-[75px]' id='yard-rows-per-page'>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {ROWS_PER_PAGE.map((size) => (
+              <SelectItem key={size} value={size.toString()}>
+                {size}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className='flex items-center gap-2'>
+        <span className='whitespace-nowrap text-sm text-muted-foreground'>
+          {start}-{end} of {total}
+        </span>
+        <Button
+          aria-label='Go to previous page'
+          size='icon'
+          variant='ghost'
+          disabled={page <= 1}
+          onClick={() => onPageChange(page - 1)}
+        >
+          <ChevronLeftIcon className='h-4 w-4' />
+        </Button>
+        <Button
+          aria-label='Go to next page'
+          size='icon'
+          variant='ghost'
+          disabled={page >= pageCount}
+          onClick={() => onPageChange(page + 1)}
+        >
+          <ChevronRightIcon className='h-4 w-4' />
+        </Button>
+      </div>
+    </div>
   );
 }
 

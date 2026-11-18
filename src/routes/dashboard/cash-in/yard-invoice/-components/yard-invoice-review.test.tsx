@@ -114,8 +114,9 @@ function renderReview(
     lines: [line()],
     linesTotal: 96,
     page: 1,
-    pageSize: 50,
+    pageSize: 10,
     onPage: vi.fn(),
+    onPageSizeChange: vi.fn(),
     reviewConfirmed: false,
     onConfirmChange: vi.fn(),
     onSubmit: vi.fn(),
@@ -238,12 +239,15 @@ describe('YardInvoiceReview', () => {
     expect(submit.disabled).toBe(true);
   });
 
-  it('pages the invoice list through the callback', () => {
+  it('pages the invoice list through the callback, like the other Cash In tables', () => {
     const onPage = vi.fn();
     renderReview({ page: 2, linesTotal: 200, onPage });
-    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Go to next page' }));
     expect(onPage).toHaveBeenCalledWith(3);
-    fireEvent.click(screen.getByRole('button', { name: 'Previous' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Go to previous page' }),
+    );
     expect(onPage).toHaveBeenCalledWith(1);
+    expect(screen.getByText('11-20 of 200')).toBeTruthy();
   });
 });
