@@ -30,7 +30,7 @@ import {
 } from '@/services/api/yard-invoice';
 
 import { YardInvoiceJobPanel } from './yard-invoice-job-panel';
-import { YardInvoiceReview, type YardUploadMode } from './yard-invoice-review';
+import { YardInvoiceReview } from './yard-invoice-review';
 
 const POLL_INTERVAL_MS = 3000;
 const PAGE_SIZE = 50;
@@ -63,8 +63,6 @@ export function YardInvoiceWorkbench() {
   const [linesTotal, setLinesTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [reviewConfirmed, setReviewConfirmed] = useState(false);
-  // Review only is the default. Posting is a separate, explicit choice.
-  const [mode, setMode] = useState<YardUploadMode>('review');
   const [busy, setBusy] = useState<'review' | 'submit' | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -256,8 +254,6 @@ export function YardInvoiceWorkbench() {
           page={page}
           pageSize={PAGE_SIZE}
           onPage={setPage}
-          mode={mode}
-          onModeChange={setMode}
           reviewConfirmed={reviewConfirmed}
           onConfirmChange={setReviewConfirmed}
           onSubmit={handleSubmit}

@@ -122,39 +122,21 @@ function renderReview(
     submitAllowed: false,
     submitting: false,
     hasFile: true,
-    mode: 'post' as const,
-    onModeChange: vi.fn(),
     ...overrides,
   };
   render(<YardInvoiceReview {...props} />);
   return props;
 }
 
-describe('YardInvoiceReview upload mode', () => {
-  it('defaults to review only: no post button and nothing can be posted from this mode', () => {
-    renderReview({ mode: 'review', submitAllowed: true });
-    expect(
-      screen.queryByRole('button', { name: 'Post to D365 Finance' }),
-    ).toBeNull();
-    expect(screen.queryByRole('checkbox')).toBeNull();
-    expect(screen.getByText('Review only. Nothing is posted.')).toBeTruthy();
+describe('YardInvoiceReview layout', () => {
+  it('shows a green success banner when every invoice is ready', () => {
+    renderReview({ submitAllowed: true });
+    expect(screen.getByText('Entries processed successfully')).toBeTruthy();
   });
 
-  it('shows the posting controls and a warning only after choosing to post', () => {
-    const onModeChange = vi.fn();
-    renderReview({ mode: 'review', onModeChange, submitAllowed: true });
-    fireEvent.click(
-      screen.getByRole('radio', { name: /Post to D365 Finance now/ }),
-    );
-    expect(onModeChange).toHaveBeenCalledWith('post');
-  });
-
-  it('shows the posting warning in post mode', () => {
-    renderReview({ mode: 'post' });
-    expect(screen.getByText(/cannot be undone from this screen/)).toBeTruthy();
-    expect(
-      screen.getByRole('button', { name: 'Post to D365 Finance' }),
-    ).toBeTruthy();
+  it('shows the same Post to D365FO action as the other Cash In batches', () => {
+    renderReview({ submitAllowed: true });
+    expect(screen.getByRole('button', { name: 'Post to D365FO' })).toBeTruthy();
   });
 });
 
@@ -233,7 +215,7 @@ describe('YardInvoiceReview', () => {
     const onSubmit = vi.fn();
     renderReview({ submitAllowed: true, onSubmit });
     const submit = screen.getByRole('button', {
-      name: 'Post to D365 Finance',
+      name: 'Post to D365FO',
     }) as HTMLButtonElement;
     expect(submit.disabled).toBe(false);
     fireEvent.click(submit);
@@ -251,7 +233,7 @@ describe('YardInvoiceReview', () => {
     const checkbox = screen.getByRole('checkbox') as HTMLInputElement;
     expect(checkbox.disabled).toBe(true);
     const submit = screen.getByRole('button', {
-      name: 'Post to D365 Finance',
+      name: 'Post to D365FO',
     }) as HTMLButtonElement;
     expect(submit.disabled).toBe(true);
   });

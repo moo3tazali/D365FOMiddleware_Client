@@ -1,5 +1,6 @@
 import CloudUpload from 'lucide-react/dist/esm/icons/cloud-upload';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import AlertCircleIcon from 'lucide-react/dist/esm/icons/alert-circle';
+import CheckCircle2Icon from 'lucide-react/dist/esm/icons/check-circle-2';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 import {
   outcomeLabel,
   outcomeTone,
@@ -18,9 +20,8 @@ import {
 import type {
   YardInvoiceJob,
   YardInvoiceLine,
+  YardInvoiceSummary,
 } from '@/services/api/yard-invoice';
-
-export type YardUploadMode = 'review' | 'post';
 
 interface Props {
   job: YardInvoiceJob;
@@ -29,8 +30,6 @@ interface Props {
   page: number;
   pageSize: number;
   onPage: (page: number) => void;
-  mode: YardUploadMode;
-  onModeChange: (mode: YardUploadMode) => void;
   reviewConfirmed: boolean;
   onConfirmChange: (checked: boolean) => void;
   onSubmit: () => void;
@@ -40,10 +39,10 @@ interface Props {
 }
 
 /**
- * Review of an uploaded workbook: which format was detected, the sheets, the
- * totals and rounding, credit notes, discrepancies, record-level issues, and a
- * paged list of invoices with their D365 values. Submit stays off until the server
- * allows it and the reviewer has confirmed.
+ * Review of an uploaded workbook, laid out like the other Cash In batches: a
+ * result banner, the sheets and totals, a paged invoice list with the D365
+ * values, and the same bottom "Post to D365FO" action. Posting stays off until the
+ * server allows it and the reviewer has confirmed.
  */
 export function YardInvoiceReview({
   job,
@@ -52,8 +51,6 @@ export function YardInvoiceReview({
   page,
   pageSize,
   onPage,
-  mode,
-  onModeChange,
   reviewConfirmed,
   onConfirmChange,
   onSubmit,
@@ -70,6 +67,8 @@ export function YardInvoiceReview({
 
   return (
     <section className='space-y-5'>
+      <ResultBanner summary={summary} blocking={blocking} />
+
       <div className='space-y-2'>
         <div className='flex flex-wrap items-center gap-3 text-sm'>
           <span className='font-medium'>{summary.fileName}</span>
@@ -78,33 +77,6 @@ export function YardInvoiceReview({
             {summary.recordCount} record(s), {summary.distinctInvoiceCount}{' '}
             invoice(s)
           </span>
-        </div>
-        <div className='flex flex-wrap gap-2 text-xs'>
-          <Chip
-            label='Blocked invoices'
-            value={summary.blockedInvoiceCount}
-            tone={summary.blockedInvoiceCount ? 'error' : 'ok'}
-          />
-          <Chip
-            label='Credit notes (-CN)'
-            value={summary.creditNoteInvoiceCount}
-            tone={summary.creditNoteInvoiceCount ? 'error' : 'ok'}
-          />
-          <Chip
-            label='Workbook vs D365 differences'
-            value={summary.discrepancyCount}
-            tone={summary.discrepancyCount ? 'error' : 'ok'}
-          />
-          <Chip
-            label='Record issues'
-            value={summary.issueCount}
-            tone={summary.issueCount ? 'error' : 'ok'}
-          />
-          <Chip
-            label='Lookups to retry'
-            value={summary.lookupFailedCount}
-            tone={summary.lookupFailedCount ? 'warn' : 'ok'}
-          />
         </div>
         <p className='text-xs text-muted-foreground'>
           Review hash {summary.payloadHash.slice(0, 12)} · job{' '}
@@ -180,28 +152,6 @@ export function YardInvoiceReview({
         </div>
       )}
 
-      {(summary.issues.length > 0 || summary.aggregationIssues.length > 0) && (
-        <Alert variant='destructive'>
-          <AlertTitle>Items that block submission</AlertTitle>
-          <AlertDescription>
-            <ul className='list-disc pl-5'>
-              {summary.issues.map((issue, index) => (
-                <li key={`rec-${index}`}>
-                  {issue.sourceSheet}, row {issue.sourceRow}, {issue.column}:{' '}
-                  {issue.message}
-                </li>
-              ))}
-              {summary.aggregationIssues.map((issue, index) => (
-                <li key={`agg-${index}`}>
-                  {issue.invoiceNumber ? `${issue.invoiceNumber}: ` : ''}
-                  {issue.message}
-                </li>
-              ))}
-            </ul>
-          </AlertDescription>
-        </Alert>
-      )}
-
       <div className='space-y-2'>
         <div className='flex items-center justify-between text-sm'>
           <span className='font-medium'>Invoices</span>
@@ -253,66 +203,18 @@ export function YardInvoiceReview({
         </div>
       </div>
 
-      {blocking > 0 && (
-        <p className='text-sm text-destructive'>
-          {blocking} item(s) block submission. Correct the workbook or the D365
-          data, then upload again.
-        </p>
-      )}
-
-      <fieldset className='space-y-2 rounded-xl border p-4'>
-        <legend className='px-1 text-sm font-medium'>
-          What to do with this upload
-        </legend>
-        <label className='flex items-center gap-2 text-sm'>
-          <input
-            type='radio'
-            name='yard-upload-mode'
-            value='review'
-            checked={mode === 'review'}
-            disabled={alreadySubmitted}
-            onChange={() => onModeChange('review')}
-          />
-          Review only. Nothing is posted.
-        </label>
-        <label className='flex items-center gap-2 text-sm'>
-          <input
-            type='radio'
-            name='yard-upload-mode'
-            value='post'
-            checked={mode === 'post'}
-            disabled={alreadySubmitted}
-            onChange={() => onModeChange('post')}
-          />
-          Post to D365 Finance now.
-        </label>
-
-        {mode === 'post' && (
-          <div className='space-y-3 pt-2'>
-            <Alert variant='destructive'>
-              <AlertDescription>
-                Posting creates journal entries in the D365 company set up for
-                this environment. It cannot be undone from this screen.
-              </AlertDescription>
-            </Alert>
-            <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
-              <label className='flex items-center gap-2 text-sm'>
-                <input
-                  type='checkbox'
-                  checked={reviewConfirmed}
-                  disabled={!summary.canSubmit || alreadySubmitted}
-                  onChange={(event) => onConfirmChange(event.target.checked)}
-                />
-                I have reviewed the invoices, amounts, rounding, accounts and
-                tags, and approve posting them.
-              </label>
-            </div>
-          </div>
-        )}
-      </fieldset>
-
-      {mode === 'post' && (
-        <div className='pt-4 border-t border-border'>
+      {!alreadySubmitted && (
+        <div className='space-y-3 border-t border-border pt-4'>
+          <label className='flex items-center gap-2 text-sm'>
+            <input
+              type='checkbox'
+              checked={reviewConfirmed}
+              disabled={!summary.canSubmit}
+              onChange={(event) => onConfirmChange(event.target.checked)}
+            />
+            I have reviewed the invoices, amounts, dimensions and tags, and
+            approve posting them.
+          </label>
           <div className='flex justify-end'>
             <Button
               size='lg'
@@ -330,19 +232,112 @@ export function YardInvoiceReview({
             >
               <CloudUpload className='size-5' />
               {submitting
-                ? 'Submitting…'
+                ? 'Posting…'
                 : job.status === 'SUBMIT_FAILED'
-                  ? 'Retry queueing'
-                  : 'Post to D365 Finance'}
+                  ? 'Retry posting'
+                  : 'Post to D365FO'}
             </Button>
           </div>
         </div>
       )}
+
       <p className='text-xs text-muted-foreground'>
         Each invoice becomes one consolidated receipt. The invoice stays open
         after posting; settlement is not part of this flow.
       </p>
     </section>
+  );
+}
+
+/** Same banner pattern as the other Cash In batches: a red error or a green success. */
+function ResultBanner({
+  summary,
+  blocking,
+}: {
+  summary: YardInvoiceSummary;
+  blocking: number;
+}) {
+  const recordIssues = [
+    ...summary.issues.map(
+      (issue) =>
+        `${issue.sourceSheet}, row ${issue.sourceRow}, ${issue.column}: ${issue.message}`,
+    ),
+    ...summary.aggregationIssues.map(
+      (issue) =>
+        `${issue.invoiceNumber ? `${issue.invoiceNumber}: ` : ''}${issue.message}`,
+    ),
+  ];
+
+  if (blocking > 0 || !summary.canSubmit) {
+    return (
+      <div
+        className={cn(
+          'relative flex flex-col gap-4 overflow-hidden rounded-xl sm:flex-row sm:items-center',
+          'border border-destructive/20 dark:border-destructive/30',
+          'bg-destructive/5 dark:bg-destructive/10',
+          'px-5 py-4',
+        )}
+      >
+        <div className='absolute inset-y-0 left-0 w-1 rounded-l-xl bg-gradient-to-b from-destructive/50 via-destructive to-destructive/50' />
+        <div className='flex flex-1 min-w-0 items-start gap-3'>
+          <div className='mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-destructive/10 dark:bg-destructive/20'>
+            <AlertCircleIcon className='size-4 text-destructive' />
+          </div>
+          <div className='space-y-1'>
+            <p className='text-sm font-semibold text-foreground'>
+              {blocking > 0
+                ? `${blocking} error${blocking !== 1 ? 's' : ''} found while processing this upload`
+                : 'This upload cannot be posted yet'}
+            </p>
+            <p className='text-sm text-muted-foreground'>
+              {summary.submitBlockedReason ??
+                'Fix the blocked invoices or the workbook and upload again.'}
+            </p>
+            <p className='text-xs text-muted-foreground'>
+              <span>
+                Workbook vs D365 differences: {summary.discrepancyCount}
+              </span>
+              {' · '}
+              <span>Credit notes (-CN): {summary.creditNoteInvoiceCount}</span>
+              {' · '}
+              <span>Lookups to retry: {summary.lookupFailedCount}</span>
+            </p>
+            {recordIssues.length > 0 && (
+              <ul className='list-disc pl-5 text-sm text-muted-foreground'>
+                {recordIssues.map((issue) => (
+                  <li key={issue}>{issue}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={cn(
+        'relative flex items-start gap-3 overflow-hidden rounded-xl',
+        'border border-emerald-200 dark:border-emerald-800/50',
+        'bg-emerald-50 dark:bg-emerald-950/20',
+        'px-5 py-4',
+      )}
+    >
+      <div className='absolute inset-y-0 left-0 w-1 rounded-l-xl bg-gradient-to-b from-emerald-400/60 via-emerald-500 to-emerald-400/60' />
+      <div className='mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/40'>
+        <CheckCircle2Icon className='size-4 text-emerald-600 dark:text-emerald-400' />
+      </div>
+      <div className='space-y-0.5'>
+        <p className='text-sm font-semibold text-emerald-900 dark:text-emerald-100'>
+          Entries processed successfully
+        </p>
+        <p className='text-sm text-emerald-800/80 dark:text-emerald-300/80'>
+          All {summary.distinctInvoiceCount} invoices are ready. Click Post to
+          D365FO to send them to Dynamics 365 Finance &amp; Operations.
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -427,27 +422,5 @@ function LineRow({ line }: { line: YardInvoiceLine }) {
         </div>
       </TableCell>
     </TableRow>
-  );
-}
-
-function Chip({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: number;
-  tone: 'ok' | 'warn' | 'error';
-}) {
-  const cls =
-    tone === 'error'
-      ? 'border-destructive/50 text-destructive'
-      : tone === 'warn'
-        ? 'border-amber-500/50 text-amber-700 dark:text-amber-400'
-        : 'border-border text-muted-foreground';
-  return (
-    <span className={`rounded-md border px-2 py-1 ${cls}`}>
-      {label}: {value}
-    </span>
   );
 }
