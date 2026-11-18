@@ -1,6 +1,10 @@
 import { sync } from '../core/sync';
 import { API_ROUTES } from '../core/api-routes';
 import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
+import { yardInvoiceApi } from './yard-invoice';
+
+const YARD_REVIEW_POLL_MS = 3000;
+const YARD_REVIEW_MAX_POLLS = 600;
 
 interface UploadData {
   companyId: string;
@@ -34,6 +38,12 @@ export class CashIn {
   }): Promise<UploadResponse> => {
     const { data, type } = options;
 
+    // Yard files are reviewed by the Yard service, which creates the batch when the
+    // review completes. The page then opens that batch like any other upload.
+    if (Number(type) === this.UPLOAD_TYPES.YARD_DOC) {
+      return this._uploadYard(data);
+    }
+
     const apiRoute = await this._getUploadApiRoute(type);
 
     return syncService.save<UploadResponse, UploadData>(apiRoute, data, {
@@ -54,6 +64,27 @@ export class CashIn {
       { batchId },
     );
   };
+
+  /** Starts the Yard review and waits until the batch exists. */
+  private async _uploadYard(data: UploadData): Promise<UploadResponse> {
+    const started = await yardInvoiceApi.startReview(
+      data.dataFile,
+      data.companyId,
+    );
+    for (let attempt = 0; attempt < YARD_REVIEW_MAX_POLLS; attempt++) {
+      await new Promise((resolve) => setTimeout(resolve, YARD_REVIEW_POLL_MS));
+      const job = await yardInvoiceApi.getJob(started.jobId);
+      if (job.status === 'REVIEW_FAILED') {
+        throw new Error(job.lastError ?? 'The workbook could not be reviewed.');
+      }
+      if (job.batchId) {
+        return { id: job.batchId } as UploadResponse;
+      }
+    }
+    throw new Error(
+      'The Yard review is taking too long. Check the batch list.',
+    );
+  }
 
   private async _getUploadApiRoute(type: number | string) {
     switch (Number(type)) {

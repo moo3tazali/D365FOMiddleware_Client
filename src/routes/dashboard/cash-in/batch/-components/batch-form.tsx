@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import CloudUpload from 'lucide-react/dist/esm/icons/cloud-upload';
 import Paperclip from 'lucide-react/dist/esm/icons/paperclip';
 import FileSpreadsheet from 'lucide-react/dist/esm/icons/file-spreadsheet';
@@ -28,22 +27,10 @@ import {
 import { useBatchForm } from '../-hooks/use-batch-form';
 import { Progress } from '@/components/ui/progress';
 import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/data-batch';
-import { TEntryProcessorTypes } from '@/interfaces/data-batch';
 import { cn } from '@/lib/utils';
 
-interface BatchFormProps {
-  onTypeChange?: (type: string) => void;
-}
-
-export const BatchForm = ({ onTypeChange }: BatchFormProps = {}) => {
+export const BatchForm = () => {
   const { form } = useBatchForm();
-
-  const selectedType = form.watch('type');
-  const isYard = selectedType === String(TEntryProcessorTypes.CashInYard);
-
-  useEffect(() => {
-    onTypeChange?.(selectedType);
-  }, [selectedType, onTypeChange]);
 
   return (
     <Form {...form}>
@@ -76,64 +63,62 @@ export const BatchForm = ({ onTypeChange }: BatchFormProps = {}) => {
           />
         </div>
 
-        {!isYard && (
-          <FormField
-            control={form.control}
-            name='dataFile'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel asChild>
-                  <span>Upload New Batch</span>
-                </FormLabel>
-                <FormControl>
-                  <FileUploader
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    dropzoneOptions={{
-                      accept: {
-                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-                          ['.xlsx', '.xls'],
-                      },
-                      multiple: false,
-                      maxFiles: 1,
-                      maxSize: 1024 * 1024 * 250, // 250MB
-                    }}
-                    className='relative bg-background rounded-xl'
-                    disabled={form.isDisabled}
-                  >
-                    <FileInput id='dataFile'>
-                      <DropZoneContent isDisabled={form.isDisabled} />
-                    </FileInput>
-                    <FileUploaderContent>
-                      {field.value &&
-                        field.value.length > 0 &&
-                        field.value.map((file, i) => (
-                          <FileUploaderItem index={i} key={i}>
-                            <div className='flex items-center gap-2'>
-                              <div className='flex size-7 shrink-0 items-center justify-center rounded-md bg-primary/10'>
-                                <Paperclip className='size-3.5 text-primary' />
-                              </div>
-                              <div className='min-w-0 flex-1 space-y-1.5'>
-                                <span className='block max-w-xs truncate text-sm font-medium sm:max-w-full'>
-                                  {file.name}
-                                </span>
-                                <Progress
-                                  size='xs'
-                                  progress={form.uploadProgress}
-                                />
-                              </div>
+        <FormField
+          control={form.control}
+          name='dataFile'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel asChild>
+                <span>Upload New Batch</span>
+              </FormLabel>
+              <FormControl>
+                <FileUploader
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  dropzoneOptions={{
+                    accept: {
+                      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                        ['.xlsx', '.xls'],
+                    },
+                    multiple: false,
+                    maxFiles: 1,
+                    maxSize: 1024 * 1024 * 250, // 250MB
+                  }}
+                  className='relative bg-background rounded-xl'
+                  disabled={form.isDisabled}
+                >
+                  <FileInput id='dataFile'>
+                    <DropZoneContent isDisabled={form.isDisabled} />
+                  </FileInput>
+                  <FileUploaderContent>
+                    {field.value &&
+                      field.value.length > 0 &&
+                      field.value.map((file, i) => (
+                        <FileUploaderItem index={i} key={i}>
+                          <div className='flex items-center gap-2'>
+                            <div className='flex size-7 shrink-0 items-center justify-center rounded-md bg-primary/10'>
+                              <Paperclip className='size-3.5 text-primary' />
                             </div>
-                          </FileUploaderItem>
-                        ))}
-                    </FileUploaderContent>
-                  </FileUploader>
-                </FormControl>
+                            <div className='min-w-0 flex-1 space-y-1.5'>
+                              <span className='block max-w-xs truncate text-sm font-medium sm:max-w-full'>
+                                {file.name}
+                              </span>
+                              <Progress
+                                size='xs'
+                                progress={form.uploadProgress}
+                              />
+                            </div>
+                          </div>
+                        </FileUploaderItem>
+                      ))}
+                  </FileUploaderContent>
+                </FileUploader>
+              </FormControl>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <button
           type='submit'
