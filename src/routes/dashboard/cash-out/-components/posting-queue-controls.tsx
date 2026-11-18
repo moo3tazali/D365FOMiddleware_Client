@@ -21,7 +21,9 @@ export const PostingQueueControls = () => {
   const { invalidate } = useInvalidate();
   const isAdmin = useAuth((state) => state.user?.role === 'ADMIN');
 
-  const { data: queue, isPending } = useQuery(cashOut.postingQueueQueryOptions());
+  const { data: queue, isPending } = useQuery(
+    cashOut.postingQueueQueryOptions(),
+  );
 
   const mutation = useMutation<CashPostingQueueState, boolean>({
     operationName: 'change the posting queue',
@@ -59,7 +61,11 @@ export const PostingQueueControls = () => {
       <div className='min-w-0 space-y-1'>
         <div className='flex items-center gap-2'>
           <span className='font-medium'>Upload queue</span>
-          <Badge dot variant='ghost' color={queue.paused ? 'warning' : 'success'}>
+          <Badge
+            dot
+            variant='ghost'
+            color={queue.paused ? 'warning' : 'success'}
+          >
             {queue.paused ? 'Paused' : 'Running'}
           </Badge>
         </div>

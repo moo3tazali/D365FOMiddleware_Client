@@ -62,14 +62,18 @@ export const BatchResult = () => {
         </section>
       )}
 
-      {batch && !!batch.totalUploadedCount && batch.status !== TDataBatchStatus.Processing && (
-        <BatchResultAlert
-          errorCount={batch.errorCount}
-          skipCount={summarizeDfoSkipErrors(batch.dfoPostingErrors).skipIssueCount}
-          batchId={batch.id}
-          errorsRoute={ROUTES.DASHBOARD.CASH_OUT.BATCH.ERRORS}
-        />
-      )}
+      {batch &&
+        !!batch.totalUploadedCount &&
+        batch.status !== TDataBatchStatus.Processing && (
+          <BatchResultAlert
+            errorCount={batch.errorCount}
+            skipCount={
+              summarizeDfoSkipErrors(batch.dfoPostingErrors).skipIssueCount
+            }
+            batchId={batch.id}
+            errorsRoute={ROUTES.DASHBOARD.CASH_OUT.BATCH.ERRORS}
+          />
+        )}
 
       {!batch && uploadError && <UploadValidationErrors error={uploadError} />}
 

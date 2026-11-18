@@ -127,8 +127,7 @@ function reprocessStatusReason(status: TDataBatchStatus): string {
     [TDataBatchStatus.Canceled]: 'A canceled batch cannot be reprocessed.',
     [TDataBatchStatus.Revalidating]:
       'Batch reprocessing is already in progress.',
-    [TDataBatchStatus.Processing]:
-      'The batch is currently being processed.',
+    [TDataBatchStatus.Processing]: 'The batch is currently being processed.',
   };
   return reasons[status];
 }

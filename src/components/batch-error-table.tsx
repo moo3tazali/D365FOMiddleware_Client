@@ -98,10 +98,14 @@ export function groupErrorsByMessage(
 function toSkipErrorGroup(item: TDataBatchError): GroupedByMessageError | null {
   const enhanced = item.enhancedData;
   if (enhanced?.kind !== 'custody-settlement-skip') return null;
-  const uniqueId = String(enhanced.uniqueId ?? item.sourceRecordIds?.[0] ?? '')
-    .trim();
-  const phase = enhanced.phase === 'settle' ? 'Settlement skipped' : 'Upload skipped';
-  const message = String(enhanced.error ?? item.errorMessages?.[0] ?? '').trim();
+  const uniqueId = String(
+    enhanced.uniqueId ?? item.sourceRecordIds?.[0] ?? '',
+  ).trim();
+  const phase =
+    enhanced.phase === 'settle' ? 'Settlement skipped' : 'Upload skipped';
+  const message = String(
+    enhanced.error ?? item.errorMessages?.[0] ?? '',
+  ).trim();
   const excelLineNumbers = Array.isArray(enhanced.excelLineNumbers)
     ? enhanced.excelLineNumbers
         .map((value) => Number(value))
@@ -110,7 +114,7 @@ function toSkipErrorGroup(item: TDataBatchError): GroupedByMessageError | null {
   return {
     property: phase,
     message,
-    sourceRecordIds: uniqueId ? [uniqueId] : item.sourceRecordIds ?? [],
+    sourceRecordIds: uniqueId ? [uniqueId] : (item.sourceRecordIds ?? []),
     excelLineNumbers,
   };
 }

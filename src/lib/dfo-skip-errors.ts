@@ -1,8 +1,10 @@
 const SKIP_DETAIL_PATTERN =
   /(?:\[Job processing\]\s*-\s*)?(?:Upload|Settlement)\s+skipped:/i;
-const SKIP_SUMMARY_PATTERN = /(?:\[Job processing\]\s*-\s*)?Skipped lines:\s+(\d+)/i;
+const SKIP_SUMMARY_PATTERN =
+  /(?:\[Job processing\]\s*-\s*)?Skipped lines:\s+(\d+)/i;
 const UNIQUE_ID_PATTERN = /UniqueId\s+([^:\s]+)/i;
-const SKIP_SPLIT_PATTERN = /(?=(?:\[Job processing\]\s*-\s*)?(?:Upload|Settlement)\s+skipped:)/i;
+const SKIP_SPLIT_PATTERN =
+  /(?=(?:\[Job processing\]\s*-\s*)?(?:Upload|Settlement)\s+skipped:)/i;
 
 export function isDfoSkipMessage(message: string): boolean {
   return classifySkipMessage(String(message ?? '').trim()) !== null;

@@ -549,9 +549,7 @@ function QueueDetailPage() {
                     <TableHead className='text-xs uppercase'>
                       Batch ID
                     </TableHead>
-                    <TableHead className='text-xs uppercase'>
-                      Started
-                    </TableHead>
+                    <TableHead className='text-xs uppercase'>Started</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

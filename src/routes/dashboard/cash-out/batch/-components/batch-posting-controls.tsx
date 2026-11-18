@@ -46,15 +46,13 @@ export const BatchPostingControls = ({ batch }: { batch: TDataBatch }) => {
         <div className='min-w-0 space-y-1'>
           <div className='flex items-center gap-2'>
             <span className='font-medium'>Posting this batch</span>
-            <Badge
-              dot
-              variant='ghost'
-              color={isPaused ? 'warning' : 'success'}
-            >
+            <Badge dot variant='ghost' color={isPaused ? 'warning' : 'success'}>
               {isPaused ? 'Paused' : 'Active'}
             </Badge>
           </div>
-          <p className='text-sm text-muted-foreground'>{describe(batch, isPaused)}</p>
+          <p className='text-sm text-muted-foreground'>
+            {describe(batch, isPaused)}
+          </p>
         </div>
 
         <div className='flex shrink-0 flex-wrap items-center gap-2'>

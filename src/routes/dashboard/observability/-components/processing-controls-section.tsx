@@ -44,7 +44,13 @@ export const ProcessingControlsSection = () => {
   };
 
   const queueMutation = useMutation({
-    mutationFn: ({ queueName, pause }: { queueName: string; pause: boolean }) =>
+    mutationFn: ({
+      queueName,
+      pause,
+    }: {
+      queueName: string;
+      pause: boolean;
+    }) =>
       pause
         ? observability.pauseQueue(queueName)
         : observability.resumeQueue(queueName),

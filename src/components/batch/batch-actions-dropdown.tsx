@@ -31,8 +31,11 @@ export function BatchActionsDropdown({ batch }: BatchActionsDropdownProps) {
     reprocess,
   } = useBatchReprocess(batch);
 
-  const { canDelete, disabledReason: deleteDisabledReason, deleteBatch } =
-    useBatchDelete(batch, { navigateAway: true });
+  const {
+    canDelete,
+    disabledReason: deleteDisabledReason,
+    deleteBatch,
+  } = useBatchDelete(batch, { navigateAway: true });
 
   const isReprocessDisabled = !batch || !canReprocess || isReprocessPending;
 

@@ -1,6 +1,6 @@
-import { API_ROUTES } from "@/services/core/api-routes";
-import { sync } from "@/services/core/sync";
-import axios from "axios";
+import { API_ROUTES } from '@/services/core/api-routes';
+import { sync } from '@/services/core/sync';
+import axios from 'axios';
 
 export interface ReconciliationRequest {
   istFile: File;
@@ -15,14 +15,14 @@ export interface ReconciliationRequest {
 
 export interface ReviewRecord {
   istRowNumber: number;
-  status: "Needs Review" | "Unmatched";
+  status: 'Needs Review' | 'Unmatched';
   matchCase: string;
   confidence: number;
   reason: string;
   description: string;
   transactionDate: string;
   amount: number | null;
-  direction: "deposit" | "withdraw" | null;
+  direction: 'deposit' | 'withdraw' | null;
   accountCode: string;
   clientName: string;
   operationNo: string;
@@ -44,7 +44,7 @@ export interface BankTransaction {
   customerReference: string;
   transactionDate: string | null;
   amount: number | null;
-  direction: "deposit" | "withdraw" | null;
+  direction: 'deposit' | 'withdraw' | null;
   dynCode: string;
   currency: string;
 }
@@ -70,19 +70,18 @@ export interface ReconciliationResult {
   };
 }
 
-
 export async function reconcileFiles(
   request: ReconciliationRequest,
 ): Promise<ReconciliationResult> {
   const form = new FormData();
-  form.append("istFile", request.istFile);
-  form.append("bankFile", request.bankFile);
-  form.append("toleranceDays", String(request.toleranceDays));
-  form.append("amountTolerance", String(request.amountTolerance));
-  form.append("confidenceThreshold", String(request.confidenceThreshold));
-  form.append("audit", String(request.audit));
-  form.append("allowManyToOne", String(request.allowManyToOne));
-  form.append("forceAll", String(request.forceAll));
+  form.append('istFile', request.istFile);
+  form.append('bankFile', request.bankFile);
+  form.append('toleranceDays', String(request.toleranceDays));
+  form.append('amountTolerance', String(request.amountTolerance));
+  form.append('confidenceThreshold', String(request.confidenceThreshold));
+  form.append('audit', String(request.audit));
+  form.append('allowManyToOne', String(request.allowManyToOne));
+  form.append('forceAll', String(request.forceAll));
 
   const response = await sync.save<ReconciliationResult, FormData>(
     API_ROUTES.RECONCILIATION.PROCESS,
@@ -97,24 +96,28 @@ export async function downloadReconciledWorkbook(
 ): Promise<void> {
   await sync.download(API_ROUTES.RECONCILIATION.DOWNLOAD, {
     params: { id: downloadId },
-    downloadMethod: "get",
+    downloadMethod: 'get',
     defaultFileName,
   });
 }
 
 export async function extractApiError(error: unknown): Promise<string> {
-  if (!axios.isAxiosError(error)) return "Unexpected error. Please try again.";
+  if (!axios.isAxiosError(error)) return 'Unexpected error. Please try again.';
   if (error.response?.data instanceof Blob) {
     try {
-      const parsed = JSON.parse(await error.response.data.text()) as { message?: string | string[] };
-      if (Array.isArray(parsed.message)) return parsed.message.join(", ");
+      const parsed = JSON.parse(await error.response.data.text()) as {
+        message?: string | string[];
+      };
+      if (Array.isArray(parsed.message)) return parsed.message.join(', ');
       if (parsed.message) return parsed.message;
     } catch {
       // Fall through to the generic Axios message.
     }
   }
-  const data = error.response?.data as { message?: string | string[] } | undefined;
-  if (Array.isArray(data?.message)) return data.message.join(", ");
+  const data = error.response?.data as
+    | { message?: string | string[] }
+    | undefined;
+  if (Array.isArray(data?.message)) return data.message.join(', ');
   if (data?.message) return data.message;
-  return error.message || "The reconciliation request failed.";
+  return error.message || 'The reconciliation request failed.';
 }

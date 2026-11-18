@@ -36,7 +36,7 @@ const Module = ({
 }: {
   to: TRoutes;
   label: string;
-  Icon: ComponentType<any>;
+  Icon: ComponentType<{ className?: string }>;
 }) => {
   return (
     <Link

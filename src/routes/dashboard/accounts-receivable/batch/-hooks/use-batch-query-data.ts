@@ -28,7 +28,7 @@ export const useBatchQueryData = (): [
   const setValue = useCallback(
     async (newBatch: TDataBatch): Promise<void> => {
       const batchQueryKey = [...dataBatch.queryKey, { batchId: newBatch.id }];
-      
+
       // Set the query data synchronously
       queryClient.setQueryData<PaginationRes<TDataBatch>>(batchQueryKey, {
         pageNumber: 1,
@@ -37,17 +37,17 @@ export const useBatchQueryData = (): [
         totalPages: 1,
         items: [newBatch],
       });
-      
+
       // Ensure the query is marked as fresh and await invalidation
-      await queryClient.invalidateQueries({ 
+      await queryClient.invalidateQueries({
         queryKey: batchQueryKey,
-        refetchType: 'none' 
+        refetchType: 'none',
       });
-      
+
       // Invalidate the list queries to update the batch list
-      await queryClient.invalidateQueries({ 
+      await queryClient.invalidateQueries({
         queryKey: dataBatch.queryKey,
-        exact: false 
+        exact: false,
       });
     },
     [dataBatch.queryKey, queryClient],

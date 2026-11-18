@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  formatExcelLineList,
-  summarizeDfoSkipErrors,
-} from './dfo-skip-errors';
+import { formatExcelLineList, summarizeDfoSkipErrors } from './dfo-skip-errors';
 
 describe('summarizeDfoSkipErrors', () => {
   it('collapses UniqueId skip dumps into a count instead of listing every line', () => {
@@ -65,8 +62,8 @@ describe('summarizeDfoSkipErrors', () => {
 describe('formatExcelLineList', () => {
   it('truncates long Excel line lists for the errors table', () => {
     expect(formatExcelLineList([841])).toBe('841');
-    expect(
-      formatExcelLineList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-    ).toBe('1, 2, 3, 4, 5, 6, 7, 8 +2 more');
+    expect(formatExcelLineList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])).toBe(
+      '1, 2, 3, 4, 5, 6, 7, 8 +2 more',
+    );
   });
 });

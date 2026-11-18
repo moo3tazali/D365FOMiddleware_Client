@@ -35,7 +35,8 @@ export const ValidationErrorsModal = ({
         <ResponsiveModalHeader>
           <ResponsiveModalTitle>Validation Failed</ResponsiveModalTitle>
           <ResponsiveModalDescription>
-            The following journal lines need attention before they can be posted:
+            The following journal lines need attention before they can be
+            posted:
           </ResponsiveModalDescription>
         </ResponsiveModalHeader>
 

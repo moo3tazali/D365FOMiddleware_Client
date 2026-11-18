@@ -22,7 +22,8 @@ function BankMappingPage() {
         </section>
         <ReconciliationForm />
         <p className='privacy-note'>
-          Files are processed by your reconciliation server and are not retained.
+          Files are processed by your reconciliation server and are not
+          retained.
         </p>
       </div>
     </div>

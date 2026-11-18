@@ -5,10 +5,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useInvalidate } from '@/hooks/use-invalidate';
 import { useMutation } from '@/hooks/use-mutation';
 import { useServices } from '@/hooks/use-services';
-import {
-  TDataBatchStatus,
-  type TDataBatch,
-} from '@/interfaces/data-batch';
+import { TDataBatchStatus, type TDataBatch } from '@/interfaces/data-batch';
 import { ROUTES } from '@/router';
 
 /**
@@ -59,8 +56,8 @@ export function useBatchDelete(
         batch.status === TDataBatchStatus.Posted
           ? `Delete posted batch ${batch.id} from the middleware? D365FO journals will NOT be deleted. This cannot be undone.`
           : batch.status === TDataBatchStatus.Posting || batch.postingPaused
-          ? `Delete batch ${batch.id} even if it is posting? Queue work is discarded and further journals stop. The journal being written right now may still finish in D365FO. Journals already created there are not removed. This cannot be undone.`
-          : `Delete batch ${batch.id} and all of its records? This cannot be undone.`;
+            ? `Delete batch ${batch.id} even if it is posting? Queue work is discarded and further journals stop. The journal being written right now may still finish in D365FO. Journals already created there are not removed. This cannot be undone.`
+            : `Delete batch ${batch.id} and all of its records? This cannot be undone.`;
       if (window.confirm(warning)) mutation.mutate();
     },
   };

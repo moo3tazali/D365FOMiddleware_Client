@@ -142,10 +142,10 @@ export const useBatchForm = () => {
 
       try {
         const data = await startUpload(options);
-        
+
         // Await setBatch to ensure query cache is updated before navigation
         await setBatch(data);
-        
+
         // Navigate after the query cache has been properly updated
         navigate({
           to: ROUTES.DASHBOARD.ACCOUNTS_RECEIVABLE.BATCH.VIEW,
