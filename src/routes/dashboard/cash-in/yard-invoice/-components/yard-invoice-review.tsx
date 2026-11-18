@@ -1,4 +1,6 @@
+import { Link } from '@tanstack/react-router';
 import CloudUpload from 'lucide-react/dist/esm/icons/cloud-upload';
+import Upload from 'lucide-react/dist/esm/icons/upload';
 import AlertCircleIcon from 'lucide-react/dist/esm/icons/alert-circle';
 import CheckCircle2Icon from 'lucide-react/dist/esm/icons/check-circle-2';
 import ChevronLeftIcon from 'lucide-react/dist/esm/icons/chevron-left';
@@ -23,6 +25,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
+import { ROUTES } from '@/router';
 import {
   outcomeLabel,
   outcomeTone,
@@ -51,10 +54,10 @@ interface Props {
 }
 
 /**
- * Review of an uploaded workbook, laid out like the other Cash In batches: a
- * result banner, the sheets and totals, a paged invoice list with the D365
- * values, and the same bottom "Post to D365FO" action. Posting stays off until the
- * server allows it and the reviewer has confirmed.
+ * Result of an uploaded workbook, laid out like the other Cash In batches: the
+ * same result banner, the paged invoice list, and the same bottom action bar
+ * (New Entry and Post to D365FO). Posting stays off until the server allows it
+ * and the reviewer has confirmed.
  */
 export function YardInvoiceReview({
   job,
@@ -91,79 +94,7 @@ export function YardInvoiceReview({
             invoice(s)
           </span>
         </div>
-        <p className='text-xs text-muted-foreground'>
-          Review hash {summary.payloadHash.slice(0, 12)} · job{' '}
-          {job.jobId.slice(0, 8)}
-        </p>
       </div>
-
-      {summary.sheets.length > 0 && (
-        <div className='overflow-x-auto rounded-xl border'>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Sheet</TableHead>
-                <TableHead>Layout</TableHead>
-                <TableHead>Rows with content</TableHead>
-                <TableHead>Accepted</TableHead>
-                <TableHead>Issues</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {summary.sheets.map((sheet) => (
-                <TableRow key={sheet.sourceSheet}>
-                  <TableCell className='text-xs'>{sheet.sourceSheet}</TableCell>
-                  <TableCell className='font-mono text-xs'>
-                    {sheet.layoutId}
-                  </TableCell>
-                  <TableCell className='text-xs'>{sheet.contentRows}</TableCell>
-                  <TableCell className='text-xs'>
-                    {sheet.acceptedRecords}
-                  </TableCell>
-                  <TableCell className='text-xs'>{sheet.issueCount}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
-
-      {summary.currencyTotals.length > 0 && (
-        <div className='overflow-x-auto rounded-xl border'>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Currency</TableHead>
-                <TableHead>Invoices</TableHead>
-                <TableHead>Raw total (exact)</TableHead>
-                <TableHead>Rounded total</TableHead>
-                <TableHead>Rounding change</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {summary.currencyTotals.map((total) => (
-                <TableRow key={total.currencyCode}>
-                  <TableCell className='text-xs'>
-                    {total.currencyCode}
-                  </TableCell>
-                  <TableCell className='text-xs'>
-                    {total.invoiceCount}
-                  </TableCell>
-                  <TableCell className='font-mono text-xs'>
-                    {total.rawTotal}
-                  </TableCell>
-                  <TableCell className='font-mono text-xs'>
-                    {total.roundedTotal}
-                  </TableCell>
-                  <TableCell className='font-mono text-xs'>
-                    {total.roundingChange}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
 
       <div className='space-y-2'>
         <div className='flex items-center justify-between text-sm'>
@@ -216,11 +147,16 @@ export function YardInvoiceReview({
             I have reviewed the invoices, amounts, dimensions and tags, and
             approve posting them.
           </label>
-          <div className='flex justify-end'>
+          <div className='flex sm:flex-row gap-2.5 w-full ms-auto sm:max-w-xl *:flex-1'>
+            <Button asChild size='lg'>
+              <Link to={ROUTES.DASHBOARD.CASH_IN.BATCH.NEW}>
+                <Upload className='size-5' />
+                New Entry
+              </Link>
+            </Button>
             <Button
               size='lg'
               variant='success'
-              className='w-full sm:max-w-xs'
               onClick={onSubmit}
               disabled={!submitAllowed || submitting}
               title={
@@ -241,11 +177,6 @@ export function YardInvoiceReview({
           </div>
         </div>
       )}
-
-      <p className='text-xs text-muted-foreground'>
-        Each invoice becomes one consolidated receipt. The invoice stays open
-        after posting; settlement is not part of this flow.
-      </p>
     </section>
   );
 }

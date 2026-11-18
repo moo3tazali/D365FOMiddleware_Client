@@ -1,6 +1,18 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
+vi.mock('@tanstack/react-router', () => ({
+  Link: ({ to, children }: { to: string; children: React.ReactNode }) => (
+    <a href={to}>{children}</a>
+  ),
+}));
+
+vi.mock('@/router', () => ({
+  ROUTES: {
+    DASHBOARD: { CASH_IN: { BATCH: { NEW: '/dashboard/cash-in/batch/new' } } },
+  },
+}));
+
 import type {
   YardInvoiceJob,
   YardInvoiceLine,
@@ -142,14 +154,18 @@ describe('YardInvoiceReview layout', () => {
 });
 
 describe('YardInvoiceReview', () => {
-  it('shows the detected format explicitly, the sheets, totals and rounding change', () => {
+  it('shows the detected format and the record counts like the other Cash In batches', () => {
     renderReview();
     expect(
       screen.getByText('Yards source workbook (per-sheet layouts)'),
     ).toBeTruthy();
-    expect(screen.getByText('Atlantic')).toBeTruthy();
-    expect(screen.getByText('131520.0001')).toBeTruthy();
-    expect(screen.getByText('-0.0001')).toBeTruthy();
+    expect(screen.getByText(/96 record\(s\), 96 invoice\(s\)/)).toBeTruthy();
+  });
+
+  it('shows the standard New Entry and Post to D365FO buttons', () => {
+    renderReview({ submitAllowed: true });
+    expect(screen.getByRole('link', { name: /New Entry/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Post to D365FO' })).toBeTruthy();
   });
 
   it('shows the workbook value and the D365 value side by side for a line', () => {
