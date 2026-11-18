@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { SharedDataBatchHeader as DataBatchHeader } from '@/components/batch/shared-data-batch-header';
 import { DataBatchTable } from './-components/data-batch-table';
 import { ErrorFallback } from '@/components/fallback/error-fallback';
@@ -20,12 +20,22 @@ export const Route = createFileRoute('/dashboard/cash-in/')({
 });
 
 function CashInPage() {
+  const yardInvoiceEnabled =
+    import.meta.env.VITE_YARD_INVOICE_UPLOAD_ENABLED === 'true';
   return (
     <div className='h-full space-y-5'>
       <DataBatchHeader
         title='Cash In'
         newUploadLink='/dashboard/cash-in/batch/new'
       />
+      {yardInvoiceEnabled && (
+        <p className='text-sm'>
+          Yard invoices:{' '}
+          <Link to='/dashboard/cash-in/yard-invoice' className='underline'>
+            review and submit an invoice upload
+          </Link>
+        </p>
+      )}
       <DataBatchTable />
     </div>
   );

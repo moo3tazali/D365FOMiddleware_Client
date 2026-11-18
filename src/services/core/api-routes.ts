@@ -182,6 +182,14 @@ export const API_ROUTES = {
         '/DataMigration/Cash/CashOut-Trucking-Document',
       CASH_IN_SHIPLINK_DOCUMENT: '/DataMigration/Cash/CashIn-Shiplink-Document',
       CASH_IN_YARD_DOCUMENT: '/DataMigration/Cash/CashIn-Yard-Document',
+      CASH_IN_YARD_INVOICE_PREVIEW:
+        '/DataMigration/Cash/CashIn-Yard-Invoice-Preview',
+      CASH_IN_YARD_INVOICE_JOB:
+        '/DataMigration/Cash/CashIn-Yard-Invoice-Jobs/:jobId',
+      CASH_IN_YARD_INVOICE_JOB_SUBMIT:
+        '/DataMigration/Cash/CashIn-Yard-Invoice-Jobs/:jobId/submit',
+      CASH_IN_YARD_INVOICE_JOB_LINES:
+        '/DataMigration/Cash/CashIn-Yard-Invoice-Jobs/:jobId/invoices',
       POST_TO_DFO: '/DataMigration/Cash/PostToDFO',
       POSTING_QUEUE: '/DataMigration/Cash/posting-queue',
       POSTING_QUEUE_PAUSE: '/DataMigration/Cash/posting-queue/pause',
