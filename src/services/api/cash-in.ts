@@ -78,7 +78,11 @@ export class CashIn {
         throw new Error(job.lastError ?? 'The workbook could not be reviewed.');
       }
       if (job.batchId) {
-        return { id: job.batchId } as UploadResponse;
+        // Return the full batch, as the other uploads do, so the batch page has every field.
+        return syncService.fetch<TDataBatch>(
+          API_ROUTES.DATA_MIGRATION.DATA_BATCH.ONE,
+          { params: { batchId: job.batchId } },
+        ) as Promise<UploadResponse>;
       }
     }
     throw new Error(
