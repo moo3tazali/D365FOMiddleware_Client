@@ -13,7 +13,7 @@ export const useDataBatchAction = (data: TDataBatch) => {
   const user = useAuth((state) => state.user);
   const canDelete = Boolean(
     user?.role === 'ADMIN' ||
-      (Boolean(user?.id) && data.createdByUserId === user?.id),
+    (Boolean(user?.id) && data.createdByUserId === user?.id),
   );
 
   const navigate = useNavigate();
