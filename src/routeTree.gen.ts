@@ -44,7 +44,6 @@ import { Route as DashboardQueuesQueueNamePageRouteImport } from './routes/dashb
 import { Route as DashboardLedgerBatchPageRouteImport } from './routes/dashboard/ledger/batch/page'
 import { Route as DashboardCashOutBatchPageRouteImport } from './routes/dashboard/cash-out/batch/page'
 import { Route as DashboardCashManagementBatchPageRouteImport } from './routes/dashboard/cash-management/batch/page'
-import { Route as DashboardCashInYardInvoicePageRouteImport } from './routes/dashboard/cash-in/yard-invoice/page'
 import { Route as DashboardCashInBatchPageRouteImport } from './routes/dashboard/cash-in/batch/page'
 import { Route as DashboardAccountsReceivableBatchPageRouteImport } from './routes/dashboard/accounts-receivable/batch/page'
 import { Route as DashboardAccountsPayableBatchPageRouteImport } from './routes/dashboard/accounts-payable/batch/page'
@@ -272,12 +271,6 @@ const DashboardCashManagementBatchPageRoute =
     id: '/',
     path: '/',
     getParentRoute: () => DashboardCashManagementBatchLayoutRoute,
-  } as any)
-const DashboardCashInYardInvoicePageRoute =
-  DashboardCashInYardInvoicePageRouteImport.update({
-    id: '/cash-in/yard-invoice/',
-    path: '/cash-in/yard-invoice/',
-    getParentRoute: () => DashboardLayoutRoute,
   } as any)
 const DashboardCashInBatchPageRoute =
   DashboardCashInBatchPageRouteImport.update({
@@ -548,7 +541,6 @@ export interface FileRoutesByFullPath {
   '/dashboard/accounts-payable/batch/': typeof DashboardAccountsPayableBatchPageRoute
   '/dashboard/accounts-receivable/batch/': typeof DashboardAccountsReceivableBatchPageRoute
   '/dashboard/cash-in/batch/': typeof DashboardCashInBatchPageRoute
-  '/dashboard/cash-in/yard-invoice': typeof DashboardCashInYardInvoicePageRoute
   '/dashboard/cash-management/batch/': typeof DashboardCashManagementBatchPageRoute
   '/dashboard/cash-out/batch/': typeof DashboardCashOutBatchPageRoute
   '/dashboard/ledger/batch/': typeof DashboardLedgerBatchPageRoute
@@ -608,7 +600,6 @@ export interface FileRoutesByTo {
   '/dashboard/accounts-payable/batch': typeof DashboardAccountsPayableBatchPageRoute
   '/dashboard/accounts-receivable/batch': typeof DashboardAccountsReceivableBatchPageRoute
   '/dashboard/cash-in/batch': typeof DashboardCashInBatchPageRoute
-  '/dashboard/cash-in/yard-invoice': typeof DashboardCashInYardInvoicePageRoute
   '/dashboard/cash-management/batch': typeof DashboardCashManagementBatchPageRoute
   '/dashboard/cash-out/batch': typeof DashboardCashOutBatchPageRoute
   '/dashboard/ledger/batch': typeof DashboardLedgerBatchPageRoute
@@ -685,7 +676,6 @@ export interface FileRoutesById {
   '/dashboard/accounts-payable/batch/': typeof DashboardAccountsPayableBatchPageRoute
   '/dashboard/accounts-receivable/batch/': typeof DashboardAccountsReceivableBatchPageRoute
   '/dashboard/cash-in/batch/': typeof DashboardCashInBatchPageRoute
-  '/dashboard/cash-in/yard-invoice/': typeof DashboardCashInYardInvoicePageRoute
   '/dashboard/cash-management/batch/': typeof DashboardCashManagementBatchPageRoute
   '/dashboard/cash-out/batch/': typeof DashboardCashOutBatchPageRoute
   '/dashboard/ledger/batch/': typeof DashboardLedgerBatchPageRoute
@@ -761,7 +751,6 @@ export interface FileRouteTypes {
     | '/dashboard/accounts-payable/batch/'
     | '/dashboard/accounts-receivable/batch/'
     | '/dashboard/cash-in/batch/'
-    | '/dashboard/cash-in/yard-invoice'
     | '/dashboard/cash-management/batch/'
     | '/dashboard/cash-out/batch/'
     | '/dashboard/ledger/batch/'
@@ -821,7 +810,6 @@ export interface FileRouteTypes {
     | '/dashboard/accounts-payable/batch'
     | '/dashboard/accounts-receivable/batch'
     | '/dashboard/cash-in/batch'
-    | '/dashboard/cash-in/yard-invoice'
     | '/dashboard/cash-management/batch'
     | '/dashboard/cash-out/batch'
     | '/dashboard/ledger/batch'
@@ -897,7 +885,6 @@ export interface FileRouteTypes {
     | '/dashboard/accounts-payable/batch/'
     | '/dashboard/accounts-receivable/batch/'
     | '/dashboard/cash-in/batch/'
-    | '/dashboard/cash-in/yard-invoice/'
     | '/dashboard/cash-management/batch/'
     | '/dashboard/cash-out/batch/'
     | '/dashboard/ledger/batch/'
@@ -1189,13 +1176,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/cash-management/batch/'
       preLoaderRoute: typeof DashboardCashManagementBatchPageRouteImport
       parentRoute: typeof DashboardCashManagementBatchLayoutRoute
-    }
-    '/dashboard/cash-in/yard-invoice/': {
-      id: '/dashboard/cash-in/yard-invoice/'
-      path: '/cash-in/yard-invoice'
-      fullPath: '/dashboard/cash-in/yard-invoice'
-      preLoaderRoute: typeof DashboardCashInYardInvoicePageRouteImport
-      parentRoute: typeof DashboardLayoutRoute
     }
     '/dashboard/cash-in/batch/': {
       id: '/dashboard/cash-in/batch/'
@@ -1796,7 +1776,6 @@ interface DashboardLayoutRouteChildren {
   DashboardQueuesPageRoute: typeof DashboardQueuesPageRoute
   DashboardSettingsPageRoute: typeof DashboardSettingsPageRoute
   DashboardVendorPageRoute: typeof DashboardVendorPageRoute
-  DashboardCashInYardInvoicePageRoute: typeof DashboardCashInYardInvoicePageRoute
   DashboardQueuesQueueNamePageRoute: typeof DashboardQueuesQueueNamePageRoute
 }
 
@@ -1826,7 +1805,6 @@ const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
   DashboardQueuesPageRoute: DashboardQueuesPageRoute,
   DashboardSettingsPageRoute: DashboardSettingsPageRoute,
   DashboardVendorPageRoute: DashboardVendorPageRoute,
-  DashboardCashInYardInvoicePageRoute: DashboardCashInYardInvoicePageRoute,
   DashboardQueuesQueueNamePageRoute: DashboardQueuesQueueNamePageRoute,
 }
 
