@@ -182,6 +182,8 @@ export const API_ROUTES = {
         '/DataMigration/Cash/CashOut-Trucking-Document',
       CASH_IN_SHIPLINK_DOCUMENT: '/DataMigration/Cash/CashIn-Shiplink-Document',
       CASH_IN_YARD_DOCUMENT: '/DataMigration/Cash/CashIn-Yard-Document',
+      CASH_IN_SHIPLINK_INVOICE_PREVIEW:
+        'DataMigration/Cash/CashIn-Shiplink-Invoice-Preview',
       CASH_IN_YARD_INVOICE_PREVIEW:
         '/DataMigration/Cash/CashIn-Yard-Invoice-Preview',
       CASH_IN_YARD_INVOICE_JOB:

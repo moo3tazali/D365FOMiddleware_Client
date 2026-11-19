@@ -141,9 +141,17 @@ interface UploadBody {
 
 class YardInvoiceApi {
   /** Starts a background review. Returns the job in REVIEWING; poll getJob until it settles. */
-  public startReview(file: File, companyId: string): Promise<YardInvoiceJob> {
+  public startReview(
+    file: File,
+    companyId: string,
+    flow: 'YARD' | 'SHIPLINK' = 'YARD',
+  ): Promise<YardInvoiceJob> {
+    const route =
+      flow === 'SHIPLINK'
+        ? API_ROUTES.DATA_MIGRATION.CASH.CASH_IN_SHIPLINK_INVOICE_PREVIEW
+        : API_ROUTES.DATA_MIGRATION.CASH.CASH_IN_YARD_INVOICE_PREVIEW;
     return sync.save<YardInvoiceJob, UploadBody>(
-      API_ROUTES.DATA_MIGRATION.CASH.CASH_IN_YARD_INVOICE_PREVIEW,
+      route,
       { companyId, dataFile: file },
       { formData: true },
     );

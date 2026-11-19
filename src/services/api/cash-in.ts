@@ -3,6 +3,11 @@ import { API_ROUTES } from '../core/api-routes';
 import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
 import { yardInvoiceApi } from './yard-invoice';
 
+/** ShipLink invoice upload is off unless VITE_SHIPLINK_INVOICE_UPLOAD_ENABLED is 'true'. */
+function isShiplinkInvoiceUploadEnabled(): boolean {
+  return import.meta.env.VITE_SHIPLINK_INVOICE_UPLOAD_ENABLED === 'true';
+}
+
 const YARD_REVIEW_POLL_MS = 3000;
 const YARD_REVIEW_MAX_POLLS = 600;
 
@@ -43,6 +48,13 @@ export class CashIn {
     if (Number(type) === this.UPLOAD_TYPES.YARD_DOC) {
       return this._uploadYard(data);
     }
+    // ShipLink uses the same eight-column template and the same review, behind its own flag.
+    if (
+      Number(type) === this.UPLOAD_TYPES.SHIPLINK_DOC &&
+      isShiplinkInvoiceUploadEnabled()
+    ) {
+      return this._uploadYard(data, 'SHIPLINK');
+    }
 
     const apiRoute = await this._getUploadApiRoute(type);
 
@@ -66,10 +78,14 @@ export class CashIn {
   };
 
   /** Starts the Yard review and waits until the batch exists. */
-  private async _uploadYard(data: UploadData): Promise<UploadResponse> {
+  private async _uploadYard(
+    data: UploadData,
+    flow: 'YARD' | 'SHIPLINK' = 'YARD',
+  ): Promise<UploadResponse> {
     const started = await yardInvoiceApi.startReview(
       data.dataFile,
       data.companyId,
+      flow,
     );
     for (let attempt = 0; attempt < YARD_REVIEW_MAX_POLLS; attempt++) {
       await new Promise((resolve) => setTimeout(resolve, YARD_REVIEW_POLL_MS));
