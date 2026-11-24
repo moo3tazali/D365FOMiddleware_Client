@@ -1,191 +1,28 @@
-import { useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
-import { useQueryClient } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
-
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useServices } from '@/hooks/use-services';
-import type { TDataBatch } from '@/interfaces/data-batch';
-import { API_ROUTES } from '@/services/core/api-routes';
-import { sync } from '@/services/core/sync';
 import {
   MAS_REVENUE_COMPANY_ID,
   MAS_REVENUE_TEMPLATE_LABEL,
-  masRevenueApi,
-  type MasRevenueLinesPage,
-  type MasRevenueReview,
 } from '@/services/api/mas-revenue';
-import { ROUTES } from '@/router';
 
-import { useBatchQueryData } from '../../-hooks/use-batch-query-data';
 import {
-  createBatchGate,
-  issuesToCsv,
-  newIdempotencyKey,
-  normalizeCurrencyInput,
-  totalsRows,
-} from './mas-revenue-view-model';
-
-const LINES_PAGE_SIZE = 50;
+  MAS_LINES_PAGE_SIZE,
+  type MasRevenueReviewState,
+} from './use-mas-revenue-review';
+import { totalsRows } from './mas-revenue-view-model';
 
 /**
- * MAS Revenue Cash In flow, shown in place of the generic uploader when this target
- * is selected. Three separate stages:
- *   1. Upload and review: validates the workbook and shows rows, errors and totals.
- *   2. Create batch: builds the Cash In batch from the reviewed snapshot.
- *   3. Send to D365FO: done on the batch page, with the existing PostToDFO action.
+ * MAS Revenue review, shown in the results area of the standard Cash In page. The
+ * file comes from the standard upload form and "Create batch" is in the standard
+ * footer. This component only shows the review and its blockers.
  */
-export const MasRevenueFlow = () => {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { dataBatch } = useServices();
-  const [, setBatch] = useBatchQueryData();
-
-  const [file, setFile] = useState<File | null>(null);
-  const [currency, setCurrency] = useState('');
-  const [review, setReview] = useState<MasRevenueReview | null>(null);
-  const [idempotencyKey, setIdempotencyKey] = useState<string | null>(null);
-  const [lines, setLines] = useState<MasRevenueLinesPage | null>(null);
-  const [linesPageNumber, setLinesPageNumber] = useState(1);
-  const [busy, setBusy] = useState<
-    'validate' | 'submit' | 'template' | 'guide' | 'lines' | null
-  >(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const currencyCode = normalizeCurrencyInput(currency);
-  const gate = createBatchGate(review, currency);
-
-  /** Any change to the file or currency invalidates the review, so a stale preview cannot be submitted. */
-  const resetReview = () => {
-    setReview(null);
-    setIdempotencyKey(null);
-    setLines(null);
-    setLinesPageNumber(1);
-    setError(null);
-  };
-
-  const handleFile = (next: File | null) => {
-    setFile(next);
-    resetReview();
-  };
-
-  const handleCurrency = (value: string) => {
-    setCurrency(value.toUpperCase());
-    resetReview();
-  };
-
-  const handleValidate = async () => {
-    if (!file || !currencyCode) return;
-    setBusy('validate');
-    setError(null);
-    try {
-      const result = await masRevenueApi.preview(file, currencyCode);
-      setReview(result);
-      setIdempotencyKey(newIdempotencyKey());
-      setLinesPageNumber(1);
-      setLines(
-        await masRevenueApi.getLines(result.reviewId, 1, LINES_PAGE_SIZE),
-      );
-    } catch (caught) {
-      setError(messageOf(caught, 'The workbook could not be reviewed.'));
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const handleLinesPage = async (pageNumber: number) => {
-    if (!review) return;
-    setBusy('lines');
-    try {
-      setLines(
-        await masRevenueApi.getLines(
-          review.reviewId,
-          pageNumber,
-          LINES_PAGE_SIZE,
-        ),
-      );
-      setLinesPageNumber(pageNumber);
-    } catch (caught) {
-      setError(messageOf(caught, 'The receipts could not be loaded.'));
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const handleCreateBatch = async () => {
-    if (!review || !idempotencyKey || !gate.allowed) return;
-    setBusy('submit');
-    setError(null);
-    try {
-      const submitted = await masRevenueApi.submit(review.reviewId, {
-        reviewVersion: review.reviewVersion,
-        payloadHash: review.payloadHash,
-        idempotencyKey,
-      });
-      if (!submitted.batchId) {
-        throw new Error(
-          'The batch was not created. Review the messages and try again.',
-        );
-      }
-      const batch = await sync.fetch<TDataBatch>(
-        API_ROUTES.DATA_MIGRATION.DATA_BATCH.ONE,
-        {
-          params: { batchId: submitted.batchId },
-        },
-      );
-      setBatch(batch);
-      await queryClient.invalidateQueries({ queryKey: dataBatch.queryKey });
-      toast.success(
-        'MAS Revenue batch created. Send it to D365FO from the batch page.',
-      );
-      navigate({
-        to: ROUTES.DASHBOARD.CASH_IN.BATCH.VIEW,
-        params: { batchId: submitted.batchId },
-      });
-    } catch (caught) {
-      setError(messageOf(caught, 'The batch could not be created.'));
-      // Refresh the review so the current blockers are shown, not a stale list.
-      try {
-        setReview(await masRevenueApi.getReview(review.reviewId));
-      } catch {
-        // The original error is already shown.
-      }
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const handleDownload = async (kind: 'template' | 'guide') => {
-    setBusy(kind);
-    try {
-      const { blob, fileName } =
-        kind === 'template'
-          ? await masRevenueApi.downloadTemplate()
-          : await masRevenueApi.downloadGuide();
-      saveBlob(blob, fileName);
-    } catch (caught) {
-      toast.error(messageOf(caught, 'The download failed.'));
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const handleExportErrors = () => {
-    if (!review?.summary) return;
-    const text = issuesToCsv(review.summary.issues);
-    saveBlob(
-      new Blob([text], { type: 'text/csv;charset=utf-8' }),
-      `MAS-Revenue-upload-errors-${review.fileName.replace(/\.xlsx$/i, '')}.csv`,
-    );
-  };
-
+export const MasRevenueReview = ({ mas }: { mas: MasRevenueReviewState }) => {
+  const { review, lines, linesPageNumber, busy, error, gate } = mas;
   const summary = review?.summary ?? null;
   const totals = totalsRows(review);
   const pageCount = lines
-    ? Math.max(1, Math.ceil(lines.total / LINES_PAGE_SIZE))
+    ? Math.max(1, Math.ceil(lines.total / MAS_LINES_PAGE_SIZE))
     : 1;
 
   return (
@@ -200,28 +37,25 @@ export const MasRevenueFlow = () => {
               variant='default'
               className='bg-primary text-primary-foreground text-sm font-semibold'
             >
-              Company: MAS (mas)
+              Company: MAS ({MAS_REVENUE_COMPANY_ID})
             </Badge>
             <Badge variant='outline'>
               Template {MAS_REVENUE_TEMPLATE_LABEL}
             </Badge>
           </div>
           <h2 id='mas-revenue-heading' className='text-lg font-semibold'>
-            MAS Revenue Cash In
+            MAS Revenue Cash In review
           </h2>
           <p className='text-sm text-muted-foreground'>
-            Direct cash revenue: each receipt debits its cash account and
-            credits the revenue account for its Revenue type, with VAT credited
-            once through the tax configuration. Credit-customer invoices are not
-            supported. The company is fixed to{' '}
-            {MAS_REVENUE_COMPANY_ID.toUpperCase()}.
+            Each receipt takes the currency of its D365 cash account.
+            Credit-customer invoices are not supported.
           </p>
         </div>
         <div className='flex flex-wrap gap-2'>
           <Button
             type='button'
             variant='outline'
-            onClick={() => handleDownload('template')}
+            onClick={() => mas.download('template')}
             disabled={busy !== null}
           >
             Download Upload Template
@@ -229,7 +63,7 @@ export const MasRevenueFlow = () => {
           <Button
             type='button'
             variant='ghost'
-            onClick={() => handleDownload('guide')}
+            onClick={() => mas.download('guide')}
             disabled={busy !== null}
           >
             Column guide
@@ -244,55 +78,8 @@ export const MasRevenueFlow = () => {
         </Alert>
       )}
 
-      <div className='space-y-4'>
-        <h3 className='text-sm font-semibold'>1. Upload and review</h3>
-        <div className='grid gap-4 md:grid-cols-2'>
-          <label className='space-y-1.5'>
-            <span className='text-sm font-medium'>Transaction currency</span>
-            <Input
-              value={currency}
-              onChange={(event) => handleCurrency(event.target.value)}
-              placeholder='For example EGP'
-              maxLength={3}
-              autoComplete='off'
-              aria-describedby='mas-currency-help'
-              aria-invalid={currency !== '' && currencyCode === null}
-              disabled={busy !== null}
-            />
-            <span
-              id='mas-currency-help'
-              className='block text-xs text-muted-foreground'
-            >
-              Required. The workbook has no currency column, so choose the
-              currency of every receipt in this file.
-            </span>
-          </label>
-          <label className='space-y-1.5'>
-            <span className='text-sm font-medium'>Workbook (.xlsx)</span>
-            <input
-              type='file'
-              accept='.xlsx'
-              className='block w-full text-sm file:mr-3 file:rounded-md file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-sm file:font-medium'
-              onChange={(event) => handleFile(event.target.files?.[0] ?? null)}
-              disabled={busy !== null}
-            />
-            <span className='block text-xs text-muted-foreground'>
-              Sheet "Row Data", up to 10 MB. Use the downloaded template.
-            </span>
-          </label>
-        </div>
-        <Button
-          type='button'
-          onClick={handleValidate}
-          disabled={!file || currencyCode === null || busy !== null}
-        >
-          {busy === 'validate' ? 'Validating…' : 'Validate & Review'}
-        </Button>
-      </div>
-
       {review && summary && (
         <div className='space-y-5'>
-          <h3 className='text-sm font-semibold'>2. Review</h3>
           <dl className='grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4'>
             <Fact label='File' value={review.fileName} />
             <Fact label='Sheet' value={summary.sourceSheet} />
@@ -386,7 +173,7 @@ export const MasRevenueFlow = () => {
                   type='button'
                   variant='outline'
                   size='sm'
-                  onClick={handleExportErrors}
+                  onClick={mas.exportErrors}
                 >
                   Export errors (CSV)
                 </Button>
@@ -452,7 +239,9 @@ export const MasRevenueFlow = () => {
                         </td>
                         <td className='px-2 py-1.5'>{line.invoiceNumber}</td>
                         <td className='px-2 py-1.5'>{line.transactionDate}</td>
-                        <td className='px-2 py-1.5'>{line.currency}</td>
+                        <td className='px-2 py-1.5'>
+                          {line.currency || 'unresolved'}
+                        </td>
                         <td className='px-2 py-1.5 tabular-nums'>
                           {line.totalMajor}
                         </td>
@@ -471,7 +260,7 @@ export const MasRevenueFlow = () => {
                   variant='outline'
                   size='sm'
                   disabled={busy !== null || linesPageNumber <= 1}
-                  onClick={() => handleLinesPage(linesPageNumber - 1)}
+                  onClick={() => mas.loadLinesPage(linesPageNumber - 1)}
                 >
                   Previous
                 </Button>
@@ -483,7 +272,7 @@ export const MasRevenueFlow = () => {
                   variant='outline'
                   size='sm'
                   disabled={busy !== null || linesPageNumber >= pageCount}
-                  onClick={() => handleLinesPage(linesPageNumber + 1)}
+                  onClick={() => mas.loadLinesPage(linesPageNumber + 1)}
                 >
                   Next
                 </Button>
@@ -491,27 +280,18 @@ export const MasRevenueFlow = () => {
             </div>
           )}
 
-          <div className='space-y-3 border-t border-border pt-4'>
-            <h3 className='text-sm font-semibold'>3. Create batch</h3>
-            <p className='text-xs text-muted-foreground'>
-              Creating the batch stores it for review. It does not send anything
-              to D365FO. Send the batch from its page when you are ready.
-            </p>
-            {!gate.allowed && gate.reasons.length > 0 && (
+          {!gate.allowed && gate.reasons.length > 0 && (
+            <div className='space-y-2 border-t border-border pt-4'>
+              <h4 className='text-sm font-medium'>
+                Create batch is not available yet
+              </h4>
               <ul className='list-disc pl-5 text-sm text-muted-foreground'>
                 {gate.reasons.map((reason) => (
                   <li key={reason}>{reason}</li>
                 ))}
               </ul>
-            )}
-            <Button
-              type='button'
-              onClick={handleCreateBatch}
-              disabled={!gate.allowed || busy !== null}
-            >
-              {busy === 'submit' ? 'Creating batch…' : 'Create batch'}
-            </Button>
-          </div>
+            </div>
+          )}
         </div>
       )}
     </section>
@@ -524,18 +304,3 @@ const Fact = ({ label, value }: { label: string; value: string }) => (
     <dd className='break-all font-medium'>{value}</dd>
   </div>
 );
-
-function messageOf(error: unknown, fallback: string): string {
-  return error instanceof Error && error.message ? error.message : fallback;
-}
-
-function saveBlob(blob: Blob, fileName: string): void {
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = fileName;
-  document.body.appendChild(anchor);
-  anchor.click();
-  anchor.remove();
-  URL.revokeObjectURL(url);
-}

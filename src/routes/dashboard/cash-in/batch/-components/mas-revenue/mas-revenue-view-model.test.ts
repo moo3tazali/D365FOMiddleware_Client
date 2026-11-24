@@ -10,7 +10,6 @@ import {
   csvCell,
   issuesToCsv,
   newIdempotencyKey,
-  normalizeCurrencyInput,
   totalsRows,
 } from './mas-revenue-view-model';
 
@@ -20,7 +19,6 @@ function review(overrides: Partial<MasRevenueReview> = {}): MasRevenueReview {
     company: 'mas',
     fileName: 'upload.xlsx',
     templateVersion: 1,
-    transactionCurrency: 'EGP',
     status: 'PREVIEWED',
     canSubmit: true,
     uploadValid: true,
@@ -37,27 +35,15 @@ function review(overrides: Partial<MasRevenueReview> = {}): MasRevenueReview {
   };
 }
 
-describe('normalizeCurrencyInput', () => {
-  it('accepts a three-letter code in any case and trims it', () => {
-    expect(normalizeCurrencyInput(' egp ')).toBe('EGP');
-  });
-
-  it('rejects anything that is not three letters', () => {
-    expect(normalizeCurrencyInput('EG')).toBeNull();
-    expect(normalizeCurrencyInput('E1P')).toBeNull();
-    expect(normalizeCurrencyInput('')).toBeNull();
-  });
-});
-
 describe('createBatchGate', () => {
   it('stays closed until a file has been reviewed', () => {
-    const gate = createBatchGate(null, 'EGP');
+    const gate = createBatchGate(null);
     expect(gate.allowed).toBe(false);
     expect(gate.reasons[0]).toMatch(/Upload and validate/);
   });
 
-  it('opens for a valid review with no blockers and a chosen currency', () => {
-    expect(createBatchGate(review(), 'EGP')).toEqual({
+  it('opens for a valid review with no blockers', () => {
+    expect(createBatchGate(review())).toEqual({
       allowed: true,
       reasons: [],
     });
@@ -69,7 +55,6 @@ describe('createBatchGate', () => {
         canSubmit: false,
         blockers: ['GL JournalName is not configured'],
       }),
-      'EGP',
     );
     expect(gate.allowed).toBe(false);
     expect(gate.reasons).toContain('GL JournalName is not configured');
@@ -78,22 +63,15 @@ describe('createBatchGate', () => {
   it('refuses a review whose upload has row issues', () => {
     const gate = createBatchGate(
       review({ uploadValid: false, canSubmit: false }),
-      'EGP',
     );
     expect(gate.allowed).toBe(false);
     expect(gate.reasons.join(' ')).toMatch(/row issues or no receipts/);
   });
 
   it('refuses a review that already created a batch', () => {
-    const gate = createBatchGate(review({ batchId: 'b1' }), 'EGP');
+    const gate = createBatchGate(review({ batchId: 'b1' }));
     expect(gate.allowed).toBe(false);
     expect(gate.reasons.join(' ')).toMatch(/already created batch b1/);
-  });
-
-  it('requires an explicit currency even when the review is otherwise valid', () => {
-    const gate = createBatchGate(review(), '');
-    expect(gate.allowed).toBe(false);
-    expect(gate.reasons.join(' ')).toMatch(/Choose the transaction currency/);
   });
 });
 
@@ -148,7 +126,6 @@ describe('totalsRows', () => {
           scannedDataRows: 3,
           nonTransactionRows: { blank: 0, zeroPlaceholder: 0, cancelled: 0 },
           accounting: { transactionRowsRead: 3, accepted: 3, rejected: 0 },
-          transactionCurrency: 'EGP',
           totalsByCurrency: {
             EGP: { value: '4800.00', vat: '672.00', total: '5472.00' },
           },

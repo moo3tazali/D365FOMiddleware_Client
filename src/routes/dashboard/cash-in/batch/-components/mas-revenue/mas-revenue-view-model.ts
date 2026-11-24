@@ -3,14 +3,6 @@ import type {
   MasRevenueRowIssue,
 } from '@/services/api/mas-revenue';
 
-const CURRENCY_PATTERN = /^[A-Z]{3}$/;
-
-/** Normalizes a currency entry. Returns null when it is not a three-letter code. */
-export function normalizeCurrencyInput(value: string): string | null {
-  const code = value.trim().toUpperCase();
-  return CURRENCY_PATTERN.test(code) ? code : null;
-}
-
 export interface CreateBatchGate {
   allowed: boolean;
   /** Every reason the batch cannot be created yet, shown to the user in order. */
@@ -23,16 +15,10 @@ export interface CreateBatchGate {
  */
 export function createBatchGate(
   review: MasRevenueReview | null,
-  currency: string,
 ): CreateBatchGate {
   const reasons: string[] = [];
   if (!review) {
     return { allowed: false, reasons: ['Upload and validate a file first.'] };
-  }
-  if (normalizeCurrencyInput(currency) === null) {
-    reasons.push(
-      'Choose the transaction currency (three letters, for example EGP).',
-    );
   }
   if (review.batchId) {
     reasons.push(`This review already created batch ${review.batchId}.`);

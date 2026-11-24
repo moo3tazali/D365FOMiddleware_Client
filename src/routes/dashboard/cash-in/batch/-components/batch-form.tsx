@@ -29,7 +29,6 @@ import { CompanyFormField } from '@/components/company-form-field';
 import { Progress } from '@/components/ui/progress';
 import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/data-batch';
 import { cn } from '@/lib/utils';
-import { MasRevenueFlow } from './mas-revenue/mas-revenue-flow';
 import { isMasRevenueTarget, useCashInTarget } from './cash-in-target-context';
 
 export const BatchForm = () => {
@@ -82,65 +81,66 @@ export const BatchForm = () => {
           />
         </div>
 
-        {isMas && <MasRevenueFlow />}
-        {!isMas && (
-          <FormField
-            control={form.control}
-            name='dataFile'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel asChild>
-                  <span>Upload New Batch</span>
-                </FormLabel>
-                <FormControl>
-                  <FileUploader
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    dropzoneOptions={{
-                      accept: {
-                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-                          ['.xlsx', '.xls'],
-                      },
-                      multiple: false,
-                      maxFiles: 1,
-                      maxSize: 1024 * 1024 * 250, // 250MB
-                    }}
-                    className='relative bg-background rounded-xl'
-                    disabled={form.isDisabled}
-                  >
-                    <FileInput id='dataFile'>
-                      <DropZoneContent isDisabled={form.isDisabled} />
-                    </FileInput>
-                    <FileUploaderContent>
-                      {field.value &&
-                        field.value.length > 0 &&
-                        field.value.map((file, i) => (
-                          <FileUploaderItem index={i} key={i}>
-                            <div className='flex items-center gap-2'>
-                              <div className='flex size-7 shrink-0 items-center justify-center rounded-md bg-primary/10'>
-                                <Paperclip className='size-3.5 text-primary' />
-                              </div>
-                              <div className='min-w-0 flex-1 space-y-1.5'>
-                                <span className='block max-w-xs truncate text-sm font-medium sm:max-w-full'>
-                                  {file.name}
-                                </span>
-                                <Progress
-                                  size='xs'
-                                  progress={form.uploadProgress}
-                                />
-                              </div>
+        <FormField
+          control={form.control}
+          name='dataFile'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel asChild>
+                <span>Upload New Batch</span>
+              </FormLabel>
+              <FormControl>
+                <FileUploader
+                  value={field.value}
+                  onValueChange={(files) => {
+                    field.onChange(files);
+                    // A new file invalidates any MAS review of the previous file.
+                    if (isMas) targetContext?.mas.reset();
+                  }}
+                  dropzoneOptions={{
+                    accept: {
+                      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                        ['.xlsx', '.xls'],
+                    },
+                    multiple: false,
+                    maxFiles: 1,
+                    maxSize: 1024 * 1024 * 250, // 250MB
+                  }}
+                  className='relative bg-background rounded-xl'
+                  disabled={form.isDisabled}
+                >
+                  <FileInput id='dataFile'>
+                    <DropZoneContent isDisabled={form.isDisabled} />
+                  </FileInput>
+                  <FileUploaderContent>
+                    {field.value &&
+                      field.value.length > 0 &&
+                      field.value.map((file, i) => (
+                        <FileUploaderItem index={i} key={i}>
+                          <div className='flex items-center gap-2'>
+                            <div className='flex size-7 shrink-0 items-center justify-center rounded-md bg-primary/10'>
+                              <Paperclip className='size-3.5 text-primary' />
                             </div>
-                          </FileUploaderItem>
-                        ))}
-                    </FileUploaderContent>
-                  </FileUploader>
-                </FormControl>
+                            <div className='min-w-0 flex-1 space-y-1.5'>
+                              <span className='block max-w-xs truncate text-sm font-medium sm:max-w-full'>
+                                {file.name}
+                              </span>
+                              <Progress
+                                size='xs'
+                                progress={form.uploadProgress}
+                              />
+                            </div>
+                          </div>
+                        </FileUploaderItem>
+                      ))}
+                  </FileUploaderContent>
+                </FileUploader>
+              </FormControl>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <button
           type='submit'

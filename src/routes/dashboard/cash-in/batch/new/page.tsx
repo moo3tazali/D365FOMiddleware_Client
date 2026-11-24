@@ -5,7 +5,12 @@ import { SharedBatchHeader as BatchHeader } from '@/components/batch/shared-batc
 import { BatchForm } from '../-components/batch-form';
 import { BatchResult } from '../-components/batch-result';
 import { BatchFooter } from '../-components/batch-footer';
-import { CashInTargetContext } from '../-components/cash-in-target-context';
+import {
+  CashInTargetContext,
+  isMasRevenueTarget,
+} from '../-components/cash-in-target-context';
+import { MasRevenueReview } from '../-components/mas-revenue/mas-revenue-flow';
+import { useMasRevenueReview } from '../-components/mas-revenue/use-mas-revenue-review';
 
 export const Route = createFileRoute('/dashboard/cash-in/batch/new/')({
   component: NewBatchPage,
@@ -13,13 +18,15 @@ export const Route = createFileRoute('/dashboard/cash-in/batch/new/')({
 
 function NewBatchPage() {
   const [target, setTarget] = useState('');
+  const mas = useMasRevenueReview();
+  const isMas = isMasRevenueTarget(target);
 
   return (
-    <CashInTargetContext.Provider value={{ target, setTarget }}>
+    <CashInTargetContext.Provider value={{ target, setTarget, mas }}>
       <div className='h-full flex flex-col gap-5'>
         <BatchHeader />
         <BatchForm />
-        <BatchResult />
+        {isMas ? <MasRevenueReview mas={mas} /> : <BatchResult />}
         <BatchFooter />
       </div>
     </CashInTargetContext.Provider>

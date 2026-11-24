@@ -11,6 +11,10 @@ import { useMutation } from '@/hooks/use-mutation';
 import { useBatchQueryData } from './use-batch-query-data';
 import { ROUTES } from '@/router';
 import { useParsedPagination } from '@/hooks/use-parsed-pagination';
+import {
+  isMasRevenueTarget,
+  useCashInTarget,
+} from '../-components/cash-in-target-context';
 
 const acceptedTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -66,6 +70,7 @@ export const useBatchForm = () => {
   });
 
   const [uploadProgress, setUploadProgress] = useState(0);
+  const targetContext = useCashInTarget();
 
   const handleCompanyChange = () => {
     // Company-dependent selections no longer apply to the new company.
@@ -90,11 +95,20 @@ export const useBatchForm = () => {
 
   const navigate = useNavigate();
 
-  const isDisabled = useMemo(() => !!batch || isPending, [batch, isPending]);
+  const isDisabled = useMemo(
+    () => !!batch || isPending || targetContext?.mas.busy === 'validate',
+    [batch, isPending, targetContext?.mas.busy],
+  );
 
   const onSubmit = useCallback(
     (values: FormData) => {
       const files = values.dataFile!;
+
+      // MAS Revenue: the same Upload runs the review; the batch is created from the footer.
+      if (isMasRevenueTarget(values.type)) {
+        void targetContext?.mas.validate(files[0]);
+        return;
+      }
 
       const options = {
         data: {
@@ -119,7 +133,7 @@ export const useBatchForm = () => {
         });
       });
     },
-    [startUpload, navigate, setBatch, dismissLoading],
+    [startUpload, navigate, setBatch, dismissLoading, targetContext],
   );
 
   return {

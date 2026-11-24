@@ -29,7 +29,6 @@ export interface MasRevenueSummary {
     accepted: number;
     rejected: number;
   };
-  transactionCurrency: string;
   totalsByCurrency: Record<
     string,
     { value: string; vat: string; total: string }
@@ -51,7 +50,6 @@ export interface MasRevenueReview {
   company: string;
   fileName: string;
   templateVersion: number;
-  transactionCurrency: string;
   status: MasRevenueReviewStatus;
   /** Submit is possible only when the upload is valid and configuration is complete. */
   canSubmit: boolean;
@@ -118,13 +116,12 @@ export class MasRevenueApi {
    * Stage 1: review. The workbook is validated and a snapshot is stored. Nothing is
    * created in D365 and no batch is created.
    */
-  public preview = (file: File, transactionCurrency: string) =>
+  public preview = (file: File) =>
     sync.save<MasRevenueReview, FormData | Record<string, unknown>>(
       API_ROUTES.DATA_MIGRATION.CASH.CASH_IN_MAS_REVENUE_PREVIEW,
       {
         companyId: MAS_REVENUE_COMPANY_ID,
         templateVersion: MAS_REVENUE_TEMPLATE_VERSION,
-        transactionCurrency: transactionCurrency.trim().toUpperCase(),
         dataFile: file,
       },
       { formData: true },
