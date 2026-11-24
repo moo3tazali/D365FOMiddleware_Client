@@ -6,7 +6,6 @@ import type {
 } from '@/services/api/mas-revenue';
 
 import {
-  createBatchGate,
   csvCell,
   issuesToCsv,
   newIdempotencyKey,
@@ -34,46 +33,6 @@ function review(overrides: Partial<MasRevenueReview> = {}): MasRevenueReview {
     ...overrides,
   };
 }
-
-describe('createBatchGate', () => {
-  it('stays closed until a file has been reviewed', () => {
-    const gate = createBatchGate(null);
-    expect(gate.allowed).toBe(false);
-    expect(gate.reasons[0]).toMatch(/Upload and validate/);
-  });
-
-  it('opens for a valid review with no blockers', () => {
-    expect(createBatchGate(review())).toEqual({
-      allowed: true,
-      reasons: [],
-    });
-  });
-
-  it('shows every configuration blocker as a reason, and stays closed', () => {
-    const gate = createBatchGate(
-      review({
-        canSubmit: false,
-        blockers: ['GL JournalName is not configured'],
-      }),
-    );
-    expect(gate.allowed).toBe(false);
-    expect(gate.reasons).toContain('GL JournalName is not configured');
-  });
-
-  it('refuses a review whose upload has row issues', () => {
-    const gate = createBatchGate(
-      review({ uploadValid: false, canSubmit: false }),
-    );
-    expect(gate.allowed).toBe(false);
-    expect(gate.reasons.join(' ')).toMatch(/row issues or no receipts/);
-  });
-
-  it('refuses a review that already created a batch', () => {
-    const gate = createBatchGate(review({ batchId: 'b1' }));
-    expect(gate.allowed).toBe(false);
-    expect(gate.reasons.join(' ')).toMatch(/already created batch b1/);
-  });
-});
 
 describe('issuesToCsv', () => {
   const issues: MasRevenueRowIssue[] = [

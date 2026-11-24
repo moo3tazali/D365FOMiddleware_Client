@@ -96,7 +96,11 @@ export const useBatchForm = () => {
   const navigate = useNavigate();
 
   const isDisabled = useMemo(
-    () => !!batch || isPending || targetContext?.mas.busy === 'validate',
+    () =>
+      !!batch ||
+      isPending ||
+      targetContext?.mas.busy === 'validate' ||
+      targetContext?.mas.busy === 'submit',
     [batch, isPending, targetContext?.mas.busy],
   );
 

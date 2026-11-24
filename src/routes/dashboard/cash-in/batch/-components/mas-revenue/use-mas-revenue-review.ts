@@ -15,12 +15,7 @@ import {
 import { ROUTES } from '@/router';
 
 import { useBatchQueryData } from '../../-hooks/use-batch-query-data';
-import {
-  createBatchGate,
-  issuesToCsv,
-  newIdempotencyKey,
-  type CreateBatchGate,
-} from './mas-revenue-view-model';
+import { issuesToCsv, newIdempotencyKey } from './mas-revenue-view-model';
 
 export const MAS_LINES_PAGE_SIZE = 50;
 
@@ -33,9 +28,13 @@ export type MasRevenueBusy =
   | null;
 
 /**
- * State and actions of the MAS Revenue review. The standard Cash In form and footer
- * drive it: the form's file goes to validate(), and the footer's Create batch calls
- * createBatch(). The review is shown in the results area of the same page.
+ * State and actions of the MAS Revenue upload. The standard Cash In form drives it:
+ * the form's file goes to validate(), which reviews the workbook and then creates the
+ * batch, exactly as the other Cash In uploads do, and opens the standard batch page.
+ * Posting is a separate step on that page, and the MAS configuration gates apply there.
+ *
+ * The review is shown only when the upload cannot create a batch (row issues, no
+ * receipts, or a server refusal such as a duplicate receipt).
  */
 export interface MasRevenueReviewState {
   review: MasRevenueReview | null;
@@ -43,10 +42,8 @@ export interface MasRevenueReviewState {
   linesPageNumber: number;
   busy: MasRevenueBusy;
   error: string | null;
-  gate: CreateBatchGate;
   validate: (file: File) => Promise<void>;
   reset: () => void;
-  createBatch: () => Promise<void>;
   loadLinesPage: (pageNumber: number) => Promise<void>;
   download: (kind: 'template' | 'guide') => Promise<void>;
   exportErrors: () => void;
@@ -59,19 +56,38 @@ export function useMasRevenueReview(): MasRevenueReviewState {
   const [, setBatch] = useBatchQueryData();
 
   const [review, setReview] = useState<MasRevenueReview | null>(null);
-  const [idempotencyKey, setIdempotencyKey] = useState<string | null>(null);
   const [lines, setLines] = useState<MasRevenueLinesPage | null>(null);
   const [linesPageNumber, setLinesPageNumber] = useState(1);
   const [busy, setBusy] = useState<MasRevenueBusy>(null);
   const [error, setError] = useState<string | null>(null);
 
-  /** A new file invalidates the review, so a stale preview cannot be submitted. */
+  /** A new file replaces any earlier result. */
   const reset = () => {
     setReview(null);
-    setIdempotencyKey(null);
     setLines(null);
     setLinesPageNumber(1);
     setError(null);
+  };
+
+  const createBatchFrom = async (reviewed: MasRevenueReview) => {
+    const submitted = await masRevenueApi.submit(reviewed.reviewId, {
+      reviewVersion: reviewed.reviewVersion,
+      payloadHash: reviewed.payloadHash,
+      idempotencyKey: newIdempotencyKey(),
+    });
+    if (!submitted.batchId) {
+      throw new Error('The batch was not created. Please try again.');
+    }
+    const batch = await sync.fetch<TDataBatch>(
+      API_ROUTES.DATA_MIGRATION.DATA_BATCH.ONE,
+      { params: { batchId: submitted.batchId } },
+    );
+    setBatch(batch);
+    await queryClient.invalidateQueries({ queryKey: dataBatch.queryKey });
+    navigate({
+      to: ROUTES.DASHBOARD.CASH_IN.BATCH.VIEW,
+      params: { batchId: submitted.batchId },
+    });
   };
 
   const validate = async (file: File) => {
@@ -80,12 +96,17 @@ export function useMasRevenueReview(): MasRevenueReviewState {
     try {
       const result = await masRevenueApi.preview(file);
       setReview(result);
-      setIdempotencyKey(newIdempotencyKey());
-      setLines(
-        await masRevenueApi.getLines(result.reviewId, 1, MAS_LINES_PAGE_SIZE),
-      );
+      if (!result.uploadValid) {
+        // Row issues or no receipts: no batch can be created. Show the issues.
+        setLines(
+          await masRevenueApi.getLines(result.reviewId, 1, MAS_LINES_PAGE_SIZE),
+        );
+        return;
+      }
+      setBusy('submit');
+      await createBatchFrom(result);
     } catch (caught) {
-      setError(messageOf(caught, 'The workbook could not be reviewed.'));
+      setError(messageOf(caught, 'The workbook could not be uploaded.'));
     } finally {
       setBusy(null);
     }
@@ -105,49 +126,6 @@ export function useMasRevenueReview(): MasRevenueReviewState {
       setLinesPageNumber(pageNumber);
     } catch (caught) {
       setError(messageOf(caught, 'The receipts could not be loaded.'));
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const gate = createBatchGate(review);
-
-  const createBatch = async () => {
-    if (!review || !idempotencyKey || !gate.allowed) return;
-    setBusy('submit');
-    setError(null);
-    try {
-      const submitted = await masRevenueApi.submit(review.reviewId, {
-        reviewVersion: review.reviewVersion,
-        payloadHash: review.payloadHash,
-        idempotencyKey,
-      });
-      if (!submitted.batchId) {
-        throw new Error(
-          'The batch was not created. Review the messages and try again.',
-        );
-      }
-      const batch = await sync.fetch<TDataBatch>(
-        API_ROUTES.DATA_MIGRATION.DATA_BATCH.ONE,
-        { params: { batchId: submitted.batchId } },
-      );
-      setBatch(batch);
-      await queryClient.invalidateQueries({ queryKey: dataBatch.queryKey });
-      toast.success(
-        'MAS Revenue batch created. Send it to D365FO from the batch page.',
-      );
-      navigate({
-        to: ROUTES.DASHBOARD.CASH_IN.BATCH.VIEW,
-        params: { batchId: submitted.batchId },
-      });
-    } catch (caught) {
-      setError(messageOf(caught, 'The batch could not be created.'));
-      // Refresh the review so the current blockers are shown, not a stale list.
-      try {
-        setReview(await masRevenueApi.getReview(review.reviewId));
-      } catch {
-        // The original error is already shown.
-      }
     } finally {
       setBusy(null);
     }
@@ -183,10 +161,8 @@ export function useMasRevenueReview(): MasRevenueReviewState {
     linesPageNumber,
     busy,
     error,
-    gate,
     validate,
     reset,
-    createBatch,
     loadLinesPage,
     download,
     exportErrors,

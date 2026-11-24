@@ -26,7 +26,11 @@ function NewBatchPage() {
       <div className='h-full flex flex-col gap-5'>
         <BatchHeader />
         <BatchForm />
-        {isMas ? <MasRevenueReview mas={mas} /> : <BatchResult />}
+        {isMas && (mas.review || mas.error) ? (
+          <MasRevenueReview mas={mas} />
+        ) : (
+          <BatchResult />
+        )}
         <BatchFooter />
       </div>
     </CashInTargetContext.Provider>

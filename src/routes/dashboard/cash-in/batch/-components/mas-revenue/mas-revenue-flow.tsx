@@ -22,7 +22,7 @@ import { totalsRows } from './mas-revenue-view-model';
  * show the same counts the batch page shows, mapped from the review.
  */
 export const MasRevenueReview = ({ mas }: { mas: MasRevenueReviewState }) => {
-  const { review, lines, linesPageNumber, busy, error, gate } = mas;
+  const { review, lines, linesPageNumber, busy, error } = mas;
   const summary = review?.summary ?? null;
   const pageCount = lines
     ? Math.max(1, Math.ceil(lines.total / MAS_LINES_PAGE_SIZE))
@@ -119,21 +119,6 @@ export const MasRevenueReview = ({ mas }: { mas: MasRevenueReviewState }) => {
               </p>
             )}
           </div>
-
-          {review.blockers.length > 0 && (
-            <Alert variant='destructive'>
-              <AlertTitle>
-                Submission is blocked by MAS configuration
-              </AlertTitle>
-              <AlertDescription>
-                <ul className='list-disc pl-5'>
-                  {review.blockers.map((blocker) => (
-                    <li key={blocker}>{blocker}</li>
-                  ))}
-                </ul>
-              </AlertDescription>
-            </Alert>
-          )}
 
           {summary.issueCount > 0 && (
             <div className='space-y-2'>
@@ -252,19 +237,6 @@ export const MasRevenueReview = ({ mas }: { mas: MasRevenueReviewState }) => {
                   Next
                 </Button>
               </div>
-            </div>
-          )}
-
-          {!gate.allowed && gate.reasons.length > 0 && (
-            <div className='space-y-2'>
-              <h4 className='text-sm font-medium'>
-                Create batch is not available yet
-              </h4>
-              <ul className='list-disc pl-5 text-sm text-muted-foreground'>
-                {gate.reasons.map((reason) => (
-                  <li key={reason}>{reason}</li>
-                ))}
-              </ul>
             </div>
           )}
         </div>

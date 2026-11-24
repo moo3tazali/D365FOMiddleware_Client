@@ -10,21 +10,10 @@ import { useBatchQueryData } from '../-hooks/use-batch-query-data';
 import { Link } from '@tanstack/react-router';
 import { ROUTES } from '@/router';
 import { useSubmitBatch } from '../-hooks/use-submit-batch';
-import { isMasRevenueTarget, useCashInTarget } from './cash-in-target-context';
-import type { MasRevenueReviewState } from './mas-revenue/use-mas-revenue-review';
 import { ValidationErrorsModal } from '@/routes/dashboard/accounts-receivable/batch/-components/validation-errors-modal';
 
 export const BatchFooter = () => {
   const [batch] = useBatchQueryData();
-  const targetContext = useCashInTarget();
-  // MAS Revenue: the same Upload runs the review, and Create batch appears once a review exists.
-  if (!batch && isMasRevenueTarget(targetContext?.target) && targetContext) {
-    return (
-      <div className='pt-4 border-t border-border'>
-        <MasFooterActions mas={targetContext.mas} />
-      </div>
-    );
-  }
 
   const ActionBtn = (() => {
     if (!batch) return <UploadBtn />;
@@ -144,21 +133,3 @@ const SubmitBtn = ({ data }: { data: TDataBatch }) => {
     </>
   );
 };
-
-const MasFooterActions = ({ mas }: { mas: MasRevenueReviewState }) => (
-  <div className='flex flex-col gap-2.5 sm:flex-row sm:justify-end'>
-    <UploadBtn />
-    {mas.review && (
-      <Button
-        size='lg'
-        variant='success'
-        className='w-full sm:max-w-xs'
-        disabled={!mas.gate.allowed || mas.busy !== null}
-        onClick={() => mas.createBatch()}
-      >
-        <CloudUpload className='size-5' />
-        {mas.busy === 'submit' ? 'Creating batch…' : 'Create batch'}
-      </Button>
-    )}
-  </div>
-);

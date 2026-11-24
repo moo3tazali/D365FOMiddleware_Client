@@ -3,37 +3,6 @@ import type {
   MasRevenueRowIssue,
 } from '@/services/api/mas-revenue';
 
-export interface CreateBatchGate {
-  allowed: boolean;
-  /** Every reason the batch cannot be created yet, shown to the user in order. */
-  reasons: string[];
-}
-
-/**
- * Whether "Create batch" may be used. It mirrors the server checks so the user sees
- * the reason before a request is sent. The server still checks everything.
- */
-export function createBatchGate(
-  review: MasRevenueReview | null,
-): CreateBatchGate {
-  const reasons: string[] = [];
-  if (!review) {
-    return { allowed: false, reasons: ['Upload and validate a file first.'] };
-  }
-  if (review.batchId) {
-    reasons.push(`This review already created batch ${review.batchId}.`);
-  }
-  if (!review.uploadValid) {
-    reasons.push(
-      'The file has row issues or no receipts. Correct the file and upload it again.',
-    );
-  }
-  for (const blocker of review.blockers) {
-    reasons.push(blocker);
-  }
-  return { allowed: reasons.length === 0 && review.canSubmit, reasons };
-}
-
 /** Client-generated key for one submit attempt. A repeated attempt reuses it. */
 export function newIdempotencyKey(): string {
   if (
