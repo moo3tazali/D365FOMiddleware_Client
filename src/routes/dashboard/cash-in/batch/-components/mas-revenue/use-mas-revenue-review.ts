@@ -15,7 +15,11 @@ import {
 import { ROUTES } from '@/router';
 
 import { useBatchQueryData } from '../../-hooks/use-batch-query-data';
-import { issuesToCsv, newIdempotencyKey } from './mas-revenue-view-model';
+import {
+  issuesToCsv,
+  messageOfError as messageOf,
+  newIdempotencyKey,
+} from './mas-revenue-view-model';
 
 export const MAS_LINES_PAGE_SIZE = 50;
 
@@ -167,10 +171,6 @@ export function useMasRevenueReview(): MasRevenueReviewState {
     download,
     exportErrors,
   };
-}
-
-function messageOf(error: unknown, fallback: string): string {
-  return error instanceof Error && error.message ? error.message : fallback;
 }
 
 function saveBlob(blob: Blob, fileName: string): void {

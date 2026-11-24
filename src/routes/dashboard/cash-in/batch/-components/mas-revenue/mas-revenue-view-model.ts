@@ -51,3 +51,18 @@ export function totalsRows(review: MasRevenueReview | null) {
     total: amounts.total,
   }));
 }
+
+/**
+ * The message to show for a failed request. API errors arrive as plain objects with a
+ * message, not as Error instances, so both are read. The fallback is used only when
+ * there is no message at all.
+ */
+export function messageOfError(error: unknown, fallback: string): string {
+  if (error && typeof error === 'object' && 'message' in error) {
+    const message = (error as { message?: unknown }).message;
+    if (typeof message === 'string' && message.trim() !== '') {
+      return message;
+    }
+  }
+  return fallback;
+}

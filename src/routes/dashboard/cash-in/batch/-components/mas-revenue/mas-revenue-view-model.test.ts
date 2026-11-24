@@ -8,6 +8,7 @@ import type {
 import {
   csvCell,
   issuesToCsv,
+  messageOfError,
   newIdempotencyKey,
   totalsRows,
 } from './mas-revenue-view-model';
@@ -101,5 +102,23 @@ describe('totalsRows', () => {
 
   it('returns no rows when there is no summary', () => {
     expect(totalsRows(null)).toEqual([]);
+  });
+});
+
+describe('messageOfError', () => {
+  it('reads the message of an API error object, not only Error instances', () => {
+    expect(
+      messageOfError(
+        { code: 409, message: 'Receipt(s) already submitted in another batch' },
+        'fallback',
+      ),
+    ).toBe('Receipt(s) already submitted in another batch');
+    expect(messageOfError(new Error('boom'), 'fallback')).toBe('boom');
+  });
+
+  it('falls back only when there is no message', () => {
+    expect(messageOfError({}, 'fallback')).toBe('fallback');
+    expect(messageOfError({ message: '  ' }, 'fallback')).toBe('fallback');
+    expect(messageOfError(null, 'fallback')).toBe('fallback');
   });
 });
