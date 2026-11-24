@@ -174,7 +174,7 @@ export const MasRevenueReview = ({ mas }: { mas: MasRevenueReviewState }) => {
 
           {lines && lines.total > 0 && (
             <div className='space-y-2'>
-              <h4 className='text-sm font-medium'>Receipts ({lines.total})</h4>
+              <h4 className='text-sm font-medium'>Lines ({lines.total})</h4>
               <div className='overflow-auto rounded-md border border-border'>
                 <table className='w-full text-sm'>
                   <thead className='bg-muted text-left'>
