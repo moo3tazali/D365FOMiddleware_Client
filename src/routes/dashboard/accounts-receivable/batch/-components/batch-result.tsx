@@ -7,6 +7,7 @@ import type { TDataBatch } from '@/interfaces/data-batch';
 import { CloudCheck } from '@/assets/icons/cloud-check';
 import { useBatchQueryData } from '../-hooks/use-batch-query-data';
 import { Description } from '@/components/ui/description';
+import { CompanyBadge } from '@/components/company-badge';
 import { ROUTES } from '@/router';
 import { BatchDFOStatus } from './batch-dfo-status';
 import { BatchResultAlert } from '@/components/batch-result-alert';
@@ -24,6 +25,7 @@ export const BatchResult = () => {
         <div>
           <h3>Batch Results</h3>
           <Description>{batch?.description}</Description>
+          <CompanyBadge company={batch?.company} className='mt-2' />
         </div>
       </div>
       <div className='grid grid-cols-2 sm:grid-cols-4 gap-3'>

@@ -192,6 +192,17 @@ export const API_ROUTES = {
         '/DataMigration/Cash/CashIn-Yard-Invoice-Jobs/:jobId/submit',
       CASH_IN_YARD_INVOICE_JOB_LINES:
         '/DataMigration/Cash/CashIn-Yard-Invoice-Jobs/:jobId/invoices',
+      CASH_IN_MAS_REVENUE_TEMPLATE:
+        '/DataMigration/Cash/CashIn-MAS-Revenue-Template',
+      CASH_IN_MAS_REVENUE_GUIDE: '/DataMigration/Cash/CashIn-MAS-Revenue-Guide',
+      CASH_IN_MAS_REVENUE_PREVIEW:
+        '/DataMigration/Cash/CashIn-MAS-Revenue-Preview',
+      CASH_IN_MAS_REVENUE_REVIEW:
+        '/DataMigration/Cash/CashIn-MAS-Revenue-Reviews/:reviewId',
+      CASH_IN_MAS_REVENUE_LINES:
+        '/DataMigration/Cash/CashIn-MAS-Revenue-Reviews/:reviewId/lines',
+      CASH_IN_MAS_REVENUE_SUBMIT:
+        '/DataMigration/Cash/CashIn-MAS-Revenue-Reviews/:reviewId/submit',
       POST_TO_DFO: '/DataMigration/Cash/PostToDFO',
       POSTING_QUEUE: '/DataMigration/Cash/posting-queue',
       POSTING_QUEUE_PAUSE: '/DataMigration/Cash/posting-queue/pause',

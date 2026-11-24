@@ -1,8 +1,6 @@
 import { sync } from '../core/sync';
 import { API_ROUTES } from '../core/api-routes';
-
-/** Company used by the Cash-In upload form. Matches the form default. */
-export const YARD_INVOICE_COMPANY = 'm-p';
+import { assertUploadCompany } from '@/constants/company';
 
 export type YardInvoiceFormat = 'TEMPLATE_8' | 'YARDS_SOURCE';
 
@@ -146,6 +144,7 @@ class YardInvoiceApi {
     companyId: string,
     flow: 'YARD' | 'SHIPLINK' = 'YARD',
   ): Promise<YardInvoiceJob> {
+    assertUploadCompany(companyId);
     const route =
       flow === 'SHIPLINK'
         ? API_ROUTES.DATA_MIGRATION.CASH.CASH_IN_SHIPLINK_INVOICE_PREVIEW
@@ -157,15 +156,14 @@ class YardInvoiceApi {
     );
   }
 
-  /** The same file is sent again: the server re-reviews it and must match the job's payload hash. */
-  public submit(
-    jobId: string,
-    file: File,
-    companyId: string,
-  ): Promise<YardInvoiceJob> {
-    return sync.save<YardInvoiceJob, UploadBody>(
+  /**
+   * The same file is sent again: the server re-reviews it and must match the job's payload hash.
+   * The company is not sent: submit uses the company saved on the job at review time.
+   */
+  public submit(jobId: string, file: File): Promise<YardInvoiceJob> {
+    return sync.save<YardInvoiceJob, Pick<UploadBody, 'dataFile'>>(
       API_ROUTES.DATA_MIGRATION.CASH.CASH_IN_YARD_INVOICE_JOB_SUBMIT,
-      { companyId, dataFile: file },
+      { dataFile: file },
       { formData: true, params: { jobId } },
     );
   }

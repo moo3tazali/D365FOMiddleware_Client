@@ -17,10 +17,13 @@ import {
   queryOptions,
 } from '@tanstack/react-query';
 import type { TPagination } from '@/interfaces/pagination';
+import type { CompanyCode } from '@/constants/company';
 
 interface DataBatchQuery extends TPagination {
   batchNumberIds?: string[];
   entryProcessorTypes?: number[];
+  /** Filters on the server before paging and counts. */
+  company?: CompanyCode;
 }
 
 interface InsertBatchPayload {
@@ -213,6 +216,7 @@ export class DataBatch {
           TEntryProcessorTypes.CashInTrucking,
           TEntryProcessorTypes.CashInShiplink,
           TEntryProcessorTypes.CashInYard,
+          TEntryProcessorTypes.CashInMasRevenue,
         ];
       case 'cashOut':
         return [

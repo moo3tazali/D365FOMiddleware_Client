@@ -25,6 +25,7 @@ import {
   FileUploaderItem,
 } from '@/components/ui/file-upload';
 import { useBatchForm } from '../-hooks/use-batch-form';
+import { CompanyFormField } from '@/components/company-form-field';
 import { Progress } from '@/components/ui/progress';
 import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/data-batch';
 import { cn } from '@/lib/utils';
@@ -36,6 +37,11 @@ export const BatchForm = () => {
     <Form {...form}>
       <form onSubmit={form.onSubmit} className='space-y-5'>
         <div className='flex flex-col lg:flex-row gap-5 *:flex-1'>
+          <CompanyFormField
+            control={form.control}
+            disabled={form.isDisabled}
+            onCompanyChange={form.handleCompanyChange}
+          />
           <FormField
             control={form.control}
             name='type'

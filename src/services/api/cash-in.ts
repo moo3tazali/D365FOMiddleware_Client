@@ -1,5 +1,6 @@
 import { sync } from '../core/sync';
 import { API_ROUTES } from '../core/api-routes';
+import { assertUploadCompany } from '@/constants/company';
 import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
 import { yardInvoiceApi } from './yard-invoice';
 
@@ -42,6 +43,7 @@ export class CashIn {
     uploadProgress?: (prog: number) => void;
   }): Promise<UploadResponse> => {
     const { data, type } = options;
+    assertUploadCompany(data.companyId);
 
     // Yard files are reviewed by the Yard service, which creates the batch when the
     // review completes. The page then opens that batch like any other upload.

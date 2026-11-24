@@ -25,17 +25,27 @@ import {
   FileUploaderItem,
 } from '@/components/ui/file-upload';
 import { useBatchForm } from '../-hooks/use-batch-form';
+import { CompanyFormField } from '@/components/company-form-field';
 import { Progress } from '@/components/ui/progress';
 import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/data-batch';
 import { cn } from '@/lib/utils';
+import { MasRevenueFlow } from './mas-revenue/mas-revenue-flow';
+import { isMasRevenueTarget, useCashInTarget } from './cash-in-target-context';
 
 export const BatchForm = () => {
   const { form } = useBatchForm();
+  const targetContext = useCashInTarget();
+  const isMas = isMasRevenueTarget(targetContext?.target);
 
   return (
     <Form {...form}>
       <form onSubmit={form.onSubmit} className='space-y-5'>
         <div className='flex flex-col lg:flex-row gap-5 *:flex-1'>
+          <CompanyFormField
+            control={form.control}
+            disabled={form.isDisabled || isMas}
+            onCompanyChange={form.handleCompanyChange}
+          />
           <FormField
             control={form.control}
             name='type'
@@ -43,7 +53,16 @@ export const BatchForm = () => {
               <FormItem>
                 <FormLabel>Target Service</FormLabel>
                 <Select
-                  onValueChange={field.onChange}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    targetContext?.setTarget(value);
+                    // The MAS Revenue flow only runs for the MAS company.
+                    if (isMasRevenueTarget(value)) {
+                      form.setValue('companyId', 'mas', {
+                        shouldValidate: true,
+                      });
+                    }
+                  }}
                   defaultValue={field.value}
                   disabled={form.isDisabled}
                   name='type'
@@ -63,62 +82,65 @@ export const BatchForm = () => {
           />
         </div>
 
-        <FormField
-          control={form.control}
-          name='dataFile'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel asChild>
-                <span>Upload New Batch</span>
-              </FormLabel>
-              <FormControl>
-                <FileUploader
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  dropzoneOptions={{
-                    accept: {
-                      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-                        ['.xlsx', '.xls'],
-                    },
-                    multiple: false,
-                    maxFiles: 1,
-                    maxSize: 1024 * 1024 * 250, // 250MB
-                  }}
-                  className='relative bg-background rounded-xl'
-                  disabled={form.isDisabled}
-                >
-                  <FileInput id='dataFile'>
-                    <DropZoneContent isDisabled={form.isDisabled} />
-                  </FileInput>
-                  <FileUploaderContent>
-                    {field.value &&
-                      field.value.length > 0 &&
-                      field.value.map((file, i) => (
-                        <FileUploaderItem index={i} key={i}>
-                          <div className='flex items-center gap-2'>
-                            <div className='flex size-7 shrink-0 items-center justify-center rounded-md bg-primary/10'>
-                              <Paperclip className='size-3.5 text-primary' />
+        {isMas && <MasRevenueFlow />}
+        {!isMas && (
+          <FormField
+            control={form.control}
+            name='dataFile'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel asChild>
+                  <span>Upload New Batch</span>
+                </FormLabel>
+                <FormControl>
+                  <FileUploader
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    dropzoneOptions={{
+                      accept: {
+                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                          ['.xlsx', '.xls'],
+                      },
+                      multiple: false,
+                      maxFiles: 1,
+                      maxSize: 1024 * 1024 * 250, // 250MB
+                    }}
+                    className='relative bg-background rounded-xl'
+                    disabled={form.isDisabled}
+                  >
+                    <FileInput id='dataFile'>
+                      <DropZoneContent isDisabled={form.isDisabled} />
+                    </FileInput>
+                    <FileUploaderContent>
+                      {field.value &&
+                        field.value.length > 0 &&
+                        field.value.map((file, i) => (
+                          <FileUploaderItem index={i} key={i}>
+                            <div className='flex items-center gap-2'>
+                              <div className='flex size-7 shrink-0 items-center justify-center rounded-md bg-primary/10'>
+                                <Paperclip className='size-3.5 text-primary' />
+                              </div>
+                              <div className='min-w-0 flex-1 space-y-1.5'>
+                                <span className='block max-w-xs truncate text-sm font-medium sm:max-w-full'>
+                                  {file.name}
+                                </span>
+                                <Progress
+                                  size='xs'
+                                  progress={form.uploadProgress}
+                                />
+                              </div>
                             </div>
-                            <div className='min-w-0 flex-1 space-y-1.5'>
-                              <span className='block max-w-xs truncate text-sm font-medium sm:max-w-full'>
-                                {file.name}
-                              </span>
-                              <Progress
-                                size='xs'
-                                progress={form.uploadProgress}
-                              />
-                            </div>
-                          </div>
-                        </FileUploaderItem>
-                      ))}
-                  </FileUploaderContent>
-                </FileUploader>
-              </FormControl>
+                          </FileUploaderItem>
+                        ))}
+                    </FileUploaderContent>
+                  </FileUploader>
+                </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <button
           type='submit'

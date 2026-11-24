@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@tanstack/react-router';
 import toast from 'react-hot-toast';
 
+import { COMPANY_REQUIRED_MESSAGE, isCompanyCode } from '@/constants/company';
 import { useServices } from '@/hooks/use-services';
 import { useMutation } from '@/hooks/use-mutation';
 import { useBatchQueryData } from './use-batch-query-data';
@@ -21,7 +22,9 @@ const acceptedTypes = [
 const FormSchema = z
   .object({
     type: z.string().min(1, 'Please select the target service.'),
-    companyId: z.string(),
+    companyId: z.string().refine(isCompanyCode, {
+      message: COMPANY_REQUIRED_MESSAGE,
+    }),
     billingCodeId: z.string().optional(),
     dataFile: z.custom<File[] | null>().superRefine((value, ctx) => {
       if (!value || value.length === 0) {
@@ -62,7 +65,7 @@ export const useBatchForm = () => {
 
   let defaultValues: FormData = {
     type: '',
-    companyId: 'm-p',
+    companyId: '',
     billingCodeId: '',
     dataFile: null,
   };
@@ -70,6 +73,7 @@ export const useBatchForm = () => {
   if (batch) {
     defaultValues = {
       ...defaultValues,
+      companyId: String(batch?.company ?? ''),
       type: String(batch?.entryProcessorType ?? ''),
       billingCodeId: String(batch?.billingCodeId ?? ''),
     };
@@ -83,6 +87,13 @@ export const useBatchForm = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const [billingCodeKey, setBillingCodeKey] = useState(crypto.randomUUID());
+
+  const handleCompanyChange = () => {
+    // Company-dependent selections no longer apply to the new company.
+    form.setValue('dataFile', null);
+    form.setValue('billingCodeId', '');
+    setBillingCodeKey(crypto.randomUUID());
+  };
 
   const { accountReceivable, dataBatch } = useServices();
 
@@ -161,13 +172,14 @@ export const useBatchForm = () => {
 
   useEffect(() => {
     if (!type) return;
-    form.resetField('billingCodeId');
+    form.setValue('billingCodeId', '');
     setBillingCodeKey(crypto.randomUUID());
   }, [type, form]);
 
   return {
     form: {
       ...form,
+      handleCompanyChange,
       uploadProgress,
       billingCodeKey,
       isBillingCodeDisabled,

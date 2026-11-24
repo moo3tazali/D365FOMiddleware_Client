@@ -31,6 +31,7 @@ export enum TEntryProcessorTypes {
   AccountReceivableShippingLines = 30,
   CashInShiplink = 31,
   CashInYard = 32,
+  CashInMasRevenue = 33,
 }
 
 export enum TDataBatchStatus {
@@ -44,6 +45,8 @@ export enum TDataBatchStatus {
 
 export interface TDataBatch {
   id: string;
+  /** Company the batch was saved for (m-p or mas). Read-only once saved. */
+  company?: string;
   billingCodeId?: string;
   apiServiceType: number;
   creationDate: string; // ISO date string

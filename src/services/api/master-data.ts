@@ -23,11 +23,28 @@ export const SYNC_TYPES_LIST = Object.values(SYNC_TYPES);
 
 export type SyncType = (typeof SYNC_TYPES_LIST)[number];
 
+/**
+ * company is required. chartOfAccounts and rateType are optional: when omitted the
+ * server reads them from that company's synced ledger (M-P keeps its legacy values).
+ */
 export interface MasterDataPayload {
   company: string;
-  chartOfAccounts: string;
-  rateType: string;
+  chartOfAccounts?: string;
+  rateType?: string;
 }
+
+/** Shared datasets are the same for every company; company datasets are stored per company. */
+export const SYNC_SCOPE: Record<SyncType, 'shared' | 'company'> = {
+  customers: 'company',
+  'financial-dimensions': 'shared',
+  'billing-data': 'company',
+  'main-accounts': 'shared',
+  vendors: 'company',
+  'exchange-rates': 'shared',
+  'payment-terms': 'company',
+  ledgers: 'company',
+  'tax-item-group-headings': 'company',
+};
 
 export class MasterData {
   private readonly syncService = sync;
@@ -123,7 +140,10 @@ export class MasterData {
       API_ROUTES.FINANCE.MASTER_DATA.MAIN_ACCOUNTS.SYNC,
       undefined,
       {
-        query: { chartOfAccounts: payload.chartOfAccounts },
+        query: {
+          company: payload.company,
+          chartOfAccounts: payload.chartOfAccounts,
+        },
       },
     );
   };

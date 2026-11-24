@@ -13,12 +13,15 @@ import {
 } from '@/components/ui/select';
 import { useSearchQuery } from '@/hooks/use-search-query';
 
+import { CompanyFilter } from '@/components/company-filter';
+import { COMPANY_CODE_VALUES } from '@/constants/company';
 import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/data-batch';
 
 const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.ACCOUNT_RECEIVABLE;
 const entryProcessorValues = entryProcessorOptions.map(({ value }) => value);
 
 export const DataBatchQuerySchema = z.object({
+  company: z.enum(COMPANY_CODE_VALUES).optional(),
   batchNumberIds: z
     .array(
       z.string().regex(/^[a-fA-F0-9]{24}$/, {
@@ -47,7 +50,8 @@ export const DataBatchFilters = () => {
         <FilterIcon className='size-3.5' />
         <span className='text-xs font-medium break-keep'>Filters</span>
       </div>
-      <div className='grid grid-cols-2 gap-2.5 flex-1'>
+      <div className='grid grid-cols-2 gap-2.5 flex-1 xl:grid-cols-3'>
+        <CompanyFilter />
         <EntryProcessorTypeFilter />
         <TargetBatchNumberFilter />
       </div>

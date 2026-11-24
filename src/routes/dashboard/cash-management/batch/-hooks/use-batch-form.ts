@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@tanstack/react-router';
 import toast from 'react-hot-toast';
 
+import { COMPANY_REQUIRED_MESSAGE, isCompanyCode } from '@/constants/company';
 import { useServices } from '@/hooks/use-services';
 import { useMutation } from '@/hooks/use-mutation';
 import { useBatchQueryData } from './use-batch-query-data';
@@ -19,7 +20,9 @@ const acceptedTypes = [
 
 const FormSchema = z.object({
   type: z.string().min(1, 'Please select the target service.'),
-  companyId: z.string(),
+  companyId: z.string().refine(isCompanyCode, {
+    message: COMPANY_REQUIRED_MESSAGE,
+  }),
   dataFile: z.custom<File[] | null>().superRefine((value, ctx) => {
     if (!value || value.length === 0) {
       ctx.addIssue({
@@ -46,13 +49,14 @@ export const useBatchForm = () => {
 
   let defaultValues: FormData = {
     type: '',
-    companyId: 'm-p',
+    companyId: '',
     dataFile: null,
   };
 
   if (batch) {
     defaultValues = {
       ...defaultValues,
+      companyId: String(batch?.company ?? ''),
       type: String(
         [
           TEntryProcessorTypes.LedgerCashOut,
@@ -71,6 +75,11 @@ export const useBatchForm = () => {
   });
 
   const [uploadProgress, setUploadProgress] = useState(0);
+
+  const handleCompanyChange = () => {
+    // Company-dependent selections no longer apply to the new company.
+    form.setValue('dataFile', null);
+  };
 
   const { ledger, dataBatch } = useServices();
 
@@ -128,6 +137,7 @@ export const useBatchForm = () => {
   return {
     form: {
       ...form,
+      handleCompanyChange,
       uploadProgress,
       isDisabled,
       onSubmit: form.handleSubmit(onSubmit),

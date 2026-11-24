@@ -10,10 +10,14 @@ import { useBatchQueryData } from '../-hooks/use-batch-query-data';
 import { Link } from '@tanstack/react-router';
 import { ROUTES } from '@/router';
 import { useSubmitBatch } from '../-hooks/use-submit-batch';
+import { isMasRevenueTarget, useCashInTarget } from './cash-in-target-context';
 import { ValidationErrorsModal } from '@/routes/dashboard/accounts-receivable/batch/-components/validation-errors-modal';
 
 export const BatchFooter = () => {
   const [batch] = useBatchQueryData();
+  const targetContext = useCashInTarget();
+  // The MAS flow has its own actions (validate, create batch); the generic Upload is not used.
+  if (!batch && isMasRevenueTarget(targetContext?.target)) return null;
 
   const ActionBtn = (() => {
     if (!batch) return <UploadBtn />;

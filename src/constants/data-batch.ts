@@ -131,6 +131,10 @@ export const ENTRY_PROCESSOR_OPTIONS = {
       label: 'Yard Document',
       value: TEntryProcessorTypes.CashInYard,
     },
+    {
+      label: 'MAS Revenue Cash In',
+      value: TEntryProcessorTypes.CashInMasRevenue,
+    },
   ],
   CASH_OUT: [
     {

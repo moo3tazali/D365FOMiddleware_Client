@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { CompanyBadge } from '@/components/company-badge';
 import { useServices } from '@/hooks/use-services';
 import { DataTable, type ColumnDef } from '@/components/data-table';
 import { TDataBatchStatus, type TDataBatch } from '@/interfaces/data-batch';
@@ -72,6 +73,11 @@ const columns: ColumnDef<TDataBatch>[] = [
     cell: ({ getValue }) => (
       <CellEntryProcessorType value={getValue<number>()} />
     ),
+  },
+  {
+    accessorKey: 'company',
+    header: 'Company',
+    cell: ({ getValue }) => <CompanyBadge company={getValue<string>()} />,
   },
   {
     accessorKey: 'totalUploadedCount',

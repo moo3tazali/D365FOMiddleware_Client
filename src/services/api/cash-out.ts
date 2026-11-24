@@ -1,5 +1,6 @@
 import { sync } from '../core/sync';
 import { API_ROUTES } from '../core/api-routes';
+import { assertUploadCompany } from '@/constants/company';
 import { TEntryProcessorTypes, type TDataBatch } from '@/interfaces/data-batch';
 import { queryOptions } from '@tanstack/react-query';
 
@@ -44,6 +45,7 @@ export class CashOut {
     uploadProgress?: (prog: number) => void;
   }): Promise<UploadResponse> => {
     const { data, type } = options;
+    assertUploadCompany(data.companyId);
 
     const apiRoute = await this._getUploadApiRoute(type);
 
