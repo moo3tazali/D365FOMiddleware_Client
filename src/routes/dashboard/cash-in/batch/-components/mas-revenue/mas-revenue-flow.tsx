@@ -1,11 +1,15 @@
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  MAS_REVENUE_COMPANY_ID,
-  MAS_REVENUE_TEMPLATE_LABEL,
-} from '@/services/api/mas-revenue';
+import UploadCloud from 'lucide-react/dist/esm/icons/upload-cloud';
+import SlidersHorizontal from 'lucide-react/dist/esm/icons/sliders-horizontal';
+import CloudAlert from 'lucide-react/dist/esm/icons/cloud-alert';
 
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Description } from '@/components/ui/description';
+import { CompanyBadge } from '@/components/company-badge';
+import { CloudCheck } from '@/assets/icons/cloud-check';
+import { MAS_REVENUE_COMPANY_ID } from '@/services/api/mas-revenue';
+
+import { StatCard } from '../batch-result';
 import {
   MAS_LINES_PAGE_SIZE,
   type MasRevenueReviewState,
@@ -13,63 +17,79 @@ import {
 import { totalsRows } from './mas-revenue-view-model';
 
 /**
- * MAS Revenue review, shown in the results area of the standard Cash In page. The
- * file comes from the standard upload form and "Create batch" is in the standard
- * footer. This component only shows the review and its blockers.
+ * MAS Revenue review in the standard "Batch Results" layout. The file comes from the
+ * standard upload form and "Create batch" is in the standard footer. The four cards
+ * show the same counts the batch page shows, mapped from the review.
  */
 export const MasRevenueReview = ({ mas }: { mas: MasRevenueReviewState }) => {
   const { review, lines, linesPageNumber, busy, error, gate } = mas;
   const summary = review?.summary ?? null;
-  const totals = totalsRows(review);
   const pageCount = lines
     ? Math.max(1, Math.ceil(lines.total / MAS_LINES_PAGE_SIZE))
     : 1;
+  const totals = totalsRows(review);
+
+  const stats = [
+    {
+      label: 'Total Uploaded',
+      total: formatCount(summary?.scannedDataRows),
+      color: 'sky' as const,
+      icon: <UploadCloud className='size-5 text-sky-500 dark:text-sky-400' />,
+    },
+    {
+      label: 'Total Formatted',
+      total: formatCount(summary?.accounting.accepted),
+      color: 'indigo' as const,
+      icon: (
+        <SlidersHorizontal className='size-5 text-indigo-500 dark:text-indigo-400' />
+      ),
+    },
+    {
+      label: 'Success Count',
+      total: formatCount(
+        review ? (review.canSubmit ? review.receiptCount : 0) : undefined,
+      ),
+      color: 'emerald' as const,
+      icon: (
+        <CloudCheck className='size-5 text-emerald-500 dark:text-emerald-400' />
+      ),
+    },
+    {
+      label: 'Error Count',
+      total: formatCount(summary?.accounting.rejected),
+      color: 'red' as const,
+      icon: <CloudAlert className='size-5 text-red-500 dark:text-red-400' />,
+    },
+  ];
 
   return (
-    <section
-      aria-labelledby='mas-revenue-heading'
-      className='space-y-6 rounded-xl border border-border bg-card p-5'
-    >
-      <header className='flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between'>
-        <div className='space-y-2'>
-          <div className='flex flex-wrap items-center gap-2'>
-            <Badge
-              variant='default'
-              className='bg-primary text-primary-foreground text-sm font-semibold'
-            >
-              Company: MAS ({MAS_REVENUE_COMPANY_ID})
-            </Badge>
-            <Badge variant='outline'>
-              Template {MAS_REVENUE_TEMPLATE_LABEL}
-            </Badge>
-          </div>
-          <h2 id='mas-revenue-heading' className='text-lg font-semibold'>
-            MAS Revenue Cash In review
-          </h2>
-          <p className='text-sm text-muted-foreground'>
-            Each receipt takes the currency of its D365 cash account.
-            Credit-customer invoices are not supported.
-          </p>
+    <div className='flex-1 space-y-5'>
+      <div className='flex flex-wrap items-center justify-between gap-3'>
+        <div>
+          <h3>Batch Results</h3>
+          <Description>
+            {review
+              ? `MAS Revenue Cash In review: ${review.fileName}`
+              : 'MAS Revenue Cash In. Upload a workbook to review it.'}
+          </Description>
+          <CompanyBadge company={MAS_REVENUE_COMPANY_ID} className='mt-2' />
         </div>
-        <div className='flex flex-wrap gap-2'>
-          <Button
-            type='button'
-            variant='outline'
-            onClick={() => mas.download('template')}
-            disabled={busy !== null}
-          >
-            Download Upload Template
-          </Button>
-          <Button
-            type='button'
-            variant='ghost'
-            onClick={() => mas.download('guide')}
-            disabled={busy !== null}
-          >
-            Column guide
-          </Button>
-        </div>
-      </header>
+        <Button
+          type='button'
+          variant='outline'
+          size='sm'
+          onClick={() => mas.download('template')}
+          disabled={busy !== null}
+        >
+          Download Upload Template
+        </Button>
+      </div>
+
+      <div className='grid grid-cols-2 sm:grid-cols-4 gap-3'>
+        {stats.map((stat) => (
+          <StatCard key={stat.label} {...stat} />
+        ))}
+      </div>
 
       {error && (
         <Alert variant='destructive' role='alert'>
@@ -80,67 +100,22 @@ export const MasRevenueReview = ({ mas }: { mas: MasRevenueReviewState }) => {
 
       {review && summary && (
         <div className='space-y-5'>
-          <dl className='grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4'>
-            <Fact label='File' value={review.fileName} />
-            <Fact label='Sheet' value={summary.sourceSheet} />
-            <Fact
-              label='Rows scanned'
-              value={String(summary.scannedDataRows)}
-            />
-            <Fact
-              label='Receipts accepted'
-              value={String(summary.accounting.accepted)}
-            />
-            <Fact
-              label='Rows rejected'
-              value={String(summary.accounting.rejected)}
-            />
-            <Fact
-              label='Blank rows'
-              value={String(summary.nonTransactionRows.blank)}
-            />
-            <Fact
-              label='Zero placeholder rows'
-              value={String(summary.nonTransactionRows.zeroPlaceholder)}
-            />
-            <Fact
-              label='Cancelled rows'
-              value={String(summary.nonTransactionRows.cancelled)}
-            />
-          </dl>
-
-          <div className='space-y-2'>
-            <h4 className='text-sm font-medium'>Totals per currency</h4>
-            <table className='w-full max-w-xl text-sm'>
-              <thead>
-                <tr className='text-left text-muted-foreground'>
-                  <th className='py-1 pr-3 font-medium'>Currency</th>
-                  <th className='py-1 pr-3 font-medium'>Value</th>
-                  <th className='py-1 pr-3 font-medium'>VAT</th>
-                  <th className='py-1 font-medium'>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {totals.map((row) => (
-                  <tr key={row.currency} className='border-t border-border'>
-                    <td className='py-1 pr-3'>{row.currency}</td>
-                    <td className='py-1 pr-3 tabular-nums'>{row.value}</td>
-                    <td className='py-1 pr-3 tabular-nums'>{row.vat}</td>
-                    <td className='py-1 tabular-nums'>{row.total}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className='space-y-1 text-sm'>
+            {totals.map((row) => (
+              <p key={row.currency}>
+                <span className='font-medium'>{row.currency}</span>: value{' '}
+                {row.value}, VAT {row.vat}, total {row.total}
+              </p>
+            ))}
             {summary.journalGroups.length > 0 && (
               <p className='text-xs text-muted-foreground'>
-                Planned journals: {summary.journalGroups.length} (
+                Planned journals:{' '}
                 {summary.journalGroups
                   .map(
                     (group) =>
-                      `${group.journalBatchNumber}: ${group.lineCount} line(s)`,
+                      `${group.journalBatchNumber} (${group.lineCount} GL lines)`,
                   )
                   .join('; ')}
-                )
               </p>
             )}
           </div>
@@ -281,7 +256,7 @@ export const MasRevenueReview = ({ mas }: { mas: MasRevenueReviewState }) => {
           )}
 
           {!gate.allowed && gate.reasons.length > 0 && (
-            <div className='space-y-2 border-t border-border pt-4'>
+            <div className='space-y-2'>
               <h4 className='text-sm font-medium'>
                 Create batch is not available yet
               </h4>
@@ -294,13 +269,11 @@ export const MasRevenueReview = ({ mas }: { mas: MasRevenueReviewState }) => {
           )}
         </div>
       )}
-    </section>
+    </div>
   );
 };
 
-const Fact = ({ label, value }: { label: string; value: string }) => (
-  <div className='space-y-0.5'>
-    <dt className='text-xs text-muted-foreground'>{label}</dt>
-    <dd className='break-all font-medium'>{value}</dd>
-  </div>
-);
+/** Count for a card: "--" until a review exists, the standard placeholder. */
+function formatCount(value: number | undefined): string {
+  return value === undefined ? '--' : value.toLocaleString('en-US');
+}
