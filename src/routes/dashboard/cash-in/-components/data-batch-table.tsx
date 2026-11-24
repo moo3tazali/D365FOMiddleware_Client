@@ -12,10 +12,7 @@ import { TableActionCol } from '@/components/table-action-col';
 import { useDataBatchAction } from '../-hooks/use-data-batch-action';
 import { ROUTES } from '@/router';
 import { Button } from '@/components/ui/button';
-import {
-  CASH_IN_LIST_PROCESSOR_TYPES,
-  ENTRY_PROCESSOR_OPTIONS,
-} from '@/constants/data-batch';
+import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/data-batch';
 import { useSearchQuery } from '@/hooks/use-search-query';
 import { ClampText } from '@/components/ui/clamp-text';
 import { ReprocessBatchMenuItem } from '@/components/reprocess-batch-menu-item';
@@ -147,9 +144,7 @@ const CellDescription = ({ value }: { value: string }) => {
   return <ClampText>{value}</ClampText>;
 };
 
-const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.CASH_IN.filter(
-  ({ value }) => CASH_IN_LIST_PROCESSOR_TYPES.includes(value),
-);
+const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.CASH_IN;
 
 const CellEntryProcessorType = ({ value }: { value: number }) => {
   return (

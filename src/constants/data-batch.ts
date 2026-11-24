@@ -1,18 +1,5 @@
 import { TEntryProcessorTypes } from '@/interfaces/data-batch';
 
-/**
- * Cash In batch-list filter options. MAS Revenue (type 33) is left out until the
- * backend that lists it is live: the current live backend rejects the whole list
- * request when it receives type 33. The upload form still offers MAS Revenue.
- * Restore the full CASH_IN options here once the backend is deployed.
- */
-export const CASH_IN_LIST_PROCESSOR_TYPES: readonly TEntryProcessorTypes[] = [
-  TEntryProcessorTypes.CashInFreight,
-  TEntryProcessorTypes.CashInTrucking,
-  TEntryProcessorTypes.CashInShiplink,
-  TEntryProcessorTypes.CashInYard,
-];
-
 export const ACCOUNT_RECEIVABLE_ENTRY_PROCESSOR_TYPES = [
   TEntryProcessorTypes.AccountReceivableFreight,
   TEntryProcessorTypes.AccountReceivableTrucking,

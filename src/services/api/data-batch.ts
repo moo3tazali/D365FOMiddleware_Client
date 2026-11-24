@@ -211,12 +211,12 @@ export class DataBatch {
           TEntryProcessorTypes.LedgerVisaOut,
         ];
       case 'cashIn':
-        // MAS Revenue (33) is not listed until the backend accepts it; see CASH_IN_LIST_PROCESSOR_TYPES.
         return [
           TEntryProcessorTypes.CashInFreight,
           TEntryProcessorTypes.CashInTrucking,
           TEntryProcessorTypes.CashInShiplink,
           TEntryProcessorTypes.CashInYard,
+          TEntryProcessorTypes.CashInMasRevenue,
         ];
       case 'cashOut':
         return [
