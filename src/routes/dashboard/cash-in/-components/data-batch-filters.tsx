@@ -15,9 +15,14 @@ import { useSearchQuery } from '@/hooks/use-search-query';
 
 import { CompanyFilter } from '@/components/company-filter';
 import { COMPANY_CODE_VALUES } from '@/constants/company';
-import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/data-batch';
+import {
+  CASH_IN_LIST_PROCESSOR_TYPES,
+  ENTRY_PROCESSOR_OPTIONS,
+} from '@/constants/data-batch';
 
-const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.CASH_IN;
+const entryProcessorOptions = ENTRY_PROCESSOR_OPTIONS.CASH_IN.filter(
+  ({ value }) => CASH_IN_LIST_PROCESSOR_TYPES.includes(value),
+);
 const entryProcessorValues = entryProcessorOptions.map(({ value }) => value);
 
 export const DataBatchQuerySchema = z.object({
