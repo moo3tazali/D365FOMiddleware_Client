@@ -198,6 +198,10 @@ export const API_ROUTES = {
       CASH_IN_MAS_JOURNAL_TEMPLATE:
         '/DataMigration/Cash/CashIn-MAS-Journal-Template',
       CASH_IN_MAS_JOURNAL_GUIDE: '/DataMigration/Cash/CashIn-MAS-Journal-Guide',
+      CASH_IN_MAS_RECEIPTS_TEMPLATE:
+        '/DataMigration/Cash/CashIn-MAS-Receipts-Template',
+      CASH_IN_MAS_RECEIPTS_GUIDE:
+        '/DataMigration/Cash/CashIn-MAS-Receipts-Guide',
       CASH_IN_MAS_REVENUE_PREVIEW:
         '/DataMigration/Cash/CashIn-MAS-Revenue-Preview',
       CASH_IN_MAS_REVENUE_REVIEW:

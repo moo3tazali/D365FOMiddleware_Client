@@ -5,7 +5,7 @@ import { API_ROUTES } from '../core/api-routes';
 export const MAS_REVENUE_COMPANY_ID = 'mas';
 /** Template contract version. The server accepts only this version today. */
 export const MAS_REVENUE_TEMPLATE_VERSION = 1;
-export const MAS_REVENUE_TEMPLATE_LABEL = 'v2';
+export const MAS_REVENUE_TEMPLATE_LABEL = 'v3';
 
 export interface MasRevenueRowIssue {
   sourceSheet: string;
@@ -98,18 +98,21 @@ export interface MasRevenueBatchRef {
 }
 
 export class MasRevenueApi {
-  /** Downloads the journal-lines template. The server names the file. */
+  /** Downloads the cash receipts template (Receipts and Revenue Types). */
   public downloadTemplate = () =>
-    sync.download(API_ROUTES.DATA_MIGRATION.CASH.CASH_IN_MAS_JOURNAL_TEMPLATE, {
-      downloadMethod: 'get',
-      defaultFileName: `MAS-Journal-Lines-Template-${MAS_REVENUE_TEMPLATE_LABEL}.xlsx`,
-    });
+    sync.download(
+      API_ROUTES.DATA_MIGRATION.CASH.CASH_IN_MAS_RECEIPTS_TEMPLATE,
+      {
+        downloadMethod: 'get',
+        defaultFileName: `MAS-Cash-Receipts-Template-${MAS_REVENUE_TEMPLATE_LABEL}.xlsx`,
+      },
+    );
 
   /** Downloads the user guide that describes every column. */
   public downloadGuide = () =>
-    sync.download(API_ROUTES.DATA_MIGRATION.CASH.CASH_IN_MAS_JOURNAL_GUIDE, {
+    sync.download(API_ROUTES.DATA_MIGRATION.CASH.CASH_IN_MAS_RECEIPTS_GUIDE, {
       downloadMethod: 'get',
-      defaultFileName: `MAS-Journal-Lines-Guide-${MAS_REVENUE_TEMPLATE_LABEL}.md`,
+      defaultFileName: `MAS-Cash-Receipts-Guide-${MAS_REVENUE_TEMPLATE_LABEL}.md`,
     });
 
   /**
