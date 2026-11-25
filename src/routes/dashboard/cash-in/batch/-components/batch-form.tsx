@@ -27,7 +27,12 @@ import {
 import { useBatchForm } from '../-hooks/use-batch-form';
 import { CompanyFormField } from '@/components/company-form-field';
 import { Progress } from '@/components/ui/progress';
-import { ENTRY_PROCESSOR_OPTIONS } from '@/constants/data-batch';
+import {
+  CREDIT_NOTE_SETTLEMENT_TEMPLATE_URL,
+  ENTRY_PROCESSOR_OPTIONS,
+} from '@/constants/data-batch';
+import { TEntryProcessorTypes } from '@/interfaces/data-batch';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { isMasRevenueTarget, useCashInTarget } from './cash-in-target-context';
 
@@ -35,6 +40,9 @@ export const BatchForm = () => {
   const { form } = useBatchForm();
   const targetContext = useCashInTarget();
   const isMas = isMasRevenueTarget(targetContext?.target);
+  const isCreditNoteSettlement =
+    String(targetContext?.target ?? form.watch('type') ?? '') ===
+    String(TEntryProcessorTypes.CashInCreditNoteSettlement);
 
   return (
     <Form {...form}>
@@ -136,6 +144,18 @@ export const BatchForm = () => {
                   </FileUploaderContent>
                 </FileUploader>
               </FormControl>
+              {isCreditNoteSettlement && (
+                <div className='flex items-center justify-between gap-3 pt-1'>
+                  <p className='text-xs text-muted-foreground'>
+                    One row per credit note and the open invoice it reverses.
+                  </p>
+                  <Button type='button' variant='outline' size='sm' asChild>
+                    <a href={CREDIT_NOTE_SETTLEMENT_TEMPLATE_URL} download>
+                      Download Upload Template
+                    </a>
+                  </Button>
+                </div>
+              )}
 
               <FormMessage />
             </FormItem>

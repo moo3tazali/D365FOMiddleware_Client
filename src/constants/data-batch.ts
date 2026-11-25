@@ -23,6 +23,14 @@ export const getExpectedGroupCountLabel = (
     ? 'invoice(s)'
     : 'BatchNumber(s)';
 
+/** Credit note settlement upload is off unless VITE_CREDIT_NOTE_SETTLEMENT_ENABLED is 'true'. */
+export const CREDIT_NOTE_SETTLEMENT_ENABLED =
+  import.meta.env.VITE_CREDIT_NOTE_SETTLEMENT_ENABLED === 'true';
+
+/** Blank template the user downloads, fills and uploads. */
+export const CREDIT_NOTE_SETTLEMENT_TEMPLATE_URL =
+  '/templates/Credit_Note_Settlement_Template.xlsx';
+
 export const ENTRY_PROCESSOR_OPTIONS = {
   ACCOUNT_RECEIVABLE: [
     {
@@ -135,6 +143,14 @@ export const ENTRY_PROCESSOR_OPTIONS = {
       label: 'MAS Revenue Cash In',
       value: TEntryProcessorTypes.CashInMasRevenue,
     },
+    ...(CREDIT_NOTE_SETTLEMENT_ENABLED
+      ? [
+          {
+            label: 'Credit Note Settlement',
+            value: TEntryProcessorTypes.CashInCreditNoteSettlement,
+          },
+        ]
+      : []),
   ],
   CASH_OUT: [
     {

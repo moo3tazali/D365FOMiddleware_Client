@@ -32,6 +32,7 @@ export enum TEntryProcessorTypes {
   CashInShiplink = 31,
   CashInYard = 32,
   CashInMasRevenue = 33,
+  CashInCreditNoteSettlement = 34,
 }
 
 export enum TDataBatchStatus {
